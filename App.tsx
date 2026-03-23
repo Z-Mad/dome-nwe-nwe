@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Routes, Route, useNavigate, useLocation, Navigate, useParams, useSearchParams } from "react-router-dom";
 import MarketplaceSidebar from "./components/MarketplaceSidebar";
 import Discovery from "./components/Discovery";
 import ProductDetail from "./components/ProductDetail";
@@ -345,8 +346,8 @@ const INITIAL_RESOURCES = [
 
 const App: React.FC = () => {
   const [currentAccount, setCurrentAccount] = useState<Account>(ACCOUNTS[0]);
-  const [currentView, setCurrentView] = useState("discovery");
-  const [viewParams, setViewParams] = useState<any>({});
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // Data State
   const [myOrders, setMyOrders] = useState(INITIAL_ORDERS);
@@ -355,12 +356,74 @@ const App: React.FC = () => {
   const [systemNotifications, setSystemNotifications] = useState<any[]>([]);
 
   const handleNavigate = (view: string, params?: any) => {
-    setCurrentView(view);
-    if (params) setViewParams(params);
+    let path = "/";
+    let search = "";
+
+    switch (view) {
+      case "discovery":
+        path = "/discovery";
+        break;
+      case "detail":
+        path = `/detail/${params?.id || ""}`;
+        if (params) {
+           const searchParams = new URLSearchParams();
+           if (params.action) searchParams.set("action", params.action);
+           if (params.upgrade_instance_id) searchParams.set("upgrade_instance_id", params.upgrade_instance_id);
+           if (params.instance_name) searchParams.set("instance_name", params.instance_name);
+           if (params.instance_status) searchParams.set("instance_status", params.instance_status);
+           search = searchParams.toString();
+        }
+        break;
+      case "profile":
+        path = "/profile";
+        if (params?.tab) {
+          search = `?tab=${params.tab}`;
+        }
+        break;
+      case "messages":
+        path = "/messages";
+        break;
+      case "settings":
+        path = "/settings";
+        break;
+      case "demand_square":
+        path = "/demand-square";
+        break;
+      case "categories":
+        path = "/categories";
+        break;
+      case "method_agents":
+        path = "/agents/method";
+        break;
+      case "analysis_agents":
+        path = "/agents/analysis";
+        break;
+      case "services":
+        path = "/services";
+        break;
+      case "documentation":
+        path = "/documentation";
+        break;
+      case "resource_packs":
+        path = "/resource-packs";
+        break;
+      case "publish_wizard":
+        path = "/publish";
+        if (params) {
+           const searchParams = new URLSearchParams();
+           if (params.mode) searchParams.set("mode", params.mode);
+           search = searchParams.toString();
+        }
+        break;
+      default:
+        path = "/discovery";
+    }
+
+    navigate(search ? `${path}?${search}` : path);
   };
 
-  const handlePublish = (data: any) => {
-    if (viewParams?.mode === "version") {
+  const handlePublish = (data: any, mode?: string) => {
+    if (mode === "version") {
       // Handle Version Update (In a real app, this would update the specific asset)
       // For now, we mock it by adding to the list but visually distinct or updated
       console.log("Published new version for:", data.title, data.nextVersion);
@@ -605,127 +668,22 @@ const App: React.FC = () => {
     handleNavigate("profile", { tab: "orders" });
   };
 
-  const renderContent = () => {
-    switch (currentView) {
-      case "discovery":
-        return (
-          <Discovery
-            onNavigateToDetail={(id) => handleNavigate("detail", { id })}
-            extraAgents={extraAgents}
-          />
-        );
-      case "detail":
-        // Check for existing orders to determine context
-        // We pass the full list of orders for this resource to ProductDetail
-        const productOrders = viewParams?.id
-          ? myOrders.filter((o) => o.resourceId === viewParams.id.toString())
-          : [];
-        return (
-          <ProductDetail
-            onBack={() => handleNavigate("discovery")}
-            onNavigate={handleNavigate}
-            onPurchase={handlePurchase}
-            onUpgrade={handleUpgrade}
-            initialParams={viewParams}
-            productOrders={productOrders}
-          />
-        );
-      case "profile":
-        return (
-          <UserProfile
-            onNavigate={handleNavigate}
-            currentAccount={currentAccount}
-            initialParams={viewParams}
-            extraAssets={extraAgents}
-            globalOrders={myOrders}
-            globalResources={myResources}
-            onUpgrade={handleUpgrade}
-            onUpdateOrder={(orderId, updates) =>
-              setMyOrders((prev) =>
-                prev.map((o) => (o.id === orderId ? { ...o, ...updates } : o)),
-              )
-            }
-            onUpdateResource={(resourceId, updates) =>
-              setMyResources((prev) =>
-                prev.map((r) => (r.id === resourceId ? { ...r, ...updates } : r)),
-              )
-            }
-            onAddResource={(resource) =>
-              setMyResources((prev) => [resource, ...prev])
-            }
-          />
-        );
-      case "messages":
-        return (
-          <MessageCenter
-            initialParams={viewParams}
-            systemNotifications={systemNotifications}
-          />
-        );
-      case "settings":
-        return (
-          <SettingsView
-            currentAccount={currentAccount}
-            accounts={ACCOUNTS}
-            onSwitchAccount={(id) =>
-              setCurrentAccount(
-                ACCOUNTS.find((a) => a.id === id) || ACCOUNTS[0],
-              )
-            }
-          />
-        );
-      case "demand_square":
-        return <DemandSquare />;
-      case "categories":
-        return <CategoryListView />;
-      case "method_agents":
-        return (
-          <AgentCategoryView
-            category="method"
-            onNavigateToDetail={(id) => handleNavigate("detail", { id })}
-          />
-        );
-      case "analysis_agents":
-        return (
-          <AgentCategoryView
-            category="analysis"
-            onNavigateToDetail={(id) => handleNavigate("detail", { id })}
-          />
-        );
-      case "services":
-        return (
-          <AgentCategoryView
-            category="service"
-            onNavigateToDetail={(id) => handleNavigate("detail", { id })}
-          />
-        );
-      case "documentation":
-        return <DocumentationView />;
-      case "resource_packs":
-        return (
-          <ResourcePackView
-            orders={myOrders}
-            onPurchase={handleResourcePackPurchase}
-          />
-        );
-      case "publish_wizard":
-        return (
-          <PublishWizard
-            onClose={() => handleNavigate("profile", { tab: "assets" })}
-            onPublish={handlePublish}
-            initialData={viewParams?.assetData}
-            mode={viewParams?.mode}
-          />
-        );
-      default:
-        return (
-          <Discovery
-            onNavigateToDetail={() => handleNavigate("detail")}
-            extraAgents={extraAgents}
-          />
-        );
-    }
-  };
+  const currentView = (() => {
+    const path = location.pathname;
+    if (path.startsWith("/detail")) return "detail";
+    if (path.startsWith("/profile")) return "profile";
+    if (path.startsWith("/messages")) return "messages";
+    if (path.startsWith("/settings")) return "settings";
+    if (path.startsWith("/demand-square")) return "demand_square";
+    if (path.startsWith("/categories")) return "categories";
+    if (path.startsWith("/agents/method")) return "method_agents";
+    if (path.startsWith("/agents/analysis")) return "analysis_agents";
+    if (path.startsWith("/services")) return "services";
+    if (path.startsWith("/documentation")) return "documentation";
+    if (path.startsWith("/resource-packs")) return "resource_packs";
+    if (path.startsWith("/publish")) return "publish_wizard";
+    return "discovery";
+  })();
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden font-sans text-gray-900">
@@ -741,9 +699,101 @@ const App: React.FC = () => {
       />
 
       <div className="flex-1 flex flex-col min-w-0 bg-white relative">
-        {renderContent()}
+        <Routes>
+          <Route path="/" element={<Navigate to="/discovery" replace />} />
+          <Route path="/discovery" element={<Discovery onNavigateToDetail={(id) => handleNavigate("detail", { id })} extraAgents={extraAgents} />} />
+          <Route path="/detail/:id" element={<ProductDetailWrapper myOrders={myOrders} handleNavigate={handleNavigate} handlePurchase={handlePurchase} handleUpgrade={handleUpgrade} />} />
+          <Route path="/detail" element={<Navigate to="/discovery" replace />} />
+          <Route path="/profile" element={<UserProfileWrapper currentAccount={currentAccount} handleNavigate={handleNavigate} extraAgents={extraAgents} myOrders={myOrders} myResources={myResources} handleUpgrade={handleUpgrade} setMyOrders={setMyOrders} setMyResources={setMyResources} />} />
+          <Route path="/messages" element={<MessageCenterWrapper systemNotifications={systemNotifications} />} />
+          <Route path="/settings" element={<SettingsView currentAccount={currentAccount} accounts={ACCOUNTS} onSwitchAccount={(id) => setCurrentAccount(ACCOUNTS.find((a) => a.id === id) || ACCOUNTS[0])} />} />
+          <Route path="/demand-square" element={<DemandSquare />} />
+          <Route path="/categories" element={<CategoryListView />} />
+          <Route path="/agents/method" element={<AgentCategoryView category="method" onNavigateToDetail={(id) => handleNavigate("detail", { id })} />} />
+          <Route path="/agents/analysis" element={<AgentCategoryView category="analysis" onNavigateToDetail={(id) => handleNavigate("detail", { id })} />} />
+          <Route path="/services" element={<AgentCategoryView category="service" onNavigateToDetail={(id) => handleNavigate("detail", { id })} />} />
+          <Route path="/documentation" element={<DocumentationView />} />
+          <Route path="/resource-packs" element={<ResourcePackView orders={myOrders} onPurchase={handleResourcePackPurchase} />} />
+          <Route path="/publish" element={<PublishWizardWrapper handleNavigate={handleNavigate} handlePublish={handlePublish} />} />
+          <Route path="*" element={<Navigate to="/discovery" replace />} />
+        </Routes>
       </div>
     </div>
+  );
+};
+
+// Wrappers to pass URL params to components expecting initialParams
+const ProductDetailWrapper = ({ myOrders, handleNavigate, handlePurchase, handleUpgrade }: any) => {
+  const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const action = searchParams.get("action") as any;
+  const upgrade_instance_id = searchParams.get("upgrade_instance_id") as string | undefined;
+  const instance_name = searchParams.get("instance_name") as string | undefined;
+  const instance_status = searchParams.get("instance_status") as string | undefined;
+
+  const params = { id, action, upgrade_instance_id, instance_name, instance_status };
+  const productOrders = id ? myOrders.filter((o: any) => o.resourceId === id.toString()) : [];
+
+  return (
+    <ProductDetail
+      onBack={() => handleNavigate("discovery")}
+      onNavigate={handleNavigate}
+      onPurchase={handlePurchase}
+      onUpgrade={handleUpgrade}
+      initialParams={params}
+      productOrders={productOrders}
+    />
+  );
+};
+
+const UserProfileWrapper = ({ currentAccount, handleNavigate, extraAgents, myOrders, myResources, handleUpgrade, setMyOrders, setMyResources }: any) => {
+  const [searchParams] = useSearchParams();
+  const tab = searchParams.get("tab") || "assets";
+  return (
+    <UserProfile
+      onNavigate={handleNavigate}
+      currentAccount={currentAccount}
+      initialParams={{ tab }}
+      extraAssets={extraAgents}
+      globalOrders={myOrders}
+      globalResources={myResources}
+      onUpgrade={handleUpgrade}
+      onUpdateOrder={(orderId: string, updates: any) =>
+        setMyOrders((prev: any[]) =>
+          prev.map((o) => (o.id === orderId ? { ...o, ...updates } : o))
+        )
+      }
+      onUpdateResource={(resourceId: string, updates: any) =>
+        setMyResources((prev: any[]) =>
+          prev.map((r) => (r.id === resourceId ? { ...r, ...updates } : r))
+        )
+      }
+      onAddResource={(resource: any) => setMyResources((prev: any[]) => [resource, ...prev])}
+    />
+  );
+};
+
+const MessageCenterWrapper = ({ systemNotifications }: any) => {
+  const [searchParams] = useSearchParams();
+  const tab = searchParams.get("tab") || "all";
+  return (
+    <MessageCenter
+      initialParams={{ tab }}
+      systemNotifications={systemNotifications}
+    />
+  );
+};
+
+const PublishWizardWrapper = ({ handleNavigate, handlePublish }: any) => {
+  const [searchParams] = useSearchParams();
+  const mode = searchParams.get("mode") || "create";
+  return (
+    <PublishWizard
+      onClose={() => handleNavigate("profile", { tab: "assets" })}
+      onPublish={(data: any) => handlePublish(data, mode)}
+      initialData={undefined} // Since we mock it, we pass undefined or handle assetData
+      mode={mode as any}
+    />
   );
 };
 
