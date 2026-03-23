@@ -3,8 +3,7 @@
 
 ## 项目概述
 
-维观市场前端项目，基于 React + TypeScript + Vite 构建，项目使用 Tailwind CSS 进行样式开发,提供智能体商城、订单管理、资源监控等功能。
-没有登录入口，采用其他项目跳转携带token，refresh_token，tenantid，Authorization等参数。
+维观市场前端项目，基于 React + TypeScript + Vite 构建，项目使用 Tailwind CSS 进行样式开发,提供智能体商城
 
 ## 技术栈
 

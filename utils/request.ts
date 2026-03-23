@@ -1,17 +1,32 @@
 import { useAuthStore } from '../store/authStore';
 
-const BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || '';
+const BASE_URL = (import.meta as any).env?.VITE_BASE_API || '';
 
 interface RequestOptions extends RequestInit {
   params?: Record<string, any>;
 }
 
+let isRefreshing: boolean = false;
+let reqList: any[] = [];
+let isShowModal: boolean = true;
+
+const outLog = async () => {
+  const { useUserStore } = await import('./user');
+  const userStore = useUserStore.getState();
+  userStore.clearAll();
+  setTimeout(() => {
+    isRefreshing = false;
+    isShowModal = true;
+  }, 1000);
+  window.location.href = '/';
+};
+
 /**
- * 封装 Fetch API，自动注入 Token 和 TenantId
+ * 封装 Fetch API，自动注入 Token 和 tenantId
  */
 export const request = async <T>(url: string, options: RequestOptions = {}): Promise<T> => {
   const { params, ...customOptions } = options;
-  const { token, tenantid, authorization } = useAuthStore.getState();
+  const { token, tenantId, authorization } = useAuthStore.getState();
 
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
@@ -19,14 +34,15 @@ export const request = async <T>(url: string, options: RequestOptions = {}): Pro
   };
 
   if (token) {
-    headers['token'] = token;
+    headers['Skyman-Auth'] = token;
   }
-  if (tenantid) {
-    headers['tenantid'] = tenantid;
+  if (tenantId) {
+    headers['Tenant-Id'] = tenantId;
   }
   if (authorization) {
     headers['Authorization'] = authorization;
   }
+  console.log(headers,useAuthStore.getState());
 
   let finalUrl = url.startsWith('http') ? url : `${BASE_URL}${url}`;
 
@@ -46,10 +62,57 @@ export const request = async <T>(url: string, options: RequestOptions = {}): Pro
       headers,
     });
 
-    if (response.status === 401) {
-      // 处理 Token 过期，可以跳转到登录或刷新 Token
-      console.error('Unauthorized: Token expired or invalid');
-      // 这里的逻辑可以根据实际情况进行补充
+    const status = response.status;
+
+    if (response.url?.includes('/oauth/token') && status === 412) {
+      await outLog();
+      return {} as T;
+    }
+
+    if (status === 412) {
+      return {} as T;
+      if (!isShowModal) return {} as T;
+      if (localStorage.getItem('market_token')) {
+        if (!isRefreshing) {
+          isRefreshing = true;
+          const { useUserStore } = await import('./user');
+          const userStore = useUserStore.getState();
+          try {
+            await userStore.refreshUser();
+            reqList.forEach((cb) => cb());
+            reqList = [];
+            isRefreshing = false;
+            return await request<T>(url, options);
+          } catch (e) {
+            reqList = [];
+            isRefreshing = false;
+            throw e;
+          }
+        } else {
+          return new Promise<T>((resolve) => {
+            reqList.push(() => {
+              resolve(request<T>(url, options));
+            });
+          });
+        }
+      } else {
+        alert('token缺失，请重新登录');
+        await outLog();
+        return {} as T;
+      }
+    } else if (status === 401) {
+      alert('身份过期，请重新登录');
+      await outLog();
+      return {} as T;
+    } else if (status === 409) {
+      if (!isShowModal) return {} as T;
+      isShowModal = false;
+      if (window.confirm('该账号已被其他设备操作登出\n请重新登录')) {
+        await outLog();
+      } else {
+        await outLog(); // Even if cancelled, we logout
+      }
+      return {} as T;
     }
 
     if (!response.ok) {
@@ -58,7 +121,10 @@ export const request = async <T>(url: string, options: RequestOptions = {}): Pro
 
     const data = await response.json();
     return data as T;
-  } catch (error) {
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      return {} as T;
+    }
     console.error('Request failed:', error);
     throw error;
   }
