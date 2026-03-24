@@ -25,9 +25,13 @@ const App: React.FC = () => {
     handleResourcePackPurchase,
   } = useMarketStore();
 
+  const initialized = React.useRef(false);
+
   useEffect(() => {
-    initAuth();
-  }, [initAuth]);
+      if (initialized.current) return;
+      initialized.current = true;
+      initAuth();
+    }, [initAuth]);
 
   const handleNavigate = (view: string, params?: any) => {
     let path = "/";
@@ -129,9 +133,6 @@ const App: React.FC = () => {
         currentView={currentView}
         onChangeView={handleNavigate}
         onPublish={() => handleNavigate("publish_wizard", { mode: "create" })}
-        currentAccount={currentAccount}
-        accounts={ACCOUNTS}
-        onSwitchAccount={setCurrentAccount}
       />
 
       <div className="flex-1 flex flex-col min-w-0 bg-white relative">

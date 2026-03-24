@@ -6,7 +6,7 @@ import {
   Mail, RefreshCw, Check, FileText, Upload, Calendar, Network, Eye, EyeOff, X, Building2, Smartphone,
   Camera, ShieldCheck
 } from 'lucide-react';
-import { Account } from '../types';
+import { Account } from '@/types';
 
 interface SettingsViewProps {
   currentAccount: Account;

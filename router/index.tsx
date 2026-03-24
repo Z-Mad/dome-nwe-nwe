@@ -1,16 +1,16 @@
 import React from "react";
 import { Routes, Route, Navigate, useParams, useSearchParams } from "react-router-dom";
-import Discovery from "../components/Discovery";
-import ProductDetail from "../components/ProductDetail";
-import PublishWizard from "../components/PublishWizard";
-import UserProfile from "../components/UserProfile";
-import DemandSquare from "../components/DemandSquare";
-import CategoryListView from "../components/CategoryListView";
-import AgentCategoryView from "../components/AgentCategoryView";
-import DocumentationView from "../components/DocumentationView";
-import SettingsView from "../components/SettingsView";
-import MessageCenter from "../components/MessageCenter";
-import ResourcePackView from "../components/ResourcePackView";
+import Discovery from "@/src/Discovery/index";
+import ProductDetail from "@/src/ProductDetail/index";
+import PublishWizard from "@/src/PublishWizard/index";
+import UserProfile from "@/src/UserProfile/index";
+import DemandSquare from "@/src/DemandSquare/index";
+import CategoryListView from "@/src/CategoryListView/index";
+import AgentCategoryView from "@/src/AgentCategoryView/index";
+import DocumentationView from "@/src/DocumentationView/index";
+import SettingsView from "@/src/SettingsView/index";
+import MessageCenter from "@/src/MessageCenter/index";
+import ResourcePackView from "@/src/ResourcePackView/index";
 
 interface AppRouterProps {
   extraAgents: any;

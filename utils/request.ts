@@ -18,7 +18,7 @@ const outLog = async () => {
     isRefreshing = false;
     isShowModal = true;
   }, 1000);
-  window.location.href = '/';
+  // window.location.href = '/';
 };
 
 /**
@@ -36,7 +36,7 @@ export const request = async <T>(url: string, options: RequestOptions = {}): Pro
   if (token) {
     headers['Skyman-Auth'] = token;
   }
-  if (tenantId) {
+  if (!headers['Tenant-Id'] && tenantId) {
     headers['Tenant-Id'] = tenantId;
   }
   if (authorization) {
@@ -63,14 +63,13 @@ export const request = async <T>(url: string, options: RequestOptions = {}): Pro
     });
 
     const status = response.status;
-
+    console.log(status,response);
     if (response.url?.includes('/oauth/token') && status === 412) {
       await outLog();
       return {} as T;
     }
 
     if (status === 412) {
-      return {} as T;
       if (!isShowModal) return {} as T;
       if (localStorage.getItem('market_token')) {
         if (!isRefreshing) {
@@ -96,12 +95,12 @@ export const request = async <T>(url: string, options: RequestOptions = {}): Pro
           });
         }
       } else {
-        alert('token缺失，请重新登录');
+        // alert('token缺失，请重新登录');
         await outLog();
         return {} as T;
       }
     } else if (status === 401) {
-      alert('身份过期，请重新登录');
+      // alert('身份过期，请重新登录');
       await outLog();
       return {} as T;
     } else if (status === 409) {

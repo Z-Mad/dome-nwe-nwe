@@ -28,7 +28,7 @@ export interface AuthResponse {
  * 刷新 Token
  */
 export const refreshToken = (data: TokenRefreshParams, options?: any) => {
-  return post<AuthResponse>(`${__SCS_AUTH__}/oauth/token`, data, options);
+  return post<AuthResponse>(`${__SCS_AUTH__}/oauth/token`, undefined, { ...options, params: data });
 };
 
 /**

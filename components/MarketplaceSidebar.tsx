@@ -5,20 +5,32 @@ import {
   ChevronDown, Check, Package, Book, Bell, MessageSquare
 } from 'lucide-react';
 import { Account } from '../types';
+import { useUserStore } from '../utils/user';
+import { useAuthStore } from '../store/authStore';
 
 interface SidebarProps {
   currentView: string;
   onChangeView: (view: string) => void;
   onPublish: () => void;
-  currentAccount: Account;
-  accounts: Account[];
-  onSwitchAccount: (id: string) => void;
 }
 
 const MarketplaceSidebar: React.FC<SidebarProps> = ({ 
-  currentView, onChangeView, onPublish, currentAccount, accounts, onSwitchAccount 
+  currentView, onChangeView, onPublish
 }) => {
   const [showAccountMenu, setShowAccountMenu] = useState(false);
+  const { userInfo, tenantList, refreshUser, checkDeveloper } = useUserStore();
+  const { currentAccount } = useAuthStore();
+
+  const handleSwitchAccount = async (tenantId: string) => {
+    try {
+      if(tenantId !== userInfo?.tenantId){
+        await refreshUser(tenantId, true);
+        setShowAccountMenu(false);
+      }
+    } catch (error) {
+      console.error('切换租户失败:', error);
+    }
+  };
 
   const menuItems = [
     { id: 'discovery', icon: <Search size={18} />, label: '探索', isHeader: false },
@@ -36,12 +48,13 @@ const MarketplaceSidebar: React.FC<SidebarProps> = ({
     { id: 'settings', icon: <Settings size={18} />, label: '设置' },
   ];
 
-  const getRoleLabel = (role: string) => {
-    switch(role) {
-      case 'admin': return '管理员';
-      case 'developer': return '开发者';
-      case 'viewer': return '访客';
-      default: return '';
+  const getRoleLabel = () => {
+     if (checkDeveloper){
+      return '开发者'
+    } else if(userInfo?.ownerUserId == userInfo?.userId){
+      return '管理员'
+    }  else {
+      return '访客'
     }
   }
 
@@ -60,11 +73,11 @@ const MarketplaceSidebar: React.FC<SidebarProps> = ({
           onClick={() => setShowAccountMenu(!showAccountMenu)}
           className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors text-left border border-transparent hover:border-gray-200"
         >
-           <img src={currentAccount.avatar} className="w-8 h-8 rounded-full border border-gray-100" alt="avatar" />
+           <img src={userInfo?.avatar || '/default-avatar.png'} className="w-8 h-8 rounded-full border border-gray-100" alt="avatar" />
            <div className="flex-1 min-w-0">
-               <div className="text-sm font-bold text-gray-800 truncate">{currentAccount.name}</div>
-               <div className="text-[10px] text-gray-500 truncate flex items-center gap-1">
-                 <Shield size={10} /> {getRoleLabel(currentAccount.role)}
+               <div className="text-sm font-bold text-gray-800 truncate">{userInfo?.deptName || '未登录'}</div>
+                <div className="text-[10px] text-gray-500 truncate flex items-center gap-1">
+                 <Shield size={10} /> {getRoleLabel()}
                </div>
            </div>
            <ChevronDown size={14} className="text-gray-400" />
@@ -73,26 +86,28 @@ const MarketplaceSidebar: React.FC<SidebarProps> = ({
         {showAccountMenu && (
           <div className="absolute top-full left-4 right-4 mt-1 bg-white rounded-xl shadow-xl border border-gray-100 p-1 z-50 animate-in fade-in zoom-in-95 duration-200">
              <div className="text-[10px] font-bold text-gray-400 px-3 py-2 uppercase">切换账号</div>
-             {accounts.map(acc => (
+             <div className="max-h-[400px] overflow-auto">
+             {tenantList.map(tenant => (
                <button 
-                  key={acc.id}
-                  onClick={() => { onSwitchAccount(acc.id); setShowAccountMenu(false); }}
-                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg mb-1 transition-colors ${currentAccount.id === acc.id ? 'bg-gray-50' : 'hover:bg-gray-50'}`}
+                  key={tenant.tenantId}
+                  onClick={() => handleSwitchAccount(tenant.tenantId)}
+                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg mb-1 transition-colors ${userInfo?.tenantId === tenant.tenantId ? 'bg-blue-50' : 'hover:bg-gray-50'}`}
                >
-                  <img src={acc.avatar} className="w-6 h-6 rounded-full" />
+                  <img src={tenant.logoUrl || '/tenantImg.png'} className="w-6 h-6 rounded-full" />
                   <div className="flex-1 text-left">
-                      <div className={`text-xs font-bold ${currentAccount.id === acc.id ? 'text-gray-900' : 'text-gray-600'}`}>{acc.name}</div>
+                      <div className={`text-xs font-bold ${userInfo?.deptId === tenant.tenantId ? 'text-gray-900' : 'text-gray-600'}`}>{tenant.tenantName}</div>
                   </div>
-                  {currentAccount.id === acc.id && <Check size={12} className="text-blue-600" />}
+                  {userInfo?.deptId === tenant.tenantId && <Check size={12} className="text-blue-600" />}
                </button>
              ))}
+              </div>
           </div>
         )}
       </div>
       
       {/* Publish Button - Hidden for Viewers */}
       <div className="px-6 mb-2 mt-2">
-        {currentAccount.permissions.canPublish ? (
+        {checkDeveloper ? (
           <button 
               onClick={onPublish}
               className="w-full bg-gray-900 hover:bg-black text-white py-2.5 rounded-xl text-sm font-medium flex items-center justify-center gap-2 transition-all shadow-lg shadow-gray-200"

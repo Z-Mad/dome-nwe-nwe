@@ -10,56 +10,104 @@ interface UserState {
   userInfo: UserInfo | null;
   tenantList: TenantInfo[];
   deviceInfo: any;
+  checkDeveloper: boolean; // 是否是开发者
   
   setUserInfo: (info: UserInfo) => void;
   getUserInfo: (userId: string) => Promise<UserInfo | null>;
   getTenantList: () => Promise<TenantInfo[]>;
-  refreshUser: (tenantId?: string) => Promise<any>;
+  refreshUser: (tenantId?: string, shouldReload?: boolean) => Promise<any>;
+  refreshPage: () => void;
   logout: () => Promise<void>;
   clearAll: () => void;
 }
 
-export const useUserStore = create<UserState>((set, getStore) => ({
-  userInfo: JSON.parse(localStorage.getItem('userInfo') || 'null'),
-  tenantList: [],
-  deviceInfo: JSON.parse(localStorage.getItem('device_info') || '{}'),
+let userInfoPromise: Promise<UserInfo | null> | null = null;
+let tenantListPromise: Promise<TenantInfo[]> | null = null;
 
-  setUserInfo: (info: UserInfo) => {
-    set({ userInfo: info });
-    localStorage.setItem('userInfo', JSON.stringify(info));
-  },
+const checkIsDeveloper = (userInfo: UserInfo | null) => {
+  return !!(userInfo?.menuCode?.includes('setting:developer') && userInfo?.checkDeveloper);
+};
 
-  getUserInfo: async (userId: string) => {
-    if (!userId) return null;
-    try {
-      const response = await getUserInfoApi(userId);
-      if (response.success && response.data) {
-        set({ userInfo: response.data });
-        localStorage.setItem('userInfo', JSON.stringify(response.data));
-        return response.data;
-      }
-      return null;
-    } catch (error) {
-      console.error('获取用户信息失败:', error);
-      return null;
-    }
-  },
+export const useUserStore = create<UserState>((set, getStore) => {
+  const userInfo = JSON.parse(localStorage.getItem('userInfo') || 'null');
+  
+  return {
+    userInfo,
+    tenantList: [],
+    deviceInfo: JSON.parse(localStorage.getItem('device_info') || '{}'),
+    checkDeveloper: checkIsDeveloper(userInfo),
+
+    setUserInfo: (info: UserInfo) => {
+      set({ 
+        userInfo: info,
+        checkDeveloper: checkIsDeveloper(info)
+      });
+      localStorage.setItem('userInfo', JSON.stringify(info));
+    },
+
+    getUserInfo: async (userId: string) => {
+      if (!userId) return null;
+      // 如果正在请求，返回现有 Promise
+      if (userInfoPromise) return userInfoPromise;
+
+      userInfoPromise = (async () => {
+        try {
+          const response = await getUserInfoApi(userId);
+          if (response.success && response.data) {
+            set({ 
+              userInfo: response.data,
+              checkDeveloper: checkIsDeveloper(response.data)
+            });
+            localStorage.setItem('userInfo', JSON.stringify(response.data));
+            return response.data;
+          }
+          return null;
+        } catch (error) {
+          console.error('获取用户信息失败:', error);
+          return null;
+        } finally {
+          userInfoPromise = null;
+        }
+      })();
+
+      return userInfoPromise;
+    },
 
   getTenantList: async () => {
-    try {
-      const response = await getTenantListApi();
-      if (response.success && response.data) {
-        set({ tenantList: response.data });
-        return response.data;
-      }
-      return [];
-    } catch (error) {
-      console.error('获取组织信息失败:', error);
-      return [];
+    // 如果已经有列表，直接返回
+    const currentList = getStore().tenantList;
+    if (currentList && currentList.length > 0) {
+      return currentList;
     }
+
+    // 如果正在请求，返回现有 Promise
+    if (tenantListPromise) return tenantListPromise;
+
+    tenantListPromise = (async () => {
+      try {
+        const response = await getTenantListApi();
+        if (response.success && response.data) {
+          const filteredData = response.data.filter(item => item.status === 'NORMAL');
+          set({ tenantList: filteredData });
+          return response.data;
+        }
+        return [];
+      } catch (error) {
+        console.error('获取组织信息失败:', error);
+        return [];
+      } finally {
+        tenantListPromise = null;
+      }
+    })();
+
+    return tenantListPromise;
   },
 
-  refreshUser: async (tenantId?: string) => {
+  refreshPage: () => {
+    window.location.reload();
+  },
+
+  refreshUser: async (tenantId?: string, shouldReload: boolean = false) => {
     const authStore = useAuthStore.getState();
     const refresh_token = authStore.refresh_token || localStorage.getItem('market_refresh_token');
     
@@ -77,11 +125,9 @@ export const useUserStore = create<UserState>((set, getStore) => ({
           grant_type: 'refresh_token',
           scope: 'all',
           refresh_token,
-          ...getStore().deviceInfo,
         },
         options
       );
-
       if (response.success && response.data?.access_token) {
         const newToken = `${response.data.token_type || 'Bearer'} ${response.data.access_token}`;
         
@@ -97,13 +143,13 @@ export const useUserStore = create<UserState>((set, getStore) => ({
         localStorage.setItem('market_refresh_token', response.data.refresh_token);
         if (tenantId) {
           localStorage.setItem('market_tenantId', tenantId);
-        }
-
-        // 如果传了 tenantId，意味着切了组织，更新下用户信息
-        if (tenantId && response.data.user_id) {
           await getStore().getUserInfo(response.data.user_id);
         }
-        
+
+        if (shouldReload) {
+          window.location.reload();
+        }
+
         return response.data;
       } else {
         throw new Error(response.msg || 'Token 刷新失败');
@@ -124,18 +170,18 @@ export const useUserStore = create<UserState>((set, getStore) => ({
     }
     getStore().clearAll();
     // 退出后回到首页或其他无授权页面，依赖项目实际情况
-    window.location.href = '/'; 
+    // window.location.href = '/'; 
   },
 
   clearAll: () => {
-    set({ userInfo: null, tenantList: [] });
+    set({ userInfo: null, tenantList: [], checkDeveloper: false });
     localStorage.removeItem('userInfo');
-    
     // 清除 authStore
     useAuthStore.setState({ token: null, refresh_token: null, tenantId: null, authorization: null });
     localStorage.removeItem('market_token');
     localStorage.removeItem('market_refresh_token');
     localStorage.removeItem('market_tenantId');
     localStorage.removeItem('market_authorization');
-  }
-}));
+    }
+  };
+});

@@ -1,16 +1,13 @@
 
 import React, { useState } from 'react';
 import { 
-    Book, FileText, ChevronRight, Anchor, Cpu, Database, 
-    ArrowRight, CreditCard, ShoppingCart, Layers, Key, ShieldCheck,
-    GitBranch, History, Download, LayoutDashboard, Settings, User,
-    Check, AlertTriangle, Zap, Server, Globe, Code, Box, LineChart,
-    Activity, Lock, Share2, Workflow, Filter, Search, Tag, FileJson,
-    ShieldAlert, Plus, Upload, Network, Coins, Scale, Factory, Package,
-    Table, MousePointer, Eye, RefreshCw, Smartphone, List, CheckCircle,
-    XCircle, Clock, Milestone, BarChart, Flag, Target, Info, PieChart,
-    MessageSquare, LifeBuoy, Wallet, FileCode, CheckSquare, Bell, Mail, Bot,
-    Rocket, Trophy, Sparkles, Map, UserCheck, HardHat, Briefcase
+    Book,  ChevronRight, Cpu, 
+     Layers, Key, ShieldCheck,
+     Download, 
+     Zap, Server, Globe, Code, Lock, Share2, Workflow, Coins, Scale, Factory, Package,
+    Table, MousePointer, Eye,  List, PieChart,
+   
+    Rocket, Trophy, Sparkles, Map,  HardHat, Briefcase
 } from 'lucide-react';
 
 const DocumentationView: React.FC = () => {

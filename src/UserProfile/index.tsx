@@ -85,7 +85,7 @@ import {
   Upload,
   BellRing,
 } from "lucide-react";
-import { Account } from "../types";
+import { Account } from "@/types";
 
 interface UserProfileProps {
   onNavigate: (view: string, params?: any) => void;

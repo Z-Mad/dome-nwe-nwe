@@ -49,12 +49,12 @@ import {
   Copy,
   MoreHorizontal,
 } from "lucide-react";
-import Sidebar from "./Sidebar";
-import ReportPanel from "./ReportPanel";
-import ChatPanel from "./ChatPanel";
-import RelatedPanel from "./RelatedPanel";
-import VideoView from "./VideoView";
-import LiveView from "./LiveView";
+import Sidebar from "@/components/Sidebar";
+import ReportPanel from "@/components/ReportPanel";
+import ChatPanel from "@/components/ChatPanel";
+import RelatedPanel from "@/components/RelatedPanel";
+import VideoView from "@/components/VideoView";
+import LiveView from "@/components/LiveView";
 import {
   MOCK_AGENTS,
   AgentData,
@@ -62,7 +62,7 @@ import {
   Deliverable,
   DataColumn,
   DataRow,
-} from "../data";
+} from "@/data";
 
 interface ProductDetailProps {
   onBack: () => void;

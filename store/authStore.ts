@@ -9,7 +9,7 @@ interface AuthState {
   authorization: string | null;
   userId: string | null;
   currentAccount: Account;
-  
+
   initAuth: () => void;
   setCurrentAccount: (id: string) => void;
 }
@@ -41,7 +41,6 @@ export const useAuthStore = create<AuthState>((set) => ({
           { key: 'authorization', storeKey: 'authorization' },
           { key: 'userId', storeKey: 'userId' }
         ];
-
         keysToExtract.forEach(({ key, storeKey }) => {
           if (parsedData[key]) {
             (authData as any)[storeKey] = parsedData[key];
@@ -88,12 +87,20 @@ export const useAuthStore = create<AuthState>((set) => ({
     set((state) => ({ ...state, ...authData }));
 
     // 触发获取用户信息（使用动态 import 避免与 userStore 形成循环依赖）
-    if (authData.userId) {
+    if (authData.userId || localStorage.getItem('market_userId')) {
       import('../utils/user').then(({ useUserStore }) => {
+        const store = useUserStore.getState();
+        const finalUserId = (authData.userId || localStorage.getItem('market_userId')) as string;
+        
         // 当 dataParam 存在（说明发生了新登录/SSO），或者本地无用户信息时，去请求接口
-        const currentUserInfo = useUserStore.getState().userInfo;
-        if (dataParam || !currentUserInfo || currentUserInfo.userId !== authData.userId) {
-          useUserStore.getState().getUserInfo(authData.userId as string);
+        const currentUserInfo = store.userInfo;
+        if (dataParam || !currentUserInfo || currentUserInfo.userId !== finalUserId) {
+          store.getUserInfo(finalUserId);
+        }
+
+        // 同时获取租户列表
+        if (dataParam || store.tenantList.length === 0) {
+          store.getTenantList();
         }
       }).catch(err => console.error('Failed to load user store:', err));
     }
