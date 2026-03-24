@@ -1,11 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { filterOrders, ProfileOrderItem } from "../utils/orderUtils";
+import { filterOrders, ProfileOrderItem } from "./orderUtils";
+import OrderFilterWorker from "./orderFilter.worker.ts?worker";
 
 const createWorker = () => {
-  return new Worker(
-    new URL("../workers/orderFilter.worker.ts", import.meta.url),
-    { type: "module" },
-  );
+  return new OrderFilterWorker();
 };
 
 export const useOrderFilterWorker = <T extends ProfileOrderItem>(

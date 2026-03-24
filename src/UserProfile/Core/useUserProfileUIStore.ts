@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import { BuyerTab } from "../components/buyerTabs";
-import { SellerTab } from "../components/sellerTabs";
-import { OrderStatusFilter } from "../utils/orderUtils";
+import { BuyerTab } from "../Buyer/buyerTabs";
+import { SellerTab } from "../Seller/sellerTabs";
+import { OrderStatusFilter } from "../Order/orderUtils";
 
 interface UserProfileUIState {
   buyerTab: BuyerTab;

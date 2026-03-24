@@ -1,7 +1,7 @@
 import React from "react";
 import { Activity, BarChart2, Box, LayoutDashboard, LifeBuoy, Wallet } from "lucide-react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
-import TabNav, { TabItem } from "./TabNav";
+import TabNav, { TabItem } from "../Shared/TabNav";
 
 export type SellerTab =
   | "dashboard"

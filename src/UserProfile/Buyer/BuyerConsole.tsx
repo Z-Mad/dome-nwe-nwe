@@ -1,6 +1,6 @@
 import React from "react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
-import TabNav, { TabItem } from "./TabNav";
+import TabNav, { TabItem } from "../Shared/TabNav";
 import { BUYER_TABS, BuyerTab } from "./buyerTabs";
 
 interface BuyerConsoleProps {
