@@ -1,30 +1,7 @@
 import React from "react";
-import { Box, FileText, Headphones, LayoutDashboard, PieChart, Receipt } from "lucide-react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import TabNav, { TabItem } from "./TabNav";
-
-export type BuyerTab =
-  | "dashboard"
-  | "orders"
-  | "bills"
-  | "invoices"
-  | "resources"
-  | "analysis"
-  | "support";
-
-const BUYER_TABS: TabItem<BuyerTab>[] = [
-  { id: "dashboard", label: "概览", icon: LayoutDashboard },
-  { id: "orders", label: "订单管理", icon: FileText },
-  { id: "bills", label: "账单管理", icon: FileText },
-  { id: "invoices", label: "发票管理", icon: Receipt },
-  { id: "resources", label: "我的资源", icon: Box },
-  { id: "analysis", label: "成本分析", icon: PieChart },
-  { id: "support", label: "服务支持", icon: Headphones },
-] as const;
-
-export const isBuyerTab = (tab: string): tab is BuyerTab => {
-  return BUYER_TABS.some((item) => item.id === tab);
-};
+import { BUYER_TABS, BuyerTab } from "./buyerTabs";
 
 interface BuyerConsoleProps {
   buyerTab: BuyerTab;
@@ -71,7 +48,7 @@ const BuyerConsole: React.FC<BuyerConsoleProps> = ({
     <div className="flex flex-col gap-6">
       {renderBuyerModals()}
       <TabNav
-        tabs={BUYER_TABS}
+        tabs={BUYER_TABS as TabItem<BuyerTab>[]}
         currentTab={buyerTab}
         onChange={handleBuyerTabChange}
         activeClassName="border-blue-600 text-blue-600"
@@ -91,4 +68,4 @@ const BuyerConsole: React.FC<BuyerConsoleProps> = ({
   );
 };
 
-export default BuyerConsole;
+export default React.memo(BuyerConsole);

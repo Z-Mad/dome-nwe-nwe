@@ -1,16 +1,17 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { Routes, Route, Navigate, useParams, useSearchParams } from "react-router-dom";
-import Discovery from "@/src/Discovery/index";
-import ProductDetail from "@/src/ProductDetail/index";
-import PublishWizard from "@/src/PublishWizard/index";
-import UserProfile from "@/src/UserProfile/index";
-import DemandSquare from "@/src/DemandSquare/index";
-import CategoryListView from "@/src/CategoryListView/index";
-import AgentCategoryView from "@/src/AgentCategoryView/index";
-import DocumentationView from "@/src/DocumentationView/index";
-import SettingsView from "@/src/SettingsView/index";
-import MessageCenter from "@/src/MessageCenter/index";
-import ResourcePackView from "@/src/ResourcePackView/index";
+
+const Discovery = lazy(() => import("@/src/Discovery/index"));
+const ProductDetail = lazy(() => import("@/src/ProductDetail/index"));
+const PublishWizard = lazy(() => import("@/src/PublishWizard/index"));
+const UserProfile = lazy(() => import("@/src/UserProfile/index"));
+const DemandSquare = lazy(() => import("@/src/DemandSquare/index"));
+const CategoryListView = lazy(() => import("@/src/CategoryListView/index"));
+const AgentCategoryView = lazy(() => import("@/src/AgentCategoryView/index"));
+const DocumentationView = lazy(() => import("@/src/DocumentationView/index"));
+const SettingsView = lazy(() => import("@/src/SettingsView/index"));
+const MessageCenter = lazy(() => import("@/src/MessageCenter/index"));
+const ResourcePackView = lazy(() => import("@/src/ResourcePackView/index"));
 
 interface AppRouterProps {
   extraAgents: any;
@@ -46,7 +47,8 @@ const AppRouter: React.FC<AppRouterProps> = ({
   onResourcePackPurchaseDone,
 }) => {
   return (
-    <Routes>
+    <Suspense fallback={<div className="p-6 text-sm text-gray-500">页面加载中...</div>}>
+      <Routes>
       <Route path="/" element={<Navigate to="/discovery" replace />} />
       <Route path="/discovery" element={<Discovery onNavigateToDetail={(id) => handleNavigate("detail", { id })} extraAgents={extraAgents} />} />
       <Route path="/detail/:id" element={<ProductDetailWrapper myOrders={myOrders} handleNavigate={handleNavigate} handlePurchase={handlePurchase} handleUpgrade={handleUpgrade} />} />
@@ -63,7 +65,8 @@ const AppRouter: React.FC<AppRouterProps> = ({
       <Route path="/resource-packs" element={<ResourcePackView orders={myOrders} onPurchase={onResourcePackPurchaseDone} />} />
       <Route path="/publish" element={<PublishWizardWrapper handleNavigate={handleNavigate} handlePublish={onPublishDone} />} />
       <Route path="*" element={<Navigate to="/discovery" replace />} />
-    </Routes>
+      </Routes>
+    </Suspense>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Navigate, Route, Routes, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import {
   User,
@@ -87,9 +87,17 @@ import {
   BellRing,
 } from "lucide-react";
 import { Account } from "@/types";
-import BuyerConsole, { BuyerTab, isBuyerTab } from "./components/BuyerConsole";
-import SellerConsole, { SellerTab, isSellerTab } from "./components/SellerConsole";
-import ProfileHeader from "./components/ProfileHeader";
+import { BuyerTab, isBuyerTab } from "./components/buyerTabs";
+import { SellerTab, isSellerTab } from "./components/sellerTabs";
+import { useDebouncedValue } from "./hooks/useDebouncedValue";
+import { useOrderFilterWorker } from "./hooks/useOrderFilterWorker";
+import { useVirtualPagination } from "./hooks/useVirtualPagination";
+import { useUserProfileUIStore } from "./store/useUserProfileUIStore";
+import { getOrderStatusLabel, getPaymentMethodLabel, ORDER_STATUS_OPTIONS, OrderStatusFilter } from "./utils/orderUtils";
+
+const BuyerConsole = lazy(() => import("./components/BuyerConsole"));
+const SellerConsole = lazy(() => import("./components/SellerConsole"));
+const ProfileHeader = lazy(() => import("./components/ProfileHeader"));
 
 interface UserProfileProps {
   onNavigate: (view: string, params?: any) => void;
@@ -861,22 +869,27 @@ const UserProfile: React.FC<UserProfileProps> = ({
   const location = useLocation();
   const [searchParams] = useSearchParams();
   // Determine display info
-  const displayAccount = {
-    ...currentAccount,
-    displayName:
-      currentAccount.role === "developer"
-        ? "COMMANDER_01"
-        : currentAccount.name,
-    orgInfo: "宝信软件 (Baosight) · ID: 88293910", // Mock for visual match
-  };
+  const displayAccount = useMemo(
+    () => ({
+      ...currentAccount,
+      displayName:
+        currentAccount.role === "developer"
+          ? "COMMANDER_01"
+          : currentAccount.name,
+      orgInfo: "宝信软件 (Baosight) · ID: 88293910",
+    }),
+    [currentAccount],
+  );
 
   // --- State ---
   const [consoleMode, setConsoleMode] = useState<"buyer" | "seller">(
     currentAccount.role === "viewer" ? "buyer" : "seller",
   );
 
-  const [buyerTab, setBuyerTab] = useState<BuyerTab>("dashboard");
-  const [sellerTab, setSellerTab] = useState<SellerTab>("dashboard");
+  const buyerTab = useUserProfileUIStore((state) => state.buyerTab);
+  const setBuyerTab = useUserProfileUIStore((state) => state.setBuyerTab);
+  const sellerTab = useUserProfileUIStore((state) => state.sellerTab);
+  const setSellerTab = useUserProfileUIStore((state) => state.setSellerTab);
   const [monitoringData, setMonitoringData] = useState(SELLER_MONITORING_MOCK);
   const [resourceSubTab, setResourceSubTab] = useState<
     "purchased" | "favorites"
@@ -891,8 +904,10 @@ const UserProfile: React.FC<UserProfileProps> = ({
   >("overview");
 
   // Order Filter State
-  const [orderSearch, setOrderSearch] = useState("");
-  const [orderStatusFilter, setOrderStatusFilter] = useState("all");
+  const orderSearch = useUserProfileUIStore((state) => state.orderSearch);
+  const setOrderSearch = useUserProfileUIStore((state) => state.setOrderSearch);
+  const orderStatusFilter = useUserProfileUIStore((state) => state.orderStatusFilter);
+  const setOrderStatusFilter = useUserProfileUIStore((state) => state.setOrderStatusFilter);
 
   const [activeModal, setActiveModal] = useState<ModalType>("none");
   const [selectedItem, setSelectedItem] = useState<any>(null);
@@ -972,6 +987,21 @@ const UserProfile: React.FC<UserProfileProps> = ({
   const [localResources, setLocalResources] = useState<any[]>(globalResources);
   const [sellerRefunds, setSellerRefunds] =
     useState<any[]>(SELLER_REFUNDS_MOCK);
+  const orderListRef = useRef<HTMLDivElement | null>(null);
+  const debouncedOrderSearch = useDebouncedValue(orderSearch, 160);
+  const filteredOrders = useOrderFilterWorker(
+    localOrders,
+    orderStatusFilter,
+    debouncedOrderSearch,
+  );
+  const virtualOrders = useVirtualPagination(filteredOrders, {
+    itemHeight: 260,
+    containerHeight: 720,
+    pageSize: 20,
+    overscan: 3,
+  });
+  const resetVirtualOrders = virtualOrders.reset;
+  const virtualOrderContainerStyle = useMemo(() => ({ height: "720px" }), []);
 
   useEffect(() => {
     setLocalOrders(globalOrders);
@@ -980,6 +1010,13 @@ const UserProfile: React.FC<UserProfileProps> = ({
   useEffect(() => {
     setLocalResources(globalResources);
   }, [globalResources]);
+
+  useEffect(() => {
+    resetVirtualOrders();
+    if (orderListRef.current) {
+      orderListRef.current.scrollTop = 0;
+    }
+  }, [localOrders.length, orderStatusFilter, debouncedOrderSearch, resetVirtualOrders]);
 
   useEffect(() => {
     if (activeModal === "generate_invoice" && selectedItem) {
@@ -992,13 +1029,13 @@ const UserProfile: React.FC<UserProfileProps> = ({
     }
   }, [activeModal, selectedItem]);
 
-  const navigateBuyerTab = (tab: BuyerTab) => {
+  const navigateBuyerTab = useCallback((tab: BuyerTab) => {
     setConsoleMode("buyer");
     setBuyerTab(tab);
     navigate(`/profile/buyer/${tab}`);
-  };
+  }, [navigate]);
 
-  const navigateSellerTab = (tab: SellerTab) => {
+  const navigateSellerTab = useCallback((tab: SellerTab) => {
     if (currentAccount.role === "viewer") {
       navigate("/profile/buyer/dashboard", { replace: true });
       return;
@@ -1006,7 +1043,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
     setConsoleMode("seller");
     setSellerTab(tab);
     navigate(`/profile/seller/${tab}`);
-  };
+  }, [currentAccount.role, navigate]);
 
   useEffect(() => {
     if (initialParams?.tab && !location.pathname.startsWith("/profile/buyer/") && !location.pathname.startsWith("/profile/seller/")) {
@@ -4053,15 +4090,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
       {/* Filter Bar */}
       <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
         <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto">
-          {[
-            "all",
-            "PendingPayment",
-            "UnderReview",
-            "Rejected",
-            "Paid",
-            "PaymentFailed",
-            "Cancelled",
-          ].map((status) => (
+          {ORDER_STATUS_OPTIONS.map((status) => (
             <button
               key={status}
               onClick={() => setOrderStatusFilter(status)}
@@ -4071,19 +4100,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
                   : "bg-gray-50 text-gray-600 hover:bg-gray-100"
               }`}
             >
-              {status === "all"
-                ? "全部订单"
-                : status === "PendingPayment"
-                  ? "待支付"
-                  : status === "UnderReview"
-                    ? "审核中"
-                    : status === "Rejected"
-                      ? "已驳回"
-                      : status === "Paid"
-                        ? "已支付"
-                        : status === "PaymentFailed"
-                          ? "支付失败"
-                          : "已取消"}
+              {getOrderStatusLabel(status)}
             </button>
           ))}
         </div>
@@ -4103,22 +4120,21 @@ const UserProfile: React.FC<UserProfileProps> = ({
       </div>
 
       {/* Orders List */}
-      <div className="space-y-4">
-        {localOrders
-          .filter(
-            (o) =>
-              orderStatusFilter === "all" || o.paymentStatus === orderStatusFilter,
-          )
-          .filter(
-            (o) =>
-              o.productName.toLowerCase().includes(orderSearch.toLowerCase()) ||
-              o.id.toLowerCase().includes(orderSearch.toLowerCase()),
-          )
-          .map((order) => (
-            <div
-              key={order.id}
-              className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all overflow-hidden group"
-            >
+      <div
+        ref={orderListRef}
+        onScroll={virtualOrders.onScroll}
+        style={virtualOrderContainerStyle}
+        className="space-y-4 overflow-y-auto pr-1"
+      >
+        {virtualOrders.topSpacerHeight > 0 && (
+          <div style={{ height: virtualOrders.topSpacerHeight }} />
+        )}
+        {virtualOrders.visibleItems.map((order) => (
+          <div
+            key={order.id}
+            style={{ height: 260 }}
+            className="mb-4 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all overflow-hidden group"
+          >
               {/* Order Header: ID, Time, Status */}
               <div className="bg-gray-50/50 px-4 py-2.5 border-b border-gray-100 flex flex-wrap items-center justify-between gap-3 text-xs text-gray-500">
                 <div className="flex items-center gap-4">
@@ -4129,16 +4145,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
                   <span>{order.createTime}</span>
                   <span className="hidden sm:inline text-gray-300">|</span>
                   <span>
-                    支付方式:{" "}
-                    {order.paymentMethod === "Alipay"
-                      ? "支付宝"
-                      : order.paymentMethod === "WeChat"
-                        ? "微信支付"
-                        : order.paymentMethod === "CorporateRemittance"
-                          ? "对公转账"
-                          : order.paymentMethod === "Free"
-                            ? "体验试用"
-                            : order.paymentMethod}
+                    支付方式: {getPaymentMethodLabel(order.paymentMethod)}
                   </span>
                 </div>
                 <PaymentStatusBadge status={order.paymentStatus} />
@@ -4316,14 +4323,19 @@ const UserProfile: React.FC<UserProfileProps> = ({
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-
-        {localOrders.filter(
-          (o) => orderStatusFilter === "all" || o.status === orderStatusFilter,
-        ).length === 0 && (
+          </div>
+        ))}
+        {virtualOrders.bottomSpacerHeight > 0 && (
+          <div style={{ height: virtualOrders.bottomSpacerHeight }} />
+        )}
+        {filteredOrders.length === 0 && (
           <div className="text-center py-10 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
             <div className="text-gray-400 font-bold">暂无相关订单</div>
+          </div>
+        )}
+        {filteredOrders.length > 0 && virtualOrders.loadedCount < filteredOrders.length && (
+          <div className="text-center text-xs text-gray-400 py-2">
+            已加载 {virtualOrders.loadedCount}/{filteredOrders.length}，继续滚动加载下一页
           </div>
         )}
       </div>
@@ -6727,13 +6739,13 @@ const renderSellerAnalysis = () => (
     </>
   );
 
-  const handleConsoleModeChange = (mode: "buyer" | "seller") => {
+  const handleConsoleModeChange = useCallback((mode: "buyer" | "seller") => {
     if (mode === "buyer") {
       navigateBuyerTab("dashboard");
       return;
     }
     navigateSellerTab("assets");
-  };
+  }, [navigateBuyerTab, navigateSellerTab]);
 
   return (
     <div className="flex-1 bg-gray-50 overflow-y-auto h-full p-6 md:p-8 relative">
@@ -6745,13 +6757,16 @@ const renderSellerAnalysis = () => (
       )}
 
       <div className="max-w-6xl mx-auto pb-20">
-        <ProfileHeader
-          displayAccount={displayAccount}
-          consoleMode={consoleMode}
-          onConsoleModeChange={handleConsoleModeChange}
-          role={currentAccount.role}
-        />
-        <Routes>
+        <Suspense fallback={<div className="bg-white rounded-2xl p-6 border border-gray-100 text-sm text-gray-500">加载中...</div>}>
+          <ProfileHeader
+            displayAccount={displayAccount}
+            consoleMode={consoleMode}
+            onConsoleModeChange={handleConsoleModeChange}
+            role={currentAccount.role}
+          />
+        </Suspense>
+        <Suspense fallback={<div className="bg-white rounded-2xl p-6 border border-gray-100 text-sm text-gray-500">工作台加载中...</div>}>
+          <Routes>
           <Route
             path="buyer/*"
             element={
@@ -6794,7 +6809,8 @@ const renderSellerAnalysis = () => (
               />
             }
           />
-        </Routes>
+          </Routes>
+        </Suspense>
       </div>
     </div>
   );

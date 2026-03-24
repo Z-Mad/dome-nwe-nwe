@@ -56,4 +56,4 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   );
 };
 
-export default ProfileHeader;
+export default React.memo(ProfileHeader);
