@@ -14,6 +14,7 @@ type UploadData =
       fileUrl?: string;
       ossUrl?: string;
       path?: string;
+      link?: string;
       [key: string]: any;
     };
 
@@ -21,7 +22,7 @@ const resolveUploadedUrl = (data: UploadData): string => {
   if (typeof data === 'string') {
     return data;
   }
-  return data.url || data.fileUrl || data.ossUrl || data.path || '';
+  return data.link || data.url || data.fileUrl || data.ossUrl || data.path || '';
 };
 
 export const uploadService = {
@@ -36,7 +37,8 @@ export const uploadService = {
 
     const url = resolveUploadedUrl(res.data);
     if (!url) {
-      throw new Error(res.msg || '上传成功但未返回可用URL');
+      console.error('上传成功但解析URL失败，后端返回数据:', res.data);
+      throw new Error('上传成功，但未能从接口响应中提取到有效的图片链接');
     }
 
     return {

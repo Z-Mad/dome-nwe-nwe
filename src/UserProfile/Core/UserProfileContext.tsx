@@ -15,6 +15,13 @@ interface UserProfileContextType {
   onUpdateResource?: (resourceId: string, updates: any) => void;
   onAddResource?: (resource: any) => void;
   
+  // Shared State
+  localOrders: any[];
+  setLocalOrders: React.Dispatch<React.SetStateAction<any[]>>;
+  localResources: any[];
+  setLocalResources: React.Dispatch<React.SetStateAction<any[]>>;
+  showToast: (msg: string) => void;
+  
   // URL-driven state helpers
   activeModal: string | null;
   openModal: (modalName: string, params?: Record<string, string>) => void;
@@ -59,6 +66,22 @@ export const UserProfileProvider: React.FC<ProviderProps> = ({
   onAddResource,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [localOrders, setLocalOrders] = React.useState<any[]>(globalOrders);
+  const [localResources, setLocalResources] = React.useState<any[]>(globalResources);
+  const [toastMsg, setToastMsg] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    setLocalOrders(globalOrders);
+  }, [globalOrders]);
+
+  React.useEffect(() => {
+    setLocalResources(globalResources);
+  }, [globalResources]);
+
+  const showToast = (msg: string) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(null), 3000);
+  };
 
   const displayAccount = useMemo(() => ({
     ...currentAccount,
@@ -100,6 +123,11 @@ export const UserProfileProvider: React.FC<ProviderProps> = ({
     onUpdateOrder,
     onUpdateResource,
     onAddResource,
+    localOrders,
+    setLocalOrders,
+    localResources,
+    setLocalResources,
+    showToast,
     activeModal,
     openModal,
     closeModal,
@@ -108,6 +136,13 @@ export const UserProfileProvider: React.FC<ProviderProps> = ({
   return (
     <UserProfileContext.Provider value={value}>
       {children}
+      {/* Global Toast within the provider */}
+      {toastMsg && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-gray-900/90 text-white px-6 py-3 rounded-xl shadow-2xl z-[9999] flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4">
+          <div className="w-2 h-2 rounded-full bg-green-400"></div>
+          <span className="font-medium text-sm">{toastMsg}</span>
+        </div>
+      )}
     </UserProfileContext.Provider>
   );
 };
