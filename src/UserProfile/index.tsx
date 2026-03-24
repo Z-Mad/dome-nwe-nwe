@@ -5,90 +5,29 @@ import { RefundRequestModal } from './components/modals/RefundRequestModal';
 import { CreateTicketModal } from './components/modals/CreateTicketModal';
 import { Navigate, Route, Routes, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import {
-  User,
-  ShoppingBag,
   Box,
   Activity,
-  DollarSign,
   CreditCard,
   FileText,
-  Headphones,
-  Heart,
   Settings,
   ShieldCheck,
-  ChevronRight,
-  Search,
   Download,
-  Clock,
   AlertTriangle,
   Plus,
   TrendingUp,
   AlertCircle,
   Edit3,
-  Trash2,
-  Home,
   CheckCircle,
   X,
-  BarChart2,
-  HardHat,
-  Copy,
-  RefreshCw,
   Loader2,
-  Send,
-  Key,
   Wallet,
-  PieChart,
-  GitCommit,
-  History,
-  Package,
-  RotateCcw,
-  Filter,
-  LayoutDashboard,
-  Calendar,
-  Eye,
   Receipt,
-  MapPin,
-  Grid,
-  Wrench,
-  MoreHorizontal,
-  ChevronDown,
-  FilePlus,
-  MessageSquare,
-  Server,
-  Database,
-  Cpu,
-  Users,
-  Zap,
-  LifeBuoy,
-  Building2,
-  Mail,
-  Camera,
-  HelpCircle,
-  Check,
-  PlayCircle,
-  LogOut,
-  Info,
-  LineChart,
-  BadgeCheck,
-  Star,
   MessageSquare as MessageIcon,
-  Coins,
-  ExternalLink,
-  PlusCircle,
-  Phone,
-  ArrowUpRight,
-  ArrowDownLeft,
   Terminal,
-  PauseCircle,
-  Play,
-  Archive,
   Scale,
-  RefreshCcw,
-  Repeat,
   Scan,
   Building,
   Upload,
-  BellRing,
 } from "lucide-react";
 import { Account } from "@/types";
 import { BuyerTab, isBuyerTab } from "./Buyer/buyerTabs";
@@ -97,11 +36,9 @@ import { useDebouncedValue } from "./Shared/useDebouncedValue";
 import { useOrderFilterWorker } from "./Order/useOrderFilterWorker";
 import { useVirtualPagination } from "./Shared/useVirtualPagination";
 import { useUserProfileUIStore } from "./Core/useUserProfileUIStore";
-import { getOrderStatusLabel, getPaymentMethodLabel, ORDER_STATUS_OPTIONS, OrderStatusFilter } from "./Order/orderUtils";
-import { BUYER_STATS, RESOURCE_TREND_DATA, INITIAL_BILLS, INITIAL_INVOICE_HEADERS, COST_BREAKDOWN, SUPPORT_TICKETS, FAQ_ITEMS } from "./Buyer/constants";
-import { SELLER_STATS, SELLER_REVENUE_CHART_DATA, SELLER_TRANSACTIONS, SELLER_MONITORING_MOCK, SELLER_ORDERS_MOCK, SELLER_REFUNDS_MOCK, HEALTH_METRICS, RICH_ASSETS_MOCK } from "./Seller/constants";
-import { REFUND_REASONS } from "./Order/constants";
-import { PaymentStatusBadge, StatusBadge } from "./Shared/badges";
+import {  INITIAL_BILLS, INITIAL_INVOICE_HEADERS} from "./Buyer/constants";
+import {  SELLER_MONITORING_MOCK, SELLER_REFUNDS_MOCK,  RICH_ASSETS_MOCK } from "./Seller/constants";
+
 
 const BuyerConsole = lazy(() => import("./Buyer/BuyerConsole"));
 const SellerConsole = lazy(() => import("./Seller/SellerConsole"));
@@ -120,35 +57,7 @@ interface UserProfileProps {
   onAddResource?: (resource: any) => void;
 }
 
-type ModalType =
-  | "none"
-  | "ticket_detail"
-  | "order_detail"
-  | "monitoring_detail"
-  | "bill_detail"
-  | "refund_request"
-  | "health_diag"
-  | "seller_refund_audit"
-  | "seller_reply_ticket"
-  | "create_ticket"
-  | "invoice_header"
-  | "request_invoice"
-  | "pay_bill"
-  | "edit_asset"
-  | "manage_version"
-  | "confirm_takedown"
-  | "upgrade_plan"
-  | "export_statement"
-  | "under_development"
-  | "payment_application"
-  | "payment"
-  | "generate_invoice"
-  | "confirm_payment"
-  | "upload_receipt"
-  | "issue_invoice"
-  | "preview_image";
 
-// --- MOCK DATA ---
 
 
 
@@ -189,25 +98,18 @@ const UserProfileContent: React.FC<UserProfileProps> = ({
   );
 
   const [monitoringData, setMonitoringData] = useState(SELLER_MONITORING_MOCK);
-  const [resourceSubTab, setResourceSubTab] = useState<
-    "purchased" | "favorites"
-  >("purchased");
+
 
   // Seller Assets State
-  const [sellerAssetFilter, setSellerAssetFilter] = useState("all");
   const [sellerAssets, setSellerAssets] = useState(RICH_ASSETS_MOCK);
 
-  const [sellerFinanceSubTab, setSellerFinanceSubTab] = useState<
-    "overview" | "monitoring" | "transactions"
-  >("overview");
+
 
   // Order Filter State
   const orderSearch = useUserProfileUIStore((state) => state.orderSearch);
-  const setOrderSearch = useUserProfileUIStore((state) => state.setOrderSearch);
   const orderStatusFilter = useUserProfileUIStore((state) => state.orderStatusFilter);
-  const setOrderStatusFilter = useUserProfileUIStore((state) => state.setOrderStatusFilter);
 
-  const [activeModal, setActiveModal] = useState<ModalType>("none");
+  const [activeModal, setActiveModal] = useState<string>("none");
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [previewImageUrl, setPreviewImageUrl] = useState<string>("");
   const [selectedVersion, setSelectedVersion] = useState<any>(null); // For version management
@@ -245,11 +147,6 @@ const UserProfileContent: React.FC<UserProfileProps> = ({
     tags: "",
   });
 
-  // Instance Name Edit State
-  const [editingInstanceId, setEditingInstanceId] = useState<string | null>(null);
-  const [editingInstanceName, setEditingInstanceName] = useState("");
-  const [activatingInstanceId, setActivatingInstanceId] = useState<string | null>(null);
-  const [activatingInstanceName, setActivatingInstanceName] = useState("");
 
   // Invoice State
   const [invoiceHeaders, setInvoiceHeaders] = useState(INITIAL_INVOICE_HEADERS);
@@ -278,7 +175,6 @@ const UserProfileContent: React.FC<UserProfileProps> = ({
       title: "企业名称",
     }
   ]);
-  const [invoiceSubTab, setInvoiceSubTab] = useState<"invoiceable" | "history">("invoiceable");
 
   // Data State
   const [localOrders, setLocalOrders] = useState<any[]>(globalOrders);
@@ -299,7 +195,6 @@ const UserProfileContent: React.FC<UserProfileProps> = ({
     overscan: 3,
   });
   const resetVirtualOrders = virtualOrders.reset;
-  const virtualOrderContainerStyle = useMemo(() => ({ height: "720px" }), []);
 
   useEffect(() => {
     setLocalOrders(globalOrders);
@@ -439,7 +334,7 @@ const UserProfileContent: React.FC<UserProfileProps> = ({
   };
 
   const openModal = (
-    type: ModalType,
+    type: string,
     item: any = null,
     subItem: any = null,
   ) => {
@@ -457,12 +352,6 @@ const UserProfileContent: React.FC<UserProfileProps> = ({
     }
     if (type === "health_diag") {
       setDiagStep(0);
-      const timers = [
-        setTimeout(() => setDiagStep(1), 500),
-        setTimeout(() => setDiagStep(2), 1500),
-        setTimeout(() => setDiagStep(3), 2500),
-        setTimeout(() => setDiagStep(4), 3500),
-      ];
     }
     if (type === "generate_invoice") {
       if (item && item.unbilledPeriod) {
@@ -491,16 +380,7 @@ const UserProfileContent: React.FC<UserProfileProps> = ({
     setSelectedVersion(null);
   };
 
-  // --- Actions ---
-  const handleCreateTicket = () => {
-    if (!ticketForm.desc) return;
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      showToast("工单已提交，技术人员将尽快与您联系。");
-      closeModal();
-    }, 1000);
-  };
+
 
   const handleSellerRefundAudit = (approved: boolean) => {
     if (!selectedItem) return;
@@ -519,31 +399,6 @@ const UserProfileContent: React.FC<UserProfileProps> = ({
       );
       closeModal();
     }, 1000);
-  };
-
-  const contactConsultant = () => {
-    onNavigate("messages", { conversationId: "manager_james" });
-  };
-
-  const handleRenew = (order: any) => {
-    // Navigate to Product Detail Page with purchase action
-    onNavigate("detail", { id: order.resourceId, action: "purchase" });
-  };
-
-  const handleRepurchase = (order: any) => {
-    openModal("payment", order);
-  };
-
-  const handleCancelOrder = (orderId: string) => {
-    if (confirm("确定要取消此订单吗？")) {
-      setLocalOrders((prev) =>
-        prev.map((o) => (o.id === orderId ? { ...o, status: "Cancelled" } : o)),
-      );
-      if (onUpdateOrder) {
-        onUpdateOrder(orderId, { status: "Cancelled" });
-      }
-      showToast("订单已取消");
-    }
   };
 
   const processSuccessfulPayment = (order: any) => {
@@ -648,49 +503,6 @@ const UserProfileContent: React.FC<UserProfileProps> = ({
     }, 1500);
   };
 
-  const handleRefundRequest = () => {
-    if (!refundReason) return;
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      showToast("退款申请已提交，请等待审核");
-      closeModal();
-    }, 1500);
-  };
-
-  const handlePayBill = (bill: any) => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setBills((prev) =>
-        prev.map((b) => (b.id === bill.id ? { ...b, status: "paid" } : b)),
-      );
-      showToast("账单支付成功");
-      closeModal();
-    }, 1500);
-  };
-
-  const handleSubmitInvoiceRequest = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setBills((prev) =>
-        prev.map((b) =>
-          b.id === selectedItem.id ? { ...b, invoiceStatus: "issued" } : b,
-        ),
-      );
-      showToast("发票申请已提交，电子发票将在24小时内发送至您的邮箱");
-      closeModal();
-    }, 1500);
-  };
-
-  const handleDeleteOrder = (orderId: string) => {
-    if (confirm("确定要删除此订单记录吗？删除后不可恢复。")) {
-      setLocalOrders((prev) => prev.filter((o) => o.id !== orderId));
-      showToast("订单记录已删除");
-    }
-  };
-
   const handleSaveAssetInfo = () => {
     if (!selectedItem) return;
     // Mock save
@@ -734,16 +546,6 @@ const UserProfileContent: React.FC<UserProfileProps> = ({
       closeModal();
     }, 1000);
   };
-
-  const handlePublishNewVersion = (asset: any) => {
-    onNavigate("publish_wizard", { mode: "version", assetData: asset });
-  };
-
-  const handlePublishNewAsset = () => {
-    onNavigate("publish_wizard", { mode: "create" });
-  };
-
-  // --- RENDERERS ---
 
   const renderOrderDetailModal = () => <OrderDetailModal selectedItem={selectedItem} setSelectedItem={setSelectedItem} closeModal={closeModal} onNavigate={onNavigate} setActiveModal={setActiveModal} setPreviewImageUrl={setPreviewImageUrl} />;
 
@@ -1750,96 +1552,6 @@ const UserProfileContent: React.FC<UserProfileProps> = ({
     </div>
   );
 
-  const renderUpgradeModal = () => (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4 animate-in fade-in">
-      <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col">
-        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-          <h3 className="font-bold text-gray-900 flex items-center gap-2">
-            <TrendingUp size={18} className="text-blue-600" /> 升级至付费版
-          </h3>
-          <button onClick={closeModal}>
-            <X size={20} className="text-gray-400 hover:text-gray-600" />
-          </button>
-        </div>
-
-        <div className="p-6 space-y-6">
-          <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
-            <h4 className="font-bold text-blue-900 text-sm mb-1">
-              无缝升级说明
-            </h4>
-            <p className="text-xs text-blue-700 leading-relaxed">
-              升级后，您的实例 ID、API Key
-              及所有历史数据将完整保留。无需重新部署或迁移数据。
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <div className="border border-gray-200 rounded-xl p-4 hover:border-blue-500 cursor-pointer transition-all ring-2 ring-transparent hover:ring-blue-100">
-              <div className="flex justify-between items-center mb-2">
-                <span className="font-bold text-gray-900">
-                  企业版订阅
-                </span>
-                <span className="text-blue-600 font-bold">¥5,800 / 月</span>
-              </div>
-              <ul className="text-xs text-gray-500 space-y-1">
-                <li className="flex items-center gap-1">
-                  <CheckCircle size={10} className="text-green-500" /> 100,000
-                  Tokens/月
-                </li>
-                <li className="flex items-center gap-1">
-                  <CheckCircle size={10} className="text-green-500" /> 500GB
-                  向量存储
-                </li>
-                <li className="flex items-center gap-1">
-                  <CheckCircle size={10} className="text-green-500" /> 20
-                  用户并发
-                </li>
-              </ul>
-            </div>
-
-            <div className="border border-gray-200 rounded-xl p-4 hover:border-blue-500 cursor-pointer transition-all ring-2 ring-transparent hover:ring-blue-100 opacity-60">
-              <div className="flex justify-between items-center mb-2">
-                <span className="font-bold text-gray-900">
-                  私有化部署 (永久授权)
-                </span>
-                <span className="text-gray-900 font-bold">¥128,000</span>
-              </div>
-              <div className="text-xs text-gray-400">
-                需联系销售顾问进行部署评估
-              </div>
-            </div>
-          </div>
-
-          <button
-            onClick={() => {
-              if (onUpgrade && selectedItem) {
-                setIsLoading(true);
-                setTimeout(() => {
-                  onUpgrade(selectedItem.id, {
-                    planName: "企业版订阅",
-                    period: "Monthly",
-                    amount: 5800,
-                    quota: { tokens: 100000, storage: 500, users: 20 },
-                  });
-                  setIsLoading(false);
-                  showToast("升级成功！实例已自动切换至企业版配置。");
-                  closeModal();
-                }, 1500);
-              }
-            }}
-            disabled={isLoading}
-            className="w-full bg-gray-900 hover:bg-black text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg"
-          >
-            {isLoading ? (
-              <Loader2 size={18} className="animate-spin" />
-            ) : (
-              "确认升级并支付 ¥5,800"
-            )}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
 
   const renderConfirmPaymentModal = () => {
     if (!selectedItem) return null;
