@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Navigate, Route, Routes, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import {
   User,
   ShoppingBag,
@@ -86,6 +87,9 @@ import {
   BellRing,
 } from "lucide-react";
 import { Account } from "@/types";
+import BuyerConsole, { BuyerTab, isBuyerTab } from "./components/BuyerConsole";
+import SellerConsole, { SellerTab, isSellerTab } from "./components/SellerConsole";
+import ProfileHeader from "./components/ProfileHeader";
 
 interface UserProfileProps {
   onNavigate: (view: string, params?: any) => void;
@@ -853,6 +857,9 @@ const UserProfile: React.FC<UserProfileProps> = ({
   onUpdateResource,
   onAddResource,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
   // Determine display info
   const displayAccount = {
     ...currentAccount,
@@ -865,24 +872,11 @@ const UserProfile: React.FC<UserProfileProps> = ({
 
   // --- State ---
   const [consoleMode, setConsoleMode] = useState<"buyer" | "seller">(
-    initialParams?.tab === "assets"
-      ? "seller"
-      : currentAccount.role === "viewer"
-        ? "buyer"
-        : "seller",
+    currentAccount.role === "viewer" ? "buyer" : "seller",
   );
 
-  const [buyerTab, setBuyerTab] = useState<
-    "dashboard" | "orders" | "bills" | "invoices" | "resources" | "analysis" | "support"
-  >("dashboard");
-  const [sellerTab, setSellerTab] = useState<
-    | "dashboard"
-    | "assets"
-    | "finance"
-    | "support"
-    | "analysis"
-    | "health"
-  >("dashboard");
+  const [buyerTab, setBuyerTab] = useState<BuyerTab>("dashboard");
+  const [sellerTab, setSellerTab] = useState<SellerTab>("dashboard");
   const [monitoringData, setMonitoringData] = useState(SELLER_MONITORING_MOCK);
   const [resourceSubTab, setResourceSubTab] = useState<
     "purchased" | "favorites"
@@ -998,20 +992,83 @@ const UserProfile: React.FC<UserProfileProps> = ({
     }
   }, [activeModal, selectedItem]);
 
-  // Handle Deep Linking
-  useEffect(() => {
-    if (initialParams?.tab) {
-      if (initialParams.tab === "assets") {
-        setConsoleMode("seller");
-        setSellerTab("assets");
-      } else if (initialParams.tab === "orders") {
-        setConsoleMode("buyer");
-        setBuyerTab("orders");
-      } else {
-        setBuyerTab(initialParams.tab as any);
-      }
+  const navigateBuyerTab = (tab: BuyerTab) => {
+    setConsoleMode("buyer");
+    setBuyerTab(tab);
+    navigate(`/profile/buyer/${tab}`);
+  };
+
+  const navigateSellerTab = (tab: SellerTab) => {
+    if (currentAccount.role === "viewer") {
+      navigate("/profile/buyer/dashboard", { replace: true });
+      return;
     }
-  }, [initialParams]);
+    setConsoleMode("seller");
+    setSellerTab(tab);
+    navigate(`/profile/seller/${tab}`);
+  };
+
+  useEffect(() => {
+    if (initialParams?.tab && !location.pathname.startsWith("/profile/buyer/") && !location.pathname.startsWith("/profile/seller/")) {
+      if (initialParams.tab === "assets") {
+        navigateSellerTab("assets");
+      } else if (initialParams.tab === "orders") {
+        navigateBuyerTab("orders");
+      } else if (isBuyerTab(initialParams.tab)) {
+        navigateBuyerTab(initialParams.tab);
+      } else if (isSellerTab(initialParams.tab)) {
+        navigateSellerTab(initialParams.tab);
+      } else {
+        navigateBuyerTab("dashboard");
+      }
+      return;
+    }
+    const queryTab = searchParams.get("tab");
+    if (queryTab) {
+      if (queryTab === "assets") {
+        navigateSellerTab("assets");
+      } else if (queryTab === "orders") {
+        navigateBuyerTab("orders");
+      } else if (isBuyerTab(queryTab)) {
+        navigateBuyerTab(queryTab);
+      } else if (isSellerTab(queryTab)) {
+        navigateSellerTab(queryTab);
+      } else {
+        navigateBuyerTab("dashboard");
+      }
+      return;
+    }
+    if (location.pathname === "/profile" || location.pathname === "/profile/") {
+      if (currentAccount.role === "viewer") {
+        navigate("/profile/buyer/dashboard", { replace: true });
+      } else {
+        navigate("/profile/seller/assets", { replace: true });
+      }
+      return;
+    }
+    const pathParts = location.pathname.split("/").filter(Boolean);
+    const routeMode = pathParts[1];
+    const routeTab = pathParts[2];
+    if (routeMode === "buyer" && routeTab && isBuyerTab(routeTab)) {
+      setConsoleMode("buyer");
+      setBuyerTab(routeTab);
+      return;
+    }
+    if (routeMode === "seller" && routeTab && isSellerTab(routeTab)) {
+      if (currentAccount.role === "viewer") {
+        navigate("/profile/buyer/dashboard", { replace: true });
+        return;
+      }
+      setConsoleMode("seller");
+      setSellerTab(routeTab);
+      return;
+    }
+    if (currentAccount.role === "viewer") {
+      navigate("/profile/buyer/dashboard", { replace: true });
+    } else {
+      navigate("/profile/seller/assets", { replace: true });
+    }
+  }, [initialParams, location.pathname, searchParams, currentAccount.role]);
 
   // Sync extraAssets (newly published) into rich assets for display
   useEffect(() => {
@@ -5379,7 +5436,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
                   <span className="text-xs font-bold">发布版本</span>
                 </button>
                 <button
-                  onClick={() => setSellerTab("support")}
+                  onClick={() => navigateSellerTab("support")}
                   className="flex flex-col items-center justify-center gap-2 p-3 bg-gray-50 rounded-xl hover:bg-orange-50 hover:text-orange-600 transition-colors group"
                 >
                   <LifeBuoy
@@ -5389,7 +5446,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
                   <span className="text-xs font-bold">查看工单</span>
                 </button>
                 <button
-                  onClick={() => setSellerTab("health")}
+                  onClick={() => navigateSellerTab("health")}
                   className="flex flex-col items-center justify-center gap-2 p-3 bg-gray-50 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-colors group"
                 >
                   <Activity
@@ -5486,7 +5543,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
             <div
               onClick={() => {
                 setSellerFinanceSubTab("transactions");
-                setSellerTab("finance");
+                navigateSellerTab("finance");
               }}
               className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-xl transition-colors cursor-pointer border border-transparent hover:border-gray-100"
             >
@@ -6638,6 +6695,46 @@ const renderSellerAnalysis = () => (
     );
   };
 
+  const renderBuyerModals = () => (
+    <>
+      {activeModal === "order_detail" && renderOrderDetailModal()}
+      {activeModal === "bill_detail" && renderBillDetailModal()}
+      {activeModal === "refund_request" && renderRefundRequestModal()}
+      {activeModal === "create_ticket" && renderCreateTicketModal()}
+      {activeModal === "invoice_header" && renderInvoiceHeaderModal()}
+      {activeModal === "request_invoice" && renderRequestInvoiceModal()}
+      {activeModal === "pay_bill" && renderPayBillModal()}
+      {activeModal === "payment_application" && renderPaymentApplicationModal()}
+      {activeModal === "payment" && renderPaymentModal()}
+      {activeModal === "confirm_payment" && renderConfirmPaymentModal()}
+      {activeModal === "upload_receipt" && renderUploadReceiptModal()}
+      {activeModal === "export_statement" && renderExportStatementModal()}
+      {activeModal === "preview_image" && renderPreviewImageModal()}
+    </>
+  );
+
+  const renderSellerModals = () => (
+    <>
+      {activeModal === "monitoring_detail" && renderMonitoringDetailModal()}
+      {activeModal === "seller_refund_audit" && renderSellerRefundAuditModal()}
+      {activeModal === "edit_asset" && renderEditAssetModal()}
+      {activeModal === "manage_version" && renderManageVersionModal()}
+      {activeModal === "confirm_takedown" && renderConfirmTakedownModal()}
+      {activeModal === "under_development" && renderUnderDevelopmentModal()}
+      {activeModal === "generate_invoice" && renderGenerateInvoiceModal()}
+      {activeModal === "issue_invoice" && renderIssueInvoiceModal()}
+      {activeModal === "health_diag" && renderSellerHealth()}
+    </>
+  );
+
+  const handleConsoleModeChange = (mode: "buyer" | "seller") => {
+    if (mode === "buyer") {
+      navigateBuyerTab("dashboard");
+      return;
+    }
+    navigateSellerTab("assets");
+  };
+
   return (
     <div className="flex-1 bg-gray-50 overflow-y-auto h-full p-6 md:p-8 relative">
       {toastMsg && (
@@ -6647,145 +6744,57 @@ const renderSellerAnalysis = () => (
         </div>
       )}
 
-      {/* Modals */}
-      {activeModal === "order_detail" && renderOrderDetailModal()}
-      {activeModal === "monitoring_detail" && renderMonitoringDetailModal()}
-      {activeModal === "bill_detail" && renderBillDetailModal()}
-      {activeModal === "refund_request" && renderRefundRequestModal()}
-      {activeModal === "seller_refund_audit" && renderSellerRefundAuditModal()}
-      {activeModal === "create_ticket" && renderCreateTicketModal()}
-      {activeModal === "invoice_header" && renderInvoiceHeaderModal()}
-      {activeModal === "request_invoice" && renderRequestInvoiceModal()}
-      {activeModal === "pay_bill" && renderPayBillModal()}
-      {activeModal === "edit_asset" && renderEditAssetModal()}
-      {activeModal === "manage_version" && renderManageVersionModal()}
-      {activeModal === "confirm_takedown" && renderConfirmTakedownModal()}
-      {activeModal === "under_development" && renderUnderDevelopmentModal()}
-      {activeModal === "payment_application" && renderPaymentApplicationModal()}
-      {activeModal === "payment" && renderPaymentModal()}
-      {activeModal === "generate_invoice" && renderGenerateInvoiceModal()}
-      {activeModal === "confirm_payment" && renderConfirmPaymentModal()}
-      {activeModal === "upload_receipt" && renderUploadReceiptModal()}
-      {activeModal === "issue_invoice" && renderIssueInvoiceModal()}
-      {activeModal === "export_statement" && renderExportStatementModal()}
-      {activeModal === "preview_image" && renderPreviewImageModal()}
-
       <div className="max-w-6xl mx-auto pb-20">
-        {/* Header Profile Card */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-8 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-6">
-            <div className="w-20 h-20 rounded-full bg-gray-200 overflow-hidden ring-4 ring-gray-50 relative group">
-              <img
-                src={displayAccount.avatar}
-                className="w-full h-full object-cover"
+        <ProfileHeader
+          displayAccount={displayAccount}
+          consoleMode={consoleMode}
+          onConsoleModeChange={handleConsoleModeChange}
+          role={currentAccount.role}
+        />
+        <Routes>
+          <Route
+            path="buyer/*"
+            element={
+              <BuyerConsole
+                buyerTab={buyerTab}
+                onBuyerTabChange={setBuyerTab}
+                renderDashboard={renderBuyerDashboard}
+                renderOrders={renderBuyerOrders}
+                renderBills={renderBuyerBills}
+                renderInvoices={renderBuyerInvoices}
+                renderResources={renderBuyerResources}
+                renderAnalysis={renderBuyerAnalysis}
+                renderSupport={renderBuyerSupport}
+                renderBuyerModals={renderBuyerModals}
               />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <h2 className="text-2xl font-bold text-gray-900">
-                  {displayAccount.displayName}
-                </h2>
-                <BadgeCheck size={20} className="text-blue-500 fill-blue-50" />
-              </div>
-              <div className="text-sm text-gray-500 flex items-center gap-2">
-                {displayAccount.orgInfo}
-              </div>
-            </div>
-          </div>
-
-          {/* Console Switcher Buttons */}
-          <div className="flex bg-gray-100 p-1.5 rounded-xl">
-            <button
-              onClick={() => setConsoleMode("buyer")}
-              className={`px-5 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all ${consoleMode === "buyer" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
-            >
-              <ShoppingBag size={16} /> 采购工作台
-            </button>
-            {currentAccount.role !== "viewer" ? (
-              <button
-                onClick={() => setConsoleMode("seller")}
-                className={`px-5 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all ${consoleMode === "seller" ? "bg-indigo-600 text-white shadow-md" : "text-gray-500 hover:text-gray-700 hover:bg-white/50"}`}
-              >
-                <Home size={16} /> 开发者控制台
-              </button>
-            ) : (
-              <button
-                disabled
-                className="px-5 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 text-gray-300 cursor-not-allowed"
-              >
-                <HardHat size={14} /> 开发者控制台
-              </button>
-            )}
-          </div>
-        </div>
-
-        {consoleMode === "buyer" ? (
-          <div className="flex flex-col gap-6">
-            <div className="flex gap-1 border-b border-gray-200 overflow-x-auto">
-              {[
-                { id: "dashboard", label: "概览", icon: LayoutDashboard },
-                { id: "orders", label: "订单管理", icon: FileText },
-                { id: "bills", label: "账单管理", icon: FileText },
-                { id: "invoices", label: "发票管理", icon: Receipt },
-                { id: "resources", label: "我的资源", icon: Box },
-                { id: "analysis", label: "成本分析", icon: PieChart },
-                { id: "support", label: "服务支持", icon: Headphones },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setBuyerTab(tab.id as any)}
-                  className={`px-6 py-3 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors whitespace-nowrap ${
-                    buyerTab === tab.id
-                      ? "border-blue-600 text-blue-600"
-                      : "border-transparent text-gray-500 hover:text-gray-800"
-                  }`}
-                >
-                  <tab.icon size={16} /> {tab.label}
-                </button>
-              ))}
-            </div>
-
-            {buyerTab === "dashboard" && renderBuyerDashboard()}
-            {buyerTab === "orders" && renderBuyerOrders()}
-            {buyerTab === "bills" && renderBuyerBills()}
-            {buyerTab === "invoices" && renderBuyerInvoices()}
-            {buyerTab === "resources" && renderBuyerResources()}
-            {buyerTab === "analysis" && renderBuyerAnalysis()}
-            {buyerTab === "support" && renderBuyerSupport()}
-          </div>
-        ) : (
-          <div className="flex flex-col gap-6">
-            <div className="flex gap-1 border-b border-gray-200 overflow-x-auto">
-              {[
-                { id: "dashboard", label: "概览", icon: LayoutDashboard },
-                { id: "assets", label: "资产管理", icon: Box },
-                { id: "finance", label: "业务管理", icon: Wallet },
-                { id: "support", label: "工单服务", icon: LifeBuoy },
-                { id: "analysis", label: "运营分析", icon: BarChart2 },
-                { id: "health", label: "健康监控", icon: Activity },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setSellerTab(tab.id as any)}
-                  className={`px-6 py-3 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors whitespace-nowrap ${
-                    sellerTab === tab.id
-                      ? "border-indigo-600 text-indigo-600"
-                      : "border-transparent text-gray-500 hover:text-gray-800"
-                  }`}
-                >
-                  <tab.icon size={16} /> {tab.label}
-                </button>
-              ))}
-            </div>
-
-            {sellerTab === "dashboard" && renderSellerDashboard()}
-            {sellerTab === "finance" && renderSellerFinance()}
-            {sellerTab === "analysis" && renderSellerAnalysis()}
-            {sellerTab === "health" && renderSellerHealth()}
-            {sellerTab === "support" && renderSellerSupport()}
-            {sellerTab === "assets" && renderSellerAssets()}
-          </div>
-        )}
+            }
+          />
+          <Route
+            path="seller/*"
+            element={
+              <SellerConsole
+                sellerTab={sellerTab}
+                onSellerTabChange={setSellerTab}
+                renderDashboard={renderSellerDashboard}
+                renderAssets={renderSellerAssets}
+                renderFinance={renderSellerFinance}
+                renderSupport={renderSellerSupport}
+                renderAnalysis={renderSellerAnalysis}
+                renderHealth={renderSellerHealth}
+                renderSellerModals={renderSellerModals}
+              />
+            }
+          />
+          <Route
+            path="*"
+            element={
+              <Navigate
+                to={currentAccount.role === "viewer" ? "buyer/dashboard" : "seller/assets"}
+                replace
+              />
+            }
+          />
+        </Routes>
       </div>
     </div>
   );

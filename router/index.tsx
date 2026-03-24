@@ -51,7 +51,7 @@ const AppRouter: React.FC<AppRouterProps> = ({
       <Route path="/discovery" element={<Discovery onNavigateToDetail={(id) => handleNavigate("detail", { id })} extraAgents={extraAgents} />} />
       <Route path="/detail/:id" element={<ProductDetailWrapper myOrders={myOrders} handleNavigate={handleNavigate} handlePurchase={handlePurchase} handleUpgrade={handleUpgrade} />} />
       <Route path="/detail" element={<Navigate to="/discovery" replace />} />
-      <Route path="/profile" element={<UserProfileWrapper currentAccount={currentAccount} handleNavigate={handleNavigate} extraAgents={extraAgents} myOrders={myOrders} myResources={myResources} handleUpgrade={handleUpgrade} setMyOrders={setMyOrders} setMyResources={setMyResources} />} />
+      <Route path="/profile/*" element={<UserProfileWrapper currentAccount={currentAccount} handleNavigate={handleNavigate} extraAgents={extraAgents} myOrders={myOrders} myResources={myResources} handleUpgrade={handleUpgrade} setMyOrders={setMyOrders} setMyResources={setMyResources} />} />
       <Route path="/messages" element={<MessageCenterWrapper systemNotifications={systemNotifications} />} />
       <Route path="/settings" element={<SettingsView currentAccount={currentAccount} accounts={ACCOUNTS} onSwitchAccount={setCurrentAccount} />} />
       <Route path="/demand-square" element={<DemandSquare />} />

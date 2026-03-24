@@ -53,9 +53,21 @@ const App: React.FC = () => {
         }
         break;
       case "profile":
-        path = "/profile";
         if (params?.tab) {
-          search = `?tab=${params.tab}`;
+          const tab = params.tab;
+          const buyerTabs = ["dashboard", "orders", "bills", "invoices", "resources", "analysis", "support"];
+          const sellerTabs = ["dashboard", "assets", "finance", "support", "analysis", "health"];
+          if (buyerTabs.includes(tab)) {
+            path = `/profile/buyer/${tab}`;
+          } else if (sellerTabs.includes(tab)) {
+            path = `/profile/seller/${tab}`;
+          } else if (tab === "assets") {
+            path = "/profile/seller/assets";
+          } else {
+            path = "/profile/buyer/dashboard";
+          }
+        } else {
+          path = "/profile";
         }
         break;
       case "messages":
