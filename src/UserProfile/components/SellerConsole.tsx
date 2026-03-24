@@ -1,7 +1,28 @@
 import React from "react";
+import { Activity, BarChart2, Box, LayoutDashboard, LifeBuoy, Wallet } from "lucide-react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import TabNav, { TabItem } from "./TabNav";
-import { SELLER_TABS, SellerTab } from "./sellerTabs";
+
+export type SellerTab =
+  | "dashboard"
+  | "assets"
+  | "finance"
+  | "support"
+  | "analysis"
+  | "health";
+
+const SELLER_TABS: TabItem<SellerTab>[] = [
+  { id: "dashboard", label: "概览", icon: LayoutDashboard },
+  { id: "assets", label: "资产管理", icon: Box },
+  { id: "finance", label: "业务管理", icon: Wallet },
+  { id: "support", label: "工单服务", icon: LifeBuoy },
+  { id: "analysis", label: "运营分析", icon: BarChart2 },
+  { id: "health", label: "健康监控", icon: Activity },
+];
+
+export const isSellerTab = (tab: string): tab is SellerTab => {
+  return SELLER_TABS.some((item) => item.id === tab);
+};
 
 interface SellerConsoleProps {
   sellerTab: SellerTab;
@@ -45,7 +66,7 @@ const SellerConsole: React.FC<SellerConsoleProps> = ({
     <div className="flex flex-col gap-6">
       {renderSellerModals()}
       <TabNav
-        tabs={SELLER_TABS as TabItem<SellerTab>[]}
+        tabs={SELLER_TABS}
         currentTab={sellerTab}
         onChange={handleSellerTabChange}
         activeClassName="border-indigo-600 text-indigo-600"

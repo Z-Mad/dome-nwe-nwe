@@ -2,9 +2,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
     Search, MoreVertical, Phone, Video, Send, Paperclip, 
-    Smile, Image as ImageIcon, Bot, User, Check, Clock,
-    Headphones, ShieldCheck
+    Smile, Image as ImageIcon, Bot, User
 } from 'lucide-react';
+import { chatService, SessionVO, MessageVO } from '@/services/chat';
+import { uploadService } from '@/services/upload';
 
 interface Message {
     id: string;
@@ -12,6 +13,7 @@ interface Message {
     text: string;
     time: string;
     type: 'text' | 'image' | 'system';
+    rawId: number; // 保存原始 ID 方便轮询等操作
 }
 
 interface Contact {
@@ -24,6 +26,8 @@ interface Contact {
     unread: number;
     status: 'online' | 'offline' | 'busy';
     isBot?: boolean;
+    rawSessionId: number; // 真实会话 ID
+    targetId: number; // 对方的用户 ID
 }
 
 interface MessageCenterProps {
@@ -31,126 +35,209 @@ interface MessageCenterProps {
     systemNotifications?: Message[];
 }
 
-const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams, systemNotifications }) => {
-    // --- Mock Data ---
-    const contacts: Contact[] = [
-        {
-            id: 'sys_01',
-            name: '冷轧 AI 助手',
-            avatar: 'bot', 
-            role: 'System Notification',
-            lastMessage: '已为您生成昨天的板形质量报告。',
-            lastTime: '10:42 AM',
-            unread: 0,
-            status: 'online',
-            isBot: true
-        },
-        {
-            id: 'manager_james',
-            name: '客户经理 - 张大伟',
-            avatar: 'https://picsum.photos/seed/manager_james/100/100',
-            role: '宝信软件 · 销售总监',
-            lastMessage: '关于您咨询的报价方案，我们已经做好了...',
-            lastTime: '昨天',
-            unread: 2,
-            status: 'online'
-        },
-        {
-            id: 'tech_support',
-            name: '技术支持 - 李工',
-            avatar: 'https://picsum.photos/seed/tech_li/100/100',
-            role: '工单 #20240415-001 已受理',
-            lastMessage: '好的，请提供一下机组的日志文件。',
-            lastTime: '周一',
-            unread: 0,
-            status: 'busy'
-        }
-    ];
+const CURRENT_USER_ID = Number(localStorage.getItem('userId')) || 1001; // FIXME: 需要从全局状态/上下文中获取当前登录用户ID
 
-    const initialMessages: Record<string, Message[]> = {
-        'manager_james': [
-            { id: '1', senderId: 'manager_james', text: '王总您好，我是负责对接贵公司的客户经理张大伟。', time: '昨天 14:20', type: 'text' },
-            { id: '2', senderId: 'manager_james', text: '关于您咨询的报价方案，我们已经做好了初步拟定，稍后发给您确认。', time: '昨天 14:21', type: 'text' }
-        ],
-        'sys_01': [
-            { id: 's1', senderId: 'sys_01', text: '欢迎使用数字冷轧质量管理系统。', time: '周一 09:00', type: 'text' },
-            { id: 's2', senderId: 'sys_01', text: '昨日产线运行平稳，综合良品率 98.2%。', time: '10:42 AM', type: 'text' }
-        ],
-        'tech_support': [
-            { id: 't1', senderId: 'me', text: '你好，我们订购的API调用偶尔会超时。', time: '周一 10:00', type: 'text' },
-            { id: 't2', senderId: 'tech_support', text: '收到，正在排查节点连接性。', time: '周一 10:05', type: 'text' }
-        ]
+const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams, systemNotifications }) => {
+    // --- State ---
+    const [contacts, setContacts] = useState<Contact[]>([]);
+    const [activeChatId, setActiveChatId] = useState<string>(initialParams?.conversationId || '');
+    const [chatHistory, setChatHistory] = useState<Record<string, Message[]>>({});
+    const [inputText, setInputText] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [uploadingImage, setUploadingImage] = useState(false);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const imageInputRef = useRef<HTMLInputElement>(null);
+    const pollingTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+    // --- Helpers ---
+    const formatTime = (timeStr: string | null) => {
+        if (!timeStr) return '';
+        const d = new Date(timeStr);
+        return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
-    // --- State ---
-    const [activeChatId, setActiveChatId] = useState<string>(initialParams?.conversationId || 'sys_01');
-    const [chatHistory, setChatHistory] = useState(initialMessages);
-    const [inputText, setInputText] = useState('');
-    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const convertSessionToContact = (session: SessionVO): Contact => {
+        const targetId = session.user1Id === CURRENT_USER_ID ? session.user2Id : session.user1Id;
+        return {
+            id: session.sessionId.toString(),
+            rawSessionId: session.sessionId,
+            targetId,
+            name: session.targetName || `用户 ${targetId}`, // FIXME: 接口未返回目标用户信息，需要后端补充或前端额外查询
+            avatar: session.targetAvatar || `https://picsum.photos/seed/${targetId}/100/100`,
+            role: session.targetRole || '普通用户',
+            lastMessage: session.lastMessage || '暂无消息',
+            lastTime: formatTime(session.lastMsgTime),
+            unread: session.unreadCount || 0,
+            status: 'online',
+            isBot: false,
+        };
+    };
+
+    const convertMessageToLocal = (msg: MessageVO): Message => {
+        return {
+            id: msg.messageId.toString(),
+            rawId: msg.messageId,
+            senderId: msg.senderId === CURRENT_USER_ID ? 'me' : msg.senderId.toString(),
+            text: msg.content,
+            time: formatTime(msg.msgTime),
+            type: msg.contentType === 2 ? 'image' : 'text',
+        };
+    };
+
+    // --- Fetch Data ---
+    const fetchSessions = async () => {
+        try {
+            const res = await chatService.getSessionList(1, 100);
+            if (res.data?.records) {
+                const mappedContacts = res.data.records.map(convertSessionToContact);
+                setContacts(mappedContacts);
+                if (!activeChatId && mappedContacts.length > 0) {
+                    setActiveChatId(mappedContacts[0].id);
+                }
+            }
+        } catch (error) {
+            console.error('获取会话列表失败', error);
+        }
+    };
+
+    const fetchHistory = async (sessionId: number) => {
+        try {
+            setLoading(true);
+            const res = await chatService.getHistory(sessionId, 50);
+            if (res.data) {
+                // 历史接口是倒序返回的，我们需要正序显示
+                const sortedMessages = res.data.reverse().map(convertMessageToLocal);
+                setChatHistory(prev => ({
+                    ...prev,
+                    [sessionId.toString()]: sortedMessages
+                }));
+            }
+        } catch (error) {
+            console.error('获取历史消息失败', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // --- Effects ---
+    // 1. 初始化拉取会话列表
     useEffect(() => {
-        if (initialParams?.conversationId) {
-            setActiveChatId(initialParams.conversationId);
-        }
-    }, [initialParams]);
+        fetchSessions();
+        // 清理轮询
+        return () => {
+            if (pollingTimerRef.current) clearTimeout(pollingTimerRef.current);
+        };
+    }, []);
 
+    // 2. 切换会话时，拉取历史记录并重置轮询
+    useEffect(() => {
+        if (!activeChatId) return;
+        const contact = contacts.find(c => c.id === activeChatId);
+        if (contact && !chatHistory[activeChatId]) {
+            fetchHistory(contact.rawSessionId);
+        }
+    }, [activeChatId, contacts]);
+
+    // 3. 滚动到底部
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [activeChatId, chatHistory]);
 
+    // 4. 轮询机制
     useEffect(() => {
-        if (systemNotifications && systemNotifications.length > 0) {
-            setChatHistory(prev => {
-                const existingIds = new Set(prev['sys_01']?.map(m => m.id) || []);
-                const newMessages = systemNotifications.filter(n => !existingIds.has(n.id));
-                
-                if (newMessages.length === 0) return prev;
-
-                return {
-                    ...prev,
-                    'sys_01': [...(prev['sys_01'] || []), ...newMessages]
-                };
-            });
-        }
-    }, [systemNotifications]);
-
-    // --- Handlers ---
-    const handleSend = () => {
-        if (!inputText.trim()) return;
+        if (!activeChatId) return;
         
-        const newMessage: Message = {
-            id: Date.now().toString(),
-            senderId: 'me',
-            text: inputText,
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            type: 'text'
+        const activeSessionId = Number(activeChatId);
+        const pollMessages = async () => {
+            try {
+                const currentMsgs = chatHistory[activeChatId] || [];
+                const lastMsgId = currentMsgs.length > 0 ? currentMsgs[currentMsgs.length - 1].rawId : 0;
+                
+                const res = await chatService.pollMessages(activeSessionId, lastMsgId);
+                if (res.data?.messages && res.data.messages.length > 0) {
+                    const newMsgs = res.data.messages.map(convertMessageToLocal);
+                    setChatHistory(prev => ({
+                        ...prev,
+                        [activeChatId]: [...(prev[activeChatId] || []), ...newMsgs]
+                    }));
+
+                    // 标记已读
+                    const latestId = res.data.lastMsgId || newMsgs[newMsgs.length - 1].rawId;
+                    await chatService.markRead(activeSessionId, latestId);
+                }
+            } catch (error) {
+                console.error('轮询消息失败', error);
+            } finally {
+                pollingTimerRef.current = setTimeout(pollMessages, 3000);
+            }
         };
 
-        setChatHistory(prev => ({
-            ...prev,
-            [activeChatId]: [...(prev[activeChatId] || []), newMessage]
-        }));
-        setInputText('');
+        if (pollingTimerRef.current) clearTimeout(pollingTimerRef.current);
+        pollingTimerRef.current = setTimeout(pollMessages, 3000);
 
-        // Mock Auto Reply
-        if (activeChatId === 'sys_01') {
-            setTimeout(() => {
+        return () => {
+            if (pollingTimerRef.current) clearTimeout(pollingTimerRef.current);
+        };
+    }, [activeChatId, chatHistory]);
+
+    // --- Handlers ---
+    const handleSend = async () => {
+        if (!inputText.trim() || !activeChatId) return;
+        const currentActiveChatId = activeChatId; // 捕获当前会话ID，防止异步改变
+        const textToSend = inputText;
+        setInputText(''); // 先清空输入框
+
+        try {
+            const res = await chatService.sendMessage(Number(currentActiveChatId), textToSend, 1);
+            if (res.data) {
+                const newMsg = convertMessageToLocal(res.data);
                 setChatHistory(prev => ({
                     ...prev,
-                    [activeChatId]: [...prev[activeChatId], {
-                        id: Date.now().toString(),
-                        senderId: 'sys_01',
-                        text: '抱歉，我是自动助理，无法处理复杂指令。请联系人工客服。',
-                        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                        type: 'text'
-                    }]
+                    [currentActiveChatId]: [...(prev[currentActiveChatId] || []), newMsg]
                 }));
-            }, 1000);
+            }
+        } catch (error) {
+            console.error('发送消息失败', error);
+            // 可以加入重发逻辑或提示用户
+        }
+    };
+
+    const handleSelectImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        e.target.value = '';
+        if (!file || !activeChatId) return;
+        if (!file.type.startsWith('image/')) return;
+        if (file.size > 10 * 1024 * 1024) return;
+
+        const currentActiveChatId = activeChatId;
+        try {
+            setUploadingImage(true);
+            const uploadRes = await uploadService.uploadFile(file);
+            const imageUrl = uploadRes.data.url;
+            const sendRes = await chatService.sendMessage(Number(currentActiveChatId), imageUrl, 2);
+            if (sendRes.data) {
+                const newMsg = convertMessageToLocal(sendRes.data);
+                setChatHistory(prev => ({
+                    ...prev,
+                    [currentActiveChatId]: [...(prev[currentActiveChatId] || []), newMsg]
+                }));
+            }
+        } catch (error) {
+            console.error('发送图片失败', error);
+        } finally {
+            setUploadingImage(false);
         }
     };
 
     const activeContact = contacts.find(c => c.id === activeChatId) || contacts[0];
+
+    if (!activeContact) {
+        return (
+            <div className="flex h-full bg-white items-center justify-center text-gray-500">
+                暂无会话
+            </div>
+        );
+    }
 
     return (
         <div className="flex h-full bg-white overflow-hidden">
@@ -245,7 +332,7 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams, systemNoti
                 <div className="flex-1 overflow-y-auto p-6 space-y-6">
                     <div className="text-center text-xs text-gray-300 my-4">--- 与 {activeContact.name} 的加密会话 ---</div>
                     
-                    {chatHistory[activeChatId]?.map((msg, index) => (
+                    {chatHistory[activeChatId]?.map((msg) => (
                         <div key={msg.id} className={`flex ${msg.senderId === 'me' ? 'justify-end' : 'justify-start'}`}>
                             {msg.senderId !== 'me' && (
                                 <div className="w-8 h-8 rounded-full bg-gray-200 flex-shrink-0 mr-3 overflow-hidden">
@@ -257,12 +344,22 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams, systemNoti
                                 </div>
                             )}
                             <div className="max-w-[70%]">
-                                <div className={`p-4 rounded-2xl text-sm leading-relaxed shadow-sm ${
+                                <div className={`rounded-2xl text-sm leading-relaxed shadow-sm ${
                                     msg.senderId === 'me' 
                                     ? 'bg-blue-600 text-white rounded-br-none' 
                                     : 'bg-white text-gray-700 rounded-bl-none border border-gray-100'
-                                }`}>
-                                    {msg.text}
+                                } ${msg.type === 'image' ? 'p-1' : 'p-4'}`}>
+                                    {msg.type === 'image' ? (
+                                        <a href={msg.text} target="_blank" rel="noreferrer">
+                                            <img
+                                                src={msg.text}
+                                                alt="聊天图片"
+                                                className="max-w-[280px] max-h-[280px] rounded-xl object-cover"
+                                            />
+                                        </a>
+                                    ) : (
+                                        msg.text
+                                    )}
                                 </div>
                                 <div className={`text-[10px] text-gray-400 mt-1 ${msg.senderId === 'me' ? 'text-right' : 'text-left'}`}>
                                     {msg.time}
@@ -281,9 +378,24 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams, systemNoti
                 {/* Input */}
                 <div className="p-4 bg-white border-t border-gray-100">
                     <div className="flex gap-4 mb-3 text-gray-400 px-2">
-                        <ImageIcon size={20} className="hover:text-blue-600 cursor-pointer transition-colors"/>
+                        <button
+                            type="button"
+                            onClick={() => imageInputRef.current?.click()}
+                            className="hover:text-blue-600 cursor-pointer transition-colors"
+                            disabled={uploadingImage}
+                        >
+                            <ImageIcon size={20}/>
+                        </button>
                         <Paperclip size={20} className="hover:text-blue-600 cursor-pointer transition-colors"/>
                         <Smile size={20} className="hover:text-blue-600 cursor-pointer transition-colors"/>
+                        {uploadingImage && <span className="text-xs text-blue-600">图片上传中...</span>}
+                        <input
+                            ref={imageInputRef}
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={handleSelectImage}
+                        />
                     </div>
                     <div className="flex gap-3">
                         <input 
@@ -296,8 +408,9 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams, systemNoti
                         />
                         <button 
                             onClick={handleSend}
+                            disabled={!inputText.trim() || uploadingImage}
                             className={`p-3 rounded-xl transition-all shadow-md flex items-center justify-center ${
-                                inputText.trim() 
+                                inputText.trim() && !uploadingImage
                                 ? 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer' 
                                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                             }`}

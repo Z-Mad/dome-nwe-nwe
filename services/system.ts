@@ -1,7 +1,5 @@
 import { get, post } from '../utils/request';
 
-// 声明全局变量以避免 TS 报错（建议放到全局 vite-env.d.ts 中）
-declare const __SCS_SERVICE__: string;
 
 export interface UserInfo {
   userId?: string;
