@@ -1,13 +1,19 @@
 import React from 'react';
-import { FileText, X, ChevronRight, CheckCircle, Clock, ExternalLink, Box, Scale, Receipt, Headphones, ArrowUpRight, PlayCircle, PlusCircle, RefreshCcw, Repeat } from 'lucide-react';
-import { StatusBadge, PaymentStatusBadge } from '../../Shared/badges';
+import { FileText, X,  Box, Scale, Receipt, Headphones, ArrowUpRight, PlayCircle, PlusCircle, RefreshCcw, Repeat, History } from 'lucide-react';
+import { StatusBadge, PaymentStatusBadge } from '@/src/UserProfile/Shared/components/atoms/badges';
+import { useUserProfile } from '../../Core/UserProfileContext';
+import { useSearchParams } from 'react-router-dom';
 
-export const OrderDetailModal = ({ selectedItem, setSelectedItem, closeModal, onNavigate, setActiveModal, setPreviewImageUrl }: any) => {
+export const OrderDetailModal = () => {
+    const { localOrders, closeModal, onNavigate, openModal } = useUserProfile();
+    const [searchParams] = useSearchParams();
+    const orderId = searchParams.get('orderId');
+    const selectedItem = localOrders.find(o => o.id === orderId);
+
     if (!selectedItem) return null;
 
     const isSubscription = selectedItem.type === "Subscription";
     const isResourcePack = selectedItem.type === "ResourcePack";
-    const isTrial = selectedItem.status === "Trial";
     const isTrialSuspended = selectedItem.status === "TRIAL_SUSPENDED";
     const isExpired = selectedItem.status === "Expired";
     const isActive = selectedItem.status === "Active";
@@ -266,8 +272,7 @@ export const OrderDetailModal = ({ selectedItem, setSelectedItem, closeModal, on
                           <span 
                             className="font-bold text-indigo-600 cursor-pointer hover:underline flex items-center gap-1"
                             onClick={() => {
-                              setPreviewImageUrl("https://picsum.photos/seed/receipt/800/600");
-                              setActiveModal("preview_image");
+                              openModal("preview_image", { imageUrl: "https://picsum.photos/seed/receipt/800/600" });
                             }}
                           >
                             <FileText size={14} /> 查看凭证
@@ -279,8 +284,7 @@ export const OrderDetailModal = ({ selectedItem, setSelectedItem, closeModal, on
                             <span 
                               className="font-bold text-indigo-600 cursor-pointer hover:underline flex items-center gap-1"
                               onClick={() => {
-                                setPreviewImageUrl("https://picsum.photos/seed/invoice/800/600");
-                                setActiveModal("preview_image");
+                                openModal("preview_image", { imageUrl: "https://picsum.photos/seed/invoice/800/600" });
                               }}
                             >
                               <FileText size={14} /> 查看凭证
@@ -379,8 +383,7 @@ export const OrderDetailModal = ({ selectedItem, setSelectedItem, closeModal, on
                   <button
                     onClick={() => {
                       closeModal();
-                      setActiveModal("refund_request");
-                      setSelectedItem(selectedItem);
+                      openModal("refund_request", { orderId: selectedItem.id });
                     }}
                     className="px-6 py-2.5 border border-red-200 text-red-600 font-bold rounded-xl hover:bg-red-50 transition-colors text-sm flex items-center gap-2"
                   >
@@ -406,8 +409,7 @@ export const OrderDetailModal = ({ selectedItem, setSelectedItem, closeModal, on
                   <button
                     onClick={() => {
                       closeModal();
-                      setActiveModal("refund_request");
-                      setSelectedItem(selectedItem);
+                      openModal("refund_request", { orderId: selectedItem.id });
                     }}
                     className="px-6 py-2.5 border border-red-200 text-red-600 font-bold rounded-xl hover:bg-red-50 transition-colors text-sm flex items-center gap-2"
                   >

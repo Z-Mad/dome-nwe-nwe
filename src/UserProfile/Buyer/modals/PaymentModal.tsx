@@ -1,27 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   X, Download, FileText, Settings, Plus, CreditCard, Wallet, Building, 
   Upload, ShieldCheck, Activity, AlertCircle, Edit3, Terminal, TrendingUp, 
   CheckCircle, Loader2, Scale, Box, Receipt, Scan
 } from 'lucide-react';
 
-export default function PaymentModal(props: any) {
-  const {
-    selectedItem, closeModal, showToast, isLoading, setIsLoading, 
-    handleSimulatePayment, invoiceHeaders, showInvoiceHeaderForm, 
-    setShowInvoiceHeaderForm, editingInvoiceHeader, setEditingInvoiceHeader, 
-    setInvoiceHeaders, paymentMethod, setPaymentMethod, setBills, 
-    receiptForm, setReceiptForm, setLocalOrders, setMonitoringData, 
-    invoiceForm, setInvoiceForm, selectedHeaderId, setSelectedHeaderId, 
-    openModal, setInvoices, refundReason, setRefundReason, refundReasonTag, 
-    setRefundReasonTag, handleTakedownAsset, editAssetForm, setEditAssetForm, 
-    handleSaveAssetInfo, selectedVersion, handleVersionAction, onUpgrade, 
-    previewImageUrl, setActiveModal, invoiceStartDate, invoiceEndDate, 
-    dateError, isQueryingUsage, localOrders, processSuccessfulPayment,
-    auditComment, setAuditComment, handleSellerRefundAudit
-  } = props;
 
+export const PaymentModal = ({ selectedItem, closeModal, showToast, localOrders, setLocalOrders, setMonitoringData, processSuccessfulPayment, setActiveModal, setBills, onNavigate, setPreviewImageUrl, selectedVersion, handleVersionAction, handleSaveAssetInfo, handleTakedownAsset, handleSellerRefundAudit, openModal, handleSimulatePayment }: any) => {
+  
 
+  
     if (!selectedItem) return null;
     return (
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4 animate-in fade-in">
@@ -89,4 +77,5 @@ export default function PaymentModal(props: any) {
       </div>
     );
   
-}
+};
+export default PaymentModal;

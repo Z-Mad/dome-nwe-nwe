@@ -26,6 +26,7 @@ interface UserProfileContextType {
   activeModal: string | null;
   openModal: (modalName: string, params?: Record<string, string>) => void;
   closeModal: () => void;
+  processSuccessfulPayment: (order: any) => void;
 }
 
 const UserProfileContext = createContext<UserProfileContextType | null>(null);
@@ -111,6 +112,49 @@ export const UserProfileProvider: React.FC<ProviderProps> = ({
     });
   };
 
+  const processSuccessfulPayment = (order: any) => {
+    if (order.orderType === "New" || order.orderType === "Trial") {
+      if (onAddResource) {
+        onAddResource({
+          id: `RES-${Date.now()}`,
+          orderId: order.id,
+          orderType: order.orderType,
+          productName: order.productName,
+          version: order.version,
+          provider: order.provider,
+          instanceName: order.instanceName || "默认实例",
+          status: "PendingActivation",
+          expireDate: order.expireDate,
+          autoRenew: order.autoRenew,
+          quota: { tokens: 500000, storage: 5 },
+          usage: { tokens: 0, storage: 0 },
+        });
+      }
+    } else if (order.orderType === "Renewal") {
+      if (onUpdateResource) {
+        const existingResource = localResources.find(r => r.orderId === order.id);
+        if (existingResource) {
+          onUpdateResource(existingResource.id, {
+            expireDate: order.expireDate,
+            status: existingResource.status === "Expired" ? "Running" : existingResource.status
+          });
+        }
+      }
+    } else if (order.orderType === "ResourcePack") {
+      if (onUpdateResource && order.targetOrderId) {
+        const existingResource = localResources.find(r => r.orderId === order.targetOrderId);
+        if (existingResource) {
+          onUpdateResource(existingResource.id, {
+            quota: {
+              tokens: (existingResource.quota?.tokens || 0) + 100000,
+              storage: (existingResource.quota?.storage || 0) + 10
+            }
+          });
+        }
+      }
+    }
+  };
+
   const value = {
     currentAccount,
     displayAccount,
@@ -131,6 +175,7 @@ export const UserProfileProvider: React.FC<ProviderProps> = ({
     activeModal,
     openModal,
     closeModal,
+    processSuccessfulPayment,
   };
 
   return (

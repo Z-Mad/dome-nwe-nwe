@@ -1,16 +1,11 @@
 import React from "react";
 import { Navigate, Route, Routes, useNavigate, useLocation } from "react-router-dom";
-import TabNav from "../Shared/TabNav";
+import TabNav from "../Shared/components/molecules/TabNav";
 import { SELLER_TABS, SellerTab } from "./sellerTabs";
 import { Dashboard, Assets, Finance, Support, Analysis, Health } from "./tabs";
+import { SellerModals } from "./SellerModals";
 
-interface SellerConsoleProps {
-  renderSellerModals: () => React.ReactNode;
-}
-
-const SellerConsole: React.FC<SellerConsoleProps> = ({
-  renderSellerModals,
-}) => {
+const SellerConsole: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -22,7 +17,7 @@ const SellerConsole: React.FC<SellerConsoleProps> = ({
 
   return (
     <div className="flex flex-col gap-6">
-      {renderSellerModals()}
+      <SellerModals />
       <TabNav
         tabs={SELLER_TABS}
         currentTab={currentTab}

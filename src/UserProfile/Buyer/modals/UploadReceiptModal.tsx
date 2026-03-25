@@ -1,25 +1,68 @@
 import React, { useState } from 'react';
 import { 
-  X, Download, FileText, Settings, Plus, CreditCard, Wallet, Building, 
-  Upload, ShieldCheck, Activity, AlertCircle, Edit3, Terminal, TrendingUp, 
-  CheckCircle, Loader2, Scale, Box, Receipt, Scan
+  X, Upload, Building, Loader2
 } from 'lucide-react';
 
-export default function UploadReceiptModal(props: any) {
-  const {
-    selectedItem, closeModal, showToast, isLoading, setIsLoading, 
-    handleSimulatePayment, invoiceHeaders, showInvoiceHeaderForm, 
-    setShowInvoiceHeaderForm, editingInvoiceHeader, setEditingInvoiceHeader, 
-    setInvoiceHeaders, paymentMethod, setPaymentMethod, setBills, 
-    receiptForm, setReceiptForm, setLocalOrders, setMonitoringData, 
-    invoiceForm, setInvoiceForm, selectedHeaderId, setSelectedHeaderId, 
-    openModal, setInvoices, refundReason, setRefundReason, refundReasonTag, 
-    setRefundReasonTag, handleTakedownAsset, editAssetForm, setEditAssetForm, 
-    handleSaveAssetInfo, selectedVersion, handleVersionAction, onUpgrade, 
-    previewImageUrl, setActiveModal, invoiceStartDate, invoiceEndDate, 
-    dateError, isQueryingUsage, localOrders, processSuccessfulPayment,
-    auditComment, setAuditComment, handleSellerRefundAudit
-  } = props;
+export const UploadReceiptModal = ({ selectedItem, closeModal, showToast, setLocalOrders, setMonitoringData }: any) => {
+  const [receiptForm, setReceiptForm] = useState({ 
+    companyName: "", 
+    phone: "", 
+    file: null as File | null, 
+    transactionId: "",
+    bankAccount: "",
+    paymentAmount: "",
+    paymentDate: "",
+    remark: "",
+    rejectReason: ""
+  });
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmitReceipt = () => {
+    if (!receiptForm.companyName || !receiptForm.bankAccount || !receiptForm.paymentAmount || !receiptForm.paymentDate || !receiptForm.transactionId) {
+      showToast("请填写完整的付款信息和流水号");
+      return;
+    }
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      showToast("回执上传成功，等待审核");
+      setLocalOrders((prev: any) =>
+        prev.map((o: any) =>
+          o.id === selectedItem?.id ? { ...o, paymentStatus: "UnderReview", status: "UnderReview" } : o
+        )
+      );
+      setMonitoringData((prev: any) => {
+        const existing = prev.find((m: any) => m.orderId === selectedItem?.id);
+        if (existing) {
+          return prev.map((m: any) => m.orderId === selectedItem?.id ? { ...m, status: "under_review" } : m);
+        } else {
+          return [
+            ...prev,
+            {
+              id: `MON-${Date.now()}`,
+              buyer: "当前用户",
+              asset: selectedItem?.productName || "未知产品",
+              version: selectedItem?.version || "v1.0",
+              instanceName: selectedItem?.instanceName || "默认实例",
+              instanceId: `ins-${Date.now().toString().slice(-6)}`,
+              orderId: selectedItem?.id || "",
+              plan: selectedItem?.snapshot?.plan || "标准版",
+              period: "当前周期",
+              usage: { tokens: "0", storage: "0 GB" },
+              unitPrice: "-",
+              feeBreakdown: { tokens: 0, storage: 0 },
+              estimatedCost: selectedItem?.amount || 0,
+              status: "under_review",
+              unbilledPeriod: "-",
+              billedPeriods: [],
+            }
+          ];
+        }
+      });
+      closeModal();
+    }, 1000);
+  };
+
 
 
     if (!selectedItem) return null;
@@ -161,5 +204,4 @@ export default function UploadReceiptModal(props: any) {
         </div>
       </div>
     );
-  
 }

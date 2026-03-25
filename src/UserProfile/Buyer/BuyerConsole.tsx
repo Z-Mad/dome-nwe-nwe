@@ -1,16 +1,11 @@
 import React from "react";
 import { Navigate, Route, Routes, useNavigate, useLocation } from "react-router-dom";
-import TabNav, { TabItem } from "../Shared/TabNav";
+import TabNav, { TabItem } from "../Shared/components/molecules/TabNav";
 import { BUYER_TABS, BuyerTab } from "./buyerTabs";
 import { Dashboard, Orders, Bills, Invoices, Resources, Analysis, Support } from "./tabs";
+import { BuyerModals } from "./BuyerModals";
 
-interface BuyerConsoleProps {
-  renderBuyerModals: () => React.ReactNode;
-}
-
-const BuyerConsole: React.FC<BuyerConsoleProps> = ({
-  renderBuyerModals,
-}) => {
+const BuyerConsole: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -22,7 +17,7 @@ const BuyerConsole: React.FC<BuyerConsoleProps> = ({
 
   return (
     <div className="flex flex-col gap-6">
-      {renderBuyerModals()}
+      <BuyerModals />
       <TabNav
         tabs={BUYER_TABS as TabItem<BuyerTab>[]}
         currentTab={currentTab}

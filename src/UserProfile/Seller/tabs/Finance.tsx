@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { CreditCard, BellRing, Receipt, FileText, RefreshCw, Search, Filter, CheckCircle } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { useUserProfile } from "../../Core/UserProfileContext";
-import { SELLER_STATS, SELLER_REVENUE_CHART_DATA, SELLER_TRANSACTIONS, SELLER_MONITORING_MOCK, SELLER_REFUNDS_MOCK } from "../constants";
+import { useSellerStore } from "../useSellerStore";
+import { SELLER_STATS, SELLER_REVENUE_CHART_DATA, SELLER_TRANSACTIONS } from "../constants";
 
 const SellerFinance: React.FC = () => {
   const { localOrders, openModal } = useUserProfile();
+  const { monitoringData, sellerRefunds } = useSellerStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const sellerFinanceSubTab = searchParams.get("subTab") || "overview";
 
@@ -16,9 +18,6 @@ const SellerFinance: React.FC = () => {
       return next;
     });
   };
-
-  const [monitoringData] = useState(SELLER_MONITORING_MOCK);
-  const [sellerRefunds] = useState(SELLER_REFUNDS_MOCK);
 
   const maxRev = Math.max(...SELLER_REVENUE_CHART_DATA.map((d) => d.value)) * 1.1;
   const underReviewItems = localOrders.filter((item) => item.paymentStatus === "UnderReview");

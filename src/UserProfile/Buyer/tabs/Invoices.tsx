@@ -2,31 +2,13 @@ import React, { useState } from "react";
 import { Receipt, Settings, CheckCircle, Download, FileText, AlertCircle, Trash2, Box, Clock } from "lucide-react";
 import { useUserProfile } from "../../Core/UserProfileContext";
 import { INITIAL_INVOICE_HEADERS } from "../constants";
+import { useBuyerStore } from "../useBuyerStore";
 
 const BuyerInvoices: React.FC = () => {
   const { localOrders, openModal, showToast } = useUserProfile();
   const [invoiceSubTab, setInvoiceSubTab] = useState<"invoiceable" | "history">("invoiceable");
   const [invoiceHeaders, setInvoiceHeaders] = useState(INITIAL_INVOICE_HEADERS);
-  const [invoices, setInvoices] = useState([
-    {
-      id: "INV-20250301-001",
-      relatedId: "2025年2月 账单",
-      amount: 9800.0,
-      type: "增值税电子普通发票",
-      status: "issued",
-      date: "2025-03-05",
-      title: "企业名称",
-    },
-    {
-      id: "INV-20250402-002",
-      relatedId: "2025年3月 账单",
-      amount: 11200.0,
-      type: "增值税电子普通发票",
-      status: "Pending",
-      date: "2025-04-02",
-      title: "企业名称",
-    }
-  ]);
+  const { invoices } = useBuyerStore();
   // Mock bills data for rendering "unissued" logic
   // Real implementation might need this from a global context if shared with Bills
   const bills: any[] = []; 

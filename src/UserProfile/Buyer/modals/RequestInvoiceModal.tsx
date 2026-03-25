@@ -1,27 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   X, Download, FileText, Settings, Plus, CreditCard, Wallet, Building, 
   Upload, ShieldCheck, Activity, AlertCircle, Edit3, Terminal, TrendingUp, 
   CheckCircle, Loader2, Scale, Box, Receipt, Scan
 } from 'lucide-react';
 
-export default function RequestInvoiceModal(props: any) {
-  const {
-    selectedItem, closeModal, showToast, isLoading, setIsLoading, 
-    handleSimulatePayment, invoiceHeaders, showInvoiceHeaderForm, 
-    setShowInvoiceHeaderForm, editingInvoiceHeader, setEditingInvoiceHeader, 
-    setInvoiceHeaders, paymentMethod, setPaymentMethod, setBills, 
-    receiptForm, setReceiptForm, setLocalOrders, setMonitoringData, 
-    invoiceForm, setInvoiceForm, selectedHeaderId, setSelectedHeaderId, 
-    openModal, setInvoices, refundReason, setRefundReason, refundReasonTag, 
-    setRefundReasonTag, handleTakedownAsset, editAssetForm, setEditAssetForm, 
-    handleSaveAssetInfo, selectedVersion, handleVersionAction, onUpgrade, 
-    previewImageUrl, setActiveModal, invoiceStartDate, invoiceEndDate, 
-    dateError, isQueryingUsage, localOrders, processSuccessfulPayment,
-    auditComment, setAuditComment, handleSellerRefundAudit
-  } = props;
 
+export const RequestInvoiceModal = ({ selectedItem, closeModal, showToast, localOrders, setLocalOrders, setMonitoringData, processSuccessfulPayment, setActiveModal, setBills, onNavigate, setPreviewImageUrl, selectedVersion, handleVersionAction, handleSaveAssetInfo, handleTakedownAsset, handleSellerRefundAudit, openModal, handleSimulatePayment }: any) => {
+    const [invoiceForm, setInvoiceForm] = useState({ type: "enterprise", title: "", taxId: "", email: "", address: "", bank: "", account: "" });
+  const [invoiceHeaders, setInvoiceHeaders] = useState([]);
+  const [selectedHeaderId, setSelectedHeaderId] = useState("h1");
+  const [isLoading, setIsLoading] = useState(false);
 
+  
     if (!selectedItem) return null;
     return (
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4 animate-in fade-in">
@@ -88,7 +79,10 @@ export default function RequestInvoiceModal(props: any) {
               取消
             </button>
             <button
-              onClick={handleRequestInvoice}
+              onClick={() => {
+                showToast("发票申请已提交，将尽快为您开具");
+                closeModal();
+              }}
               disabled={isLoading}
               className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
             >
@@ -99,4 +93,5 @@ export default function RequestInvoiceModal(props: any) {
       </div>
     );
   
-}
+};
+export default RequestInvoiceModal;

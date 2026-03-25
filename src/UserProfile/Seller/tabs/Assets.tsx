@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { Plus, Edit3, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUserProfile } from "../../Core/UserProfileContext";
-import { RICH_ASSETS_MOCK } from "../constants";
+import { useSellerStore } from "../useSellerStore";
 
 const SellerAssets: React.FC = () => {
   const { openModal } = useUserProfile();
+  const { sellerAssets } = useSellerStore();
   const navigate = useNavigate();
   const [sellerAssetFilter, setSellerAssetFilter] = useState("all");
-  const [sellerAssets] = useState(RICH_ASSETS_MOCK);
 
   const handlePublishNewAsset = () => {
     navigate("/profile/seller/assets?action=publish");

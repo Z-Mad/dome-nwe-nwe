@@ -13,6 +13,3 @@
 - Zustand（状态管理）
 - Tailwind（样式系统）
 - Fetch API（网络请求）
-
-##
-

@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { FileText, Download, CheckCircle } from "lucide-react";
 import { useUserProfile } from "../../Core/UserProfileContext";
-import { INITIAL_BILLS } from "../constants";
+import { useBuyerStore } from "../useBuyerStore";
 
 const BuyerBills: React.FC = () => {
   const { openModal, showToast } = useUserProfile();
-  const [bills, setBills] = useState(INITIAL_BILLS);
+  const { bills } = useBuyerStore();
 
   return (
     <div className="space-y-4 animate-in fade-in">

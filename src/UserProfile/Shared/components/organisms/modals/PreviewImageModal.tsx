@@ -1,27 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   X, Download, FileText, Settings, Plus, CreditCard, Wallet, Building, 
   Upload, ShieldCheck, Activity, AlertCircle, Edit3, Terminal, TrendingUp, 
   CheckCircle, Loader2, Scale, Box, Receipt, Scan
 } from 'lucide-react';
 
-export default function PreviewImageModal(props: any) {
-  const {
-    selectedItem, closeModal, showToast, isLoading, setIsLoading, 
-    handleSimulatePayment, invoiceHeaders, showInvoiceHeaderForm, 
-    setShowInvoiceHeaderForm, editingInvoiceHeader, setEditingInvoiceHeader, 
-    setInvoiceHeaders, paymentMethod, setPaymentMethod, setBills, 
-    receiptForm, setReceiptForm, setLocalOrders, setMonitoringData, 
-    invoiceForm, setInvoiceForm, selectedHeaderId, setSelectedHeaderId, 
-    openModal, setInvoices, refundReason, setRefundReason, refundReasonTag, 
-    setRefundReasonTag, handleTakedownAsset, editAssetForm, setEditAssetForm, 
-    handleSaveAssetInfo, selectedVersion, handleVersionAction, onUpgrade, 
-    previewImageUrl, setActiveModal, invoiceStartDate, invoiceEndDate, 
-    dateError, isQueryingUsage, localOrders, processSuccessfulPayment,
-    auditComment, setAuditComment, handleSellerRefundAudit
-  } = props;
 
-
+export const PreviewImageModal = ({ previewImageUrl, selectedItem, setActiveModal, closeModal, showToast }: any) => {
     if (!previewImageUrl) return null;
     return (
       <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] flex items-center justify-center p-4 animate-in fade-in">
@@ -104,4 +89,5 @@ export default function PreviewImageModal(props: any) {
       </div>
     );
   
-}
+};
+export default PreviewImageModal;

@@ -6,7 +6,7 @@ import { useDebouncedValue } from "../../Shared/useDebouncedValue";
 import { useOrderFilterWorker } from "../../Order/useOrderFilterWorker";
 import { useVirtualPagination } from "../../Shared/useVirtualPagination";
 import { ORDER_STATUS_OPTIONS, getOrderStatusLabel, getPaymentMethodLabel } from "../../Order/orderUtils";
-import { PaymentStatusBadge } from "../../Shared/badges";
+import { PaymentStatusBadge } from '@/src/UserProfile/Shared/components/atoms/badges';
 
 const BuyerOrders: React.FC = () => {
   const { localOrders, setLocalOrders, showToast, openModal, onNavigate } = useUserProfile();
