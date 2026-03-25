@@ -3,8 +3,8 @@ import { get, post } from '../utils/request';
 export interface SessionVO {
   sessionId: number;
   sessionKey: string;
-  user1Id: number;
-  user2Id: number;
+  user1Id: string;
+  user2Id: string;
   lastMessage: string | null;
   lastMsgTime: string | null;
   unreadCount: number;
@@ -18,7 +18,7 @@ export interface SessionVO {
 export interface MessageVO {
   messageId: number;
   sessionId: number;
-  senderId: number;
+  senderId: string;
   receiverId: number;
   content: string;
   contentType: number; // 1=文本, 2=图片

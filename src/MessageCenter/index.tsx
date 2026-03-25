@@ -1,15 +1,16 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-    Search, MoreVertical, Phone, Video, Send, Paperclip, 
+import {
+    Search, MoreVertical, Phone, Video, Send, Paperclip,
     Smile, Image as ImageIcon, Bot, User
 } from 'lucide-react';
 import { chatService, SessionVO, MessageVO } from '@/services/chat';
 import { uploadService } from '@/services/upload';
+import { useUserStore } from '@/utils/user';
 
 interface Message {
     id: string;
-    senderId: 'me' | string;
+    senderId: string;
     text: string;
     time: string;
     type: 'text' | 'image' | 'system';
@@ -27,7 +28,7 @@ interface Contact {
     status: 'online' | 'offline' | 'busy';
     isBot?: boolean;
     rawSessionId: number; // 真实会话 ID
-    targetId: number; // 对方的用户 ID
+    targetId: string; // 对方的用户 ID
 }
 
 interface MessageCenterProps {
@@ -35,7 +36,7 @@ interface MessageCenterProps {
     systemNotifications?: Message[];
 }
 
-const CURRENT_USER_ID = Number(localStorage.getItem('userId')) || 1001; // FIXME: 需要从全局状态/上下文中获取当前登录用户ID
+const CURRENT_USER_ID = localStorage.getItem('market_userId'); // FIXME: 需要从全局状态/上下文中获取当前登录用户ID
 
 const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams, systemNotifications }) => {
     // --- State ---
@@ -48,6 +49,7 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams, systemNoti
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const imageInputRef = useRef<HTMLInputElement>(null);
     const pollingTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const { userInfo } = useUserStore();
 
     // --- Helpers ---
     const formatTime = (timeStr: string | null) => {
@@ -77,7 +79,7 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams, systemNoti
         return {
             id: msg.messageId.toString(),
             rawId: msg.messageId,
-            senderId: msg.senderId === CURRENT_USER_ID ? 'me' : msg.senderId.toString(),
+            senderId: msg.senderId === CURRENT_USER_ID ? 'me' : msg.senderId,
             text: msg.content,
             time: formatTime(msg.msgTime),
             type: msg.contentType === 2 ? 'image' : 'text',
@@ -146,13 +148,13 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams, systemNoti
     // 4. 轮询机制
     useEffect(() => {
         if (!activeChatId) return;
-        
+
         const activeSessionId = Number(activeChatId);
         const pollMessages = async () => {
             try {
                 const currentMsgs = chatHistory[activeChatId] || [];
                 const lastMsgId = currentMsgs.length > 0 ? currentMsgs[currentMsgs.length - 1].rawId : 0;
-                
+
                 const res = await chatService.pollMessages(activeSessionId, lastMsgId);
                 if (res.data?.messages && res.data.messages.length > 0) {
                     const newMsgs = res.data.messages.map(convertMessageToLocal);
@@ -246,37 +248,35 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams, systemNoti
                 <div className="p-5 border-b border-gray-100">
                     <h2 className="text-xl font-bold text-gray-900 mb-4">消息中心</h2>
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16}/>
-                        <input 
-                            type="text" 
-                            placeholder="搜索联系人..." 
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                        <input
+                            type="text"
+                            placeholder="搜索联系人..."
                             className="w-full bg-gray-50 border border-gray-100 rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:bg-white transition-all"
                         />
                     </div>
                 </div>
-                
+
                 <div className="flex-1 overflow-y-auto custom-scrollbar">
                     {contacts.map(contact => (
-                        <div 
+                        <div
                             key={contact.id}
                             onClick={() => setActiveChatId(contact.id)}
-                            className={`flex items-start gap-3 p-4 cursor-pointer transition-colors border-l-4 ${
-                                activeChatId === contact.id 
-                                ? 'bg-blue-50/50 border-blue-600' 
+                            className={`flex items-start gap-3 p-4 cursor-pointer transition-colors border-l-4 ${activeChatId === contact.id
+                                ? 'bg-blue-50/50 border-blue-600'
                                 : 'hover:bg-gray-50 border-transparent'
-                            }`}
+                                }`}
                         >
                             <div className="relative flex-shrink-0">
                                 {contact.isBot ? (
                                     <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white">
-                                        <Bot size={20}/>
+                                        <Bot size={20} />
                                     </div>
                                 ) : (
-                                    <img src={contact.avatar} alt="avatar" className="w-10 h-10 rounded-full object-cover"/>
+                                    <img src={contact.avatar} alt="avatar" className="w-10 h-10 rounded-full object-cover" />
                                 )}
-                                <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
-                                    contact.status === 'online' ? 'bg-green-500' : 'bg-gray-400'
-                                }`}></div>
+                                <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${contact.status === 'online' ? 'bg-green-500' : 'bg-gray-400'
+                                    }`}></div>
                             </div>
                             <div className="flex-1 min-w-0">
                                 <div className="flex justify-between items-baseline mb-1">
@@ -308,10 +308,10 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams, systemNoti
                     <div className="flex items-center gap-3">
                         {activeContact.isBot ? (
                             <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white shadow-sm">
-                                <Bot size={20}/>
+                                <Bot size={20} />
                             </div>
                         ) : (
-                            <img src={activeContact.avatar} className="w-10 h-10 rounded-full object-cover shadow-sm" alt="avatar"/>
+                            <img src={activeContact.avatar} className="w-10 h-10 rounded-full object-cover shadow-sm" alt="avatar" />
                         )}
                         <div>
                             <div className="font-bold text-gray-900 text-sm flex items-center gap-2">
@@ -322,33 +322,32 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams, systemNoti
                         </div>
                     </div>
                     <div className="flex gap-4 text-gray-400">
-                        <Phone size={20} className="hover:text-blue-600 cursor-pointer transition-colors"/>
-                        <Video size={20} className="hover:text-blue-600 cursor-pointer transition-colors"/>
-                        <MoreVertical size={20} className="hover:text-gray-600 cursor-pointer transition-colors"/>
+                        <Phone size={20} className="hover:text-blue-600 cursor-pointer transition-colors" />
+                        <Video size={20} className="hover:text-blue-600 cursor-pointer transition-colors" />
+                        <MoreVertical size={20} className="hover:text-gray-600 cursor-pointer transition-colors" />
                     </div>
                 </div>
 
                 {/* Messages */}
                 <div className="flex-1 overflow-y-auto p-6 space-y-6">
                     <div className="text-center text-xs text-gray-300 my-4">--- 与 {activeContact.name} 的加密会话 ---</div>
-                    
+
                     {chatHistory[activeChatId]?.map((msg) => (
                         <div key={msg.id} className={`flex ${msg.senderId === 'me' ? 'justify-end' : 'justify-start'}`}>
                             {msg.senderId !== 'me' && (
                                 <div className="w-8 h-8 rounded-full bg-gray-200 flex-shrink-0 mr-3 overflow-hidden">
                                     {activeContact.isBot ? (
-                                        <div className="w-full h-full bg-blue-600 flex items-center justify-center text-white"><Bot size={16}/></div>
+                                        <div className="w-full h-full bg-blue-600 flex items-center justify-center text-white"><Bot size={16} /></div>
                                     ) : (
-                                        <img src={activeContact.avatar} className="w-full h-full object-cover"/>
+                                        <img src={activeContact.avatar} className="w-full h-full object-cover" />
                                     )}
                                 </div>
                             )}
                             <div className="max-w-[70%]">
-                                <div className={`rounded-2xl text-sm leading-relaxed shadow-sm ${
-                                    msg.senderId === 'me' 
-                                    ? 'bg-blue-600 text-white rounded-br-none' 
+                                <div className={`rounded-2xl text-sm leading-relaxed shadow-sm ${msg.senderId === 'me'
+                                    ? 'bg-blue-600 text-white rounded-br-none'
                                     : 'bg-white text-gray-700 rounded-bl-none border border-gray-100'
-                                } ${msg.type === 'image' ? 'p-1' : 'p-4'}`}>
+                                    } ${msg.type === 'image' ? 'p-1' : 'p-4'}`}>
                                     {msg.type === 'image' ? (
                                         <a href={msg.text} target="_blank" rel="noreferrer">
                                             <img
@@ -367,7 +366,7 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams, systemNoti
                             </div>
                             {msg.senderId === 'me' && (
                                 <div className="w-8 h-8 rounded-full bg-indigo-100 flex-shrink-0 ml-3 flex items-center justify-center text-indigo-600 overflow-hidden">
-                                    <User size={16}/>
+                                    <User size={16} />
                                 </div>
                             )}
                         </div>
@@ -384,10 +383,10 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams, systemNoti
                             className="hover:text-blue-600 cursor-pointer transition-colors"
                             disabled={uploadingImage}
                         >
-                            <ImageIcon size={20}/>
+                            <ImageIcon size={20} />
                         </button>
-                        <Paperclip size={20} className="hover:text-blue-600 cursor-pointer transition-colors"/>
-                        <Smile size={20} className="hover:text-blue-600 cursor-pointer transition-colors"/>
+                        <Paperclip size={20} className="hover:text-blue-600 cursor-pointer transition-colors" />
+                        <Smile size={20} className="hover:text-blue-600 cursor-pointer transition-colors" />
                         {uploadingImage && <span className="text-xs text-blue-600">图片上传中...</span>}
                         <input
                             ref={imageInputRef}
@@ -398,24 +397,23 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams, systemNoti
                         />
                     </div>
                     <div className="flex gap-3">
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             value={inputText}
                             onChange={(e) => setInputText(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                            placeholder="输入消息..." 
+                            placeholder="输入消息..."
                             className="flex-1 bg-gray-100 border-transparent focus:bg-white focus:border-blue-500 border rounded-xl px-4 py-3 text-sm outline-none transition-all"
                         />
-                        <button 
+                        <button
                             onClick={handleSend}
                             disabled={!inputText.trim() || uploadingImage}
-                            className={`p-3 rounded-xl transition-all shadow-md flex items-center justify-center ${
-                                inputText.trim() && !uploadingImage
-                                ? 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer' 
+                            className={`p-3 rounded-xl transition-all shadow-md flex items-center justify-center ${inputText.trim() && !uploadingImage
+                                ? 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer'
                                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                            }`}
+                                }`}
                         >
-                            <Send size={18}/>
+                            <Send size={18} />
                         </button>
                     </div>
                 </div>
