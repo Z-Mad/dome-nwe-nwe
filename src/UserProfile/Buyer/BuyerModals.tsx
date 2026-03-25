@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useUserProfile } from '../Core/UserProfileContext';
+import { useUserProfile } from '../Core/useUserProfileStore';
 import { useBuyerStore } from './useBuyerStore';
 
 import { OrderDetailModal } from './modals/OrderDetailModal';

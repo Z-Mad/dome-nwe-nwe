@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Heart, Zap, ExternalLink, PlusCircle, Server, Database, Cpu } from "lucide-react";
-import { useUserProfile } from "../../Core/UserProfileContext";
+import { useUserProfile } from "../../Core/useUserProfileStore";
 
 const BuyerResources: React.FC = () => {
   const { localResources, onUpdateResource, onNavigate } = useUserProfile();

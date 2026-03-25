@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Plus, Edit3, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useUserProfile } from "../../Core/UserProfileContext";
+import { useUserProfile } from "../../Core/useUserProfileStore";
 import { useSellerStore } from "../useSellerStore";
 
 const SellerAssets: React.FC = () => {

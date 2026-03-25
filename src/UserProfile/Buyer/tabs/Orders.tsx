@@ -1,6 +1,6 @@
 import React, { useRef, useMemo, useEffect } from "react";
 import { Search, Box, Upload, Download, Repeat, FileText, Clock, CheckCircle, Trash2, AlertCircle, AlertTriangle } from "lucide-react";
-import { useUserProfile } from "../../Core/UserProfileContext";
+import { useUserProfile } from "../../Core/useUserProfileStore";
 import { useUserProfileUIStore } from "../../Core/useUserProfileUIStore";
 import { useDebouncedValue } from "../../Shared/useDebouncedValue";
 import { useOrderFilterWorker } from "../../Order/useOrderFilterWorker";

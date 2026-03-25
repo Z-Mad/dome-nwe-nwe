@@ -1,6 +1,6 @@
 import React from "react";
 import { FileText, Download, CheckCircle } from "lucide-react";
-import { useUserProfile } from "../../Core/UserProfileContext";
+import { useUserProfile } from "../../Core/useUserProfileStore";
 import { useBuyerStore } from "../useBuyerStore";
 
 const BuyerBills: React.FC = () => {

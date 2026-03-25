@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Activity, CheckCircle } from "lucide-react";
-import { useUserProfile } from "../../Core/UserProfileContext";
+import { useUserProfile } from "../../Core/useUserProfileStore";
 import { HEALTH_METRICS } from "../constants";
 
 const SellerHealth: React.FC = () => {

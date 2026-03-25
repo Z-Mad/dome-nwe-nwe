@@ -1,7 +1,7 @@
 import React from 'react';
 import { FileText, X,  Box, Scale, Receipt, Headphones, ArrowUpRight, PlayCircle, PlusCircle, RefreshCcw, Repeat, History } from 'lucide-react';
 import { StatusBadge, PaymentStatusBadge } from '@/src/UserProfile/Shared/components/atoms/badges';
-import { useUserProfile } from '../../Core/UserProfileContext';
+import { useUserProfile } from '../../Core/useUserProfileStore';
 import { useSearchParams } from 'react-router-dom';
 
 export const OrderDetailModal = () => {

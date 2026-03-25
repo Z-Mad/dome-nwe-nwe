@@ -1,6 +1,6 @@
 import React from "react";
 import { LifeBuoy } from "lucide-react";
-import { useUserProfile } from "../../Core/UserProfileContext";
+import { useUserProfile } from "../../Core/useUserProfileStore";
 
 const SellerSupport: React.FC = () => {
   const { openModal } = useUserProfile();

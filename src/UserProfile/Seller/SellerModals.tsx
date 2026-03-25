@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useUserProfile } from '../Core/UserProfileContext';
+import { useUserProfile } from '../Core/useUserProfileStore';
 import { useSellerStore } from './useSellerStore';
 
 import { SellerRefundAuditModal } from './components/organisms/modals/SellerRefundAuditModal';

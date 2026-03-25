@@ -7,7 +7,7 @@ import { useDebouncedValue } from "./Shared/useDebouncedValue";
 import { useOrderFilterWorker } from "./Order/useOrderFilterWorker";
 import { useVirtualPagination } from "./Shared/useVirtualPagination";
 import { useUserProfileUIStore } from "./Core/useUserProfileUIStore";
-import { UserProfileProvider, useUserProfile } from "./Core/UserProfileContext";
+import { useUserProfileStore } from "./Core/useUserProfileStore";
 
 const BuyerConsole = lazy(() => import("./Buyer/BuyerConsole"));
 const SellerConsole = lazy(() => import("./Seller/SellerConsole"));
@@ -33,6 +33,8 @@ const UserProfileContent: React.FC<UserProfileProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
+  const consoleMode = useUserProfileStore(state => state.consoleMode);
+  const setConsoleMode = useUserProfileStore(state => state.setConsoleMode);
 
   const displayAccount = useMemo(
     () => ({
@@ -41,10 +43,6 @@ const UserProfileContent: React.FC<UserProfileProps> = ({
       orgInfo: "宝信软件 (Baosight) · ID: 88293910",
     }),
     [currentAccount]
-  );
-
-  const [consoleMode, setConsoleMode] = useState<"buyer" | "seller">(
-    currentAccount.role === "viewer" ? "buyer" : "seller"
   );
 
   const navigateBuyerTab = useCallback((tab: BuyerTab) => {
@@ -171,10 +169,40 @@ const UserProfileContent: React.FC<UserProfileProps> = ({
 };
 
 const UserProfile: React.FC<UserProfileProps> = (props) => {
+  const initStore = useUserProfileStore(state => state.initStore);
+  const toastMsg = useUserProfileStore(state => state.toastMsg);
+  const setSearchParamsFn = useUserProfileStore(state => state.setSearchParamsFn);
+  const setActiveModal = useUserProfileStore(state => state.setActiveModal);
+  const [, setSearchParams] = useSearchParams();
+  const location = useLocation();
+
+  useEffect(() => {
+    initStore({
+      ...props,
+      consoleMode: props.currentAccount.role === "viewer" ? "buyer" : "seller"
+    });
+  }, [props, initStore]);
+
+  useEffect(() => {
+    // Only set it once or if it changes
+    useUserProfileStore.setState({ setSearchParamsFn: setSearchParams });
+  }, [setSearchParams]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    setActiveModal(params.get('modal'));
+  }, [location.search, setActiveModal]);
+
   return (
-    <UserProfileProvider {...props} consoleMode={props.currentAccount.role === "viewer" ? "buyer" : "seller"}>
+    <>
       <UserProfileContent {...props} />
-    </UserProfileProvider>
+      {toastMsg && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-gray-900/90 text-white px-6 py-3 rounded-xl shadow-2xl z-[9999] flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4">
+          <div className="w-2 h-2 rounded-full bg-green-400"></div>
+          <span className="font-medium text-sm">{toastMsg}</span>
+        </div>
+      )}
+    </>
   );
 };
 

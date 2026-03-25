@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Receipt, Settings, CheckCircle, Download, FileText, AlertCircle, Trash2, Box, Clock } from "lucide-react";
-import { useUserProfile } from "../../Core/UserProfileContext";
+import { useUserProfile } from "../../Core/useUserProfileStore";
 import { INITIAL_INVOICE_HEADERS } from "../constants";
 import { useBuyerStore } from "../useBuyerStore";
 

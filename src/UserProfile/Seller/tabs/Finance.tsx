@@ -1,7 +1,7 @@
 import React from "react";
 import { CreditCard, BellRing, Receipt, FileText, RefreshCw, Search, Filter, CheckCircle } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
-import { useUserProfile } from "../../Core/UserProfileContext";
+import { useUserProfile } from "../../Core/useUserProfileStore";
 import { useSellerStore } from "../useSellerStore";
 import { SELLER_STATS, SELLER_REVENUE_CHART_DATA, SELLER_TRANSACTIONS } from "../constants";
 

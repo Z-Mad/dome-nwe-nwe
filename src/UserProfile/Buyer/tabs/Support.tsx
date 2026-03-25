@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Headphones, MessageSquare as MessageIcon, HelpCircle, ChevronRight, Loader2 } from "lucide-react";
-import { useUserProfile } from "../../Core/UserProfileContext";
+import { useUserProfile } from "../../Core/useUserProfileStore";
 import { SUPPORT_TICKETS, FAQ_ITEMS } from "../constants";
 import { chatService } from "../../../../services/chat";
 
