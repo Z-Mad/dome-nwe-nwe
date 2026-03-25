@@ -7,8 +7,7 @@ import { useBuyerStore } from "../useBuyerStore";
 const BuyerInvoices: React.FC = () => {
   const { localOrders, openModal, showToast } = useUserProfile();
   const [invoiceSubTab, setInvoiceSubTab] = useState<"invoiceable" | "history">("invoiceable");
-  const [invoiceHeaders, setInvoiceHeaders] = useState(INITIAL_INVOICE_HEADERS);
-  const { invoices } = useBuyerStore();
+  const { invoices, invoiceHeaders, setInvoiceHeaders } = useBuyerStore();
   // Mock bills data for rendering "unissued" logic
   // Real implementation might need this from a global context if shared with Bills
   const bills: any[] = []; 

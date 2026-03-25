@@ -8,6 +8,7 @@ import { useOrderFilterWorker } from "./Order/useOrderFilterWorker";
 import { useVirtualPagination } from "./Shared/useVirtualPagination";
 import { useUserProfileUIStore } from "./Core/useUserProfileUIStore";
 import { useUserProfileStore } from "./Core/useUserProfileStore";
+import { useUserStore } from "@/utils/user";
 
 const BuyerConsole = lazy(() => import("./Buyer/BuyerConsole"));
 const SellerConsole = lazy(() => import("./Seller/SellerConsole"));
@@ -30,6 +31,8 @@ const UserProfileContent: React.FC<UserProfileProps> = ({
   currentAccount,
   initialParams,
 }) => {
+  const { userInfo } = useUserStore();
+
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -39,8 +42,8 @@ const UserProfileContent: React.FC<UserProfileProps> = ({
   const displayAccount = useMemo(
     () => ({
       ...currentAccount,
-      displayName: currentAccount.role === "developer" ? "COMMANDER_01" : currentAccount.name,
-      orgInfo: "宝信软件 (Baosight) · ID: 88293910",
+      displayName: userInfo.userName,
+      orgInfo: `${userInfo.tenantName} ID:${userInfo.tenantId}`,
     }),
     [currentAccount]
   );

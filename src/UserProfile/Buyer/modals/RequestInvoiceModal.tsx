@@ -6,10 +6,12 @@ import {
 } from 'lucide-react';
 
 
-export const RequestInvoiceModal = ({ selectedItem, closeModal, showToast, localOrders, setLocalOrders, setMonitoringData, processSuccessfulPayment, setActiveModal, setBills, onNavigate, setPreviewImageUrl, selectedVersion, handleVersionAction, handleSaveAssetInfo, handleTakedownAsset, handleSellerRefundAudit, openModal, handleSimulatePayment }: any) => {
+export const RequestInvoiceModal = ({ selectedItem, closeModal, showToast, localOrders, setLocalOrders, setMonitoringData, processSuccessfulPayment, setActiveModal, setBills, onNavigate, setPreviewImageUrl, selectedVersion, handleVersionAction, handleSaveAssetInfo, handleTakedownAsset, handleSellerRefundAudit, openModal, handleSimulatePayment, invoiceHeaders = [], setInvoiceHeaders }: any) => {
     const [invoiceForm, setInvoiceForm] = useState({ type: "enterprise", title: "", taxId: "", email: "", address: "", bank: "", account: "" });
-  const [invoiceHeaders, setInvoiceHeaders] = useState([]);
-  const [selectedHeaderId, setSelectedHeaderId] = useState("h1");
+  const [selectedHeaderId, setSelectedHeaderId] = useState(() => {
+    const defaultHeader = invoiceHeaders.find((h: any) => h.isDefault);
+    return defaultHeader ? defaultHeader.id : (invoiceHeaders[0]?.id || "");
+  });
   const [isLoading, setIsLoading] = useState(false);
 
   

@@ -143,7 +143,7 @@ export const useUserProfileStore = create<UserProfileState>((set, get) => ({
     if (props.currentAccount && props.currentAccount !== state.currentAccount) {
       nextDisplayAccount = {
         ...props.currentAccount,
-        displayName: props.currentAccount.role === 'developer' ? 'COMMANDER_01' : props.currentAccount.name,
+        displayName: props.currentAccount.role === 'developer' ? 'COMMANDER_01111' : props.currentAccount.name,
         orgInfo: '宝信软件 (Baosight) · ID: 88293910',
       };
     }

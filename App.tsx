@@ -6,10 +6,12 @@ import { useAuthStore } from "./store/authStore";
 import { useMarketStore } from "./store/marketStore";
 import AppRouter from "./router";
 import { ACCOUNTS } from "./data";
+import { useUserStore } from "./utils/user";
 
 const App: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { checkDeveloper } = useUserStore();
 
   const { initAuth, currentAccount, setCurrentAccount } = useAuthStore();
   const {
@@ -53,6 +55,7 @@ const App: React.FC = () => {
         }
         break;
       case "profile":
+        console.log(params?.tab);
         if (params?.tab) {
           const tab = params.tab;
           const buyerTabs = ["dashboard", "orders", "bills", "invoices", "resources", "analysis", "support"];
@@ -67,7 +70,8 @@ const App: React.FC = () => {
             path = "/profile/buyer/dashboard";
           }
         } else {
-          path = "/profile";
+
+          path = checkDeveloper ? "/profile/seller/assets" : "/profile/buyer/dashboard";
         }
         break;
       case "messages":

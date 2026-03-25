@@ -1,16 +1,22 @@
 import { create } from "zustand";
-import { INITIAL_BILLS } from "./constants";
+import { INITIAL_BILLS, INITIAL_INVOICE_HEADERS } from "./constants";
 
 interface BuyerState {
   bills: any[];
   setBills: (bills: any[]) => void;
   invoices: any[];
   setInvoices: (invoices: any[]) => void;
+  invoiceHeaders: any[];
+  setInvoiceHeaders: (headers: any[] | ((prev: any[]) => any[])) => void;
 }
 
 export const useBuyerStore = create<BuyerState>((set) => ({
   bills: INITIAL_BILLS,
   setBills: (bills) => set({ bills }),
+  invoiceHeaders: INITIAL_INVOICE_HEADERS,
+  setInvoiceHeaders: (updater) => set((state) => ({
+    invoiceHeaders: typeof updater === 'function' ? updater(state.invoiceHeaders) : updater
+  })),
   invoices: [
     {
       id: "INV-20250301-001",

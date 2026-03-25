@@ -6,8 +6,7 @@ import {
 } from 'lucide-react';
 
 
-export const InvoiceHeaderModal = ({ selectedItem, closeModal, showToast, localOrders, setLocalOrders, setMonitoringData, processSuccessfulPayment, setActiveModal, setBills, onNavigate, setPreviewImageUrl, selectedVersion, handleVersionAction, handleSaveAssetInfo, handleTakedownAsset, handleSellerRefundAudit, openModal, handleSimulatePayment }: any) => {
-    const [invoiceHeaders, setInvoiceHeaders] = useState([]);
+export const InvoiceHeaderModal = ({ selectedItem, closeModal, showToast, localOrders, setLocalOrders, setMonitoringData, processSuccessfulPayment, setActiveModal, setBills, onNavigate, setPreviewImageUrl, selectedVersion, handleVersionAction, handleSaveAssetInfo, handleTakedownAsset, handleSellerRefundAudit, openModal, handleSimulatePayment, invoiceHeaders, setInvoiceHeaders }: any) => {
   const [editingInvoiceHeader, setEditingInvoiceHeader] = useState<any>(null);
   const [showInvoiceHeaderForm, setShowInvoiceHeaderForm] = useState(false);
 
