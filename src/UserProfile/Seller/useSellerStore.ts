@@ -2,15 +2,6 @@ import { create } from 'zustand'
 import { SELLER_MONITORING_MOCK, SELLER_REFUNDS_MOCK, RICH_ASSETS_MOCK } from './constants'
 import type { MonitoringData, SellerAsset, Refund } from '../types/index'
 
-interface MonitoringItem {
-  id: string
-  buyer: string
-  orderId: string
-  asset: string
-  version: string
-  [key: string]: any
-}
-
 interface SellerState {
   monitoringData: MonitoringData[]
   setMonitoringData: (data: MonitoringData[]) => void
