@@ -37,6 +37,7 @@ export default defineConfig(({ mode }) => {
          __SCS_AUTH__: JSON.stringify('/scs-auth'), // 登录服务
          __SCS_SERVICE__: JSON.stringify('/scs-service-system'), // 用户相关
          __SCS_RESOURCE__: JSON.stringify('/scs-ops-resource'), // 文件上传
+         __SCS_AGENT__: JSON.stringify('/scs-service-agent'), // 智能体服务
       },
       resolve: {
         alias: {
