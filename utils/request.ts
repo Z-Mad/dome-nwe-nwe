@@ -27,11 +27,14 @@ const outLog = async () => {
 export const request = async <T>(url: string, options: RequestOptions = {}): Promise<T> => {
   const { params, ...customOptions } = options;
   const { token, tenantId, authorization } = useAuthStore.getState();
+  const isFormDataBody = customOptions.body instanceof FormData;
 
   const headers: HeadersInit = {
-    'Content-Type': 'application/json',
     ...customOptions.headers,
   };
+  if (!isFormDataBody && !headers['Content-Type']) {
+    headers['Content-Type'] = 'application/json';
+  }
 
   if (token) {
     headers['Skyman-Auth'] = token;
@@ -135,6 +138,10 @@ export const get = <T>(url: string, params?: Record<string, any>, options?: Requ
 
 export const post = <T>(url: string, body?: any, options?: RequestOptions) => {
   return request<T>(url, { ...options, method: 'POST', body: JSON.stringify(body) });
+};
+
+export const postForm = <T>(url: string, formData: FormData, options?: RequestOptions) => {
+  return request<T>(url, { ...options, method: 'POST', body: formData });
 };
 
 export const put = <T>(url: string, body?: any, options?: RequestOptions) => {

@@ -1,4 +1,4 @@
-import { filterOrders, ProfileOrderItem } from "../utils/orderUtils";
+import { filterOrders, ProfileOrderItem } from "./orderUtils";
 
 interface FilterPayload<T extends ProfileOrderItem> {
   orders: T[];

@@ -1,0 +1,87 @@
+import React, { useState, useEffect } from 'react';
+import {  X, Download,  Loader2,} from 'lucide-react';
+
+
+export const ExportStatementModal = ({ selectedItem, closeModal, showToast, localOrders, setLocalOrders, setMonitoringData, processSuccessfulPayment, setActiveModal, setBills, onNavigate, setPreviewImageUrl, selectedVersion, handleVersionAction, handleSaveAssetInfo, handleTakedownAsset, handleSellerRefundAudit, openModal, handleSimulatePayment }: any) => {
+    const [bills] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  
+    return (
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4 animate-in fade-in">
+        <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+            <h3 className="font-bold text-gray-900 flex items-center gap-2">
+              <Download size={18} className="text-blue-600" /> 导出综合月度对账单
+            </h3>
+            <button
+              onClick={closeModal}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <X size={20} />
+            </button>
+          </div>
+          <div className="p-6 overflow-y-auto flex-1 space-y-6">
+            <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 text-sm text-blue-800">
+              综合对账单包含您在选定月份内的<strong>所有消费记录</strong>，包括：
+              <ul className="list-disc pl-5 mt-2 space-y-1">
+                <li>预付费订单（包年/包月订阅、资源包购买等）</li>
+                <li>后付费账单（按量计费的资源消耗）</li>
+              </ul>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">选择账单月份</label>
+              <select className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white">
+                {Array.from(new Set(bills.map(b => b.period))).map(period => (
+                  <option key={period} value={period}>{period}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">导出格式</label>
+              <div className="flex gap-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" name="exportFormat" defaultChecked className="text-blue-600 focus:ring-blue-500" />
+                  <span className="text-sm text-gray-700">Excel (.xlsx)</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" name="exportFormat" className="text-blue-600 focus:ring-blue-500" />
+                  <span className="text-sm text-gray-700">CSV (.csv)</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" name="exportFormat" className="text-blue-600 focus:ring-blue-500" />
+                  <span className="text-sm text-gray-700">PDF (.pdf)</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div className="p-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
+            <button
+              onClick={closeModal}
+              className="px-4 py-2 text-gray-600 font-medium hover:bg-gray-200 rounded-lg transition-colors"
+            >
+              取消
+            </button>
+            <button
+              onClick={() => {
+                setIsLoading(true);
+                setTimeout(() => {
+                  setIsLoading(false);
+                  showToast("综合对账单导出成功");
+                  closeModal();
+                }, 1500);
+              }}
+              disabled={isLoading}
+              className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
+              {isLoading ? <Loader2 className="animate-spin" size={16} /> : "确认导出"}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  
+};
+export default ExportStatementModal;

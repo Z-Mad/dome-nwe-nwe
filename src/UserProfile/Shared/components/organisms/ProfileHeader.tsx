@@ -1,6 +1,7 @@
 import React from "react";
 import { BadgeCheck, HardHat, Home, ShoppingBag } from "lucide-react";
 import { Account } from "@/types";
+import { useUserStore } from "@/utils/user";
 
 interface ProfileHeaderProps {
   displayAccount: Account & { displayName: string; orgInfo: string };
@@ -15,6 +16,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   onConsoleModeChange,
   role,
 }) => {
+  const { checkDeveloper } = useUserStore();
+
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-8 flex flex-col md:flex-row items-center justify-between gap-6">
       <div className="flex items-center gap-6">
@@ -36,7 +39,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         >
           <ShoppingBag size={16} /> 采购工作台
         </button>
-        {role !== "viewer" ? (
+        {checkDeveloper ? (
           <button
             onClick={() => onConsoleModeChange("seller")}
             className={`px-5 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all ${consoleMode === "seller" ? "bg-indigo-600 text-white shadow-md" : "text-gray-500 hover:text-gray-700 hover:bg-white/50"}`}
