@@ -146,7 +146,7 @@ export const useUserStore = create<UserState>((set, getStore) => {
           // 更新 localStorage
           localStorage.setItem('market_token', newToken)
           localStorage.setItem('market_refresh_token', response.data.refresh_token)
-          if (tenantId) {
+          if (tenantId && response.data.user_id) {
             localStorage.setItem('market_tenantId', tenantId)
             await getStore().getUserInfo(response.data.user_id)
           }

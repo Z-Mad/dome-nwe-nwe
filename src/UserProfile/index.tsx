@@ -39,7 +39,7 @@ const UserProfileContent: React.FC<UserProfileProps> = ({ currentAccount, initia
       displayName: userInfo?.userName,
       orgInfo: `${userInfo?.tenantName} ID:${userInfo?.tenantId}`,
     }),
-    [currentAccount],
+    [currentAccount, userInfo],
   )
 
   useEffect(() => {

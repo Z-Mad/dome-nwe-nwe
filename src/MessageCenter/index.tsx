@@ -38,7 +38,8 @@ interface Contact {
 }
 
 interface MessageCenterProps {
-  initialParams?: { conversationId?: string }
+  initialParams?: { conversationId?: string; tab?: string }
+  systemNotifications?: any[]
 }
 
 const CURRENT_USER_ID = localStorage.getItem('market_userId') // FIXME: 需要从全局状态/上下文中获取当前登录用户ID
@@ -108,7 +109,6 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams }) => {
 
   const fetchHistory = async (sessionId: number) => {
     try {
-      setLoading(true)
       const res = await chatService.getHistory(sessionId, 50)
       if (res.data) {
         // 历史接口是倒序返回的，我们需要正序显示
@@ -120,8 +120,6 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams }) => {
       }
     } catch (error) {
       console.error('获取历史消息失败', error)
-    } finally {
-      setLoading(false)
     }
   }
 

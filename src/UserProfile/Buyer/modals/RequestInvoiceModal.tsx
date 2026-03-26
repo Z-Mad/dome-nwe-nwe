@@ -1,13 +1,28 @@
 import { FileText, Loader2, Plus, X } from 'lucide-react'
 import { useState } from 'react'
 
+interface InvoiceHeader {
+  id: string
+  title: string
+  taxId: string
+  [key: string]: any
+}
+
+interface RequestInvoiceModalProps {
+  selectedItem: any
+  closeModal: () => void
+  showToast: (message: string) => void
+  openModal: (modalName: string, data?: any) => void
+  invoiceHeaders?: InvoiceHeader[]
+}
+
 export const RequestInvoiceModal = ({
   selectedItem,
   closeModal,
   showToast,
   openModal,
   invoiceHeaders = [],
-}: any) => {
+}: RequestInvoiceModalProps) => {
   const [invoiceForm, setInvoiceForm] = useState({
     type: 'enterprise',
     title: '',

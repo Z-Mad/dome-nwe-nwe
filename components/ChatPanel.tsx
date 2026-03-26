@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 import { INITIAL_CHAT_HISTORY } from '../constants'
-import { Message } from '../types'
+import type { Message } from '../types'
 
 const ChatPanel: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>(INITIAL_CHAT_HISTORY)

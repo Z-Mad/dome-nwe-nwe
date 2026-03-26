@@ -1,7 +1,21 @@
 import { Building, CreditCard, Loader2, Wallet, X } from 'lucide-react'
 import { useState } from 'react'
 
-export const PayBillModal = ({ selectedItem, closeModal, showToast, setBills }: any) => {
+interface Bill {
+  id: string
+  amount: number
+  status: string
+  [key: string]: any
+}
+
+interface PayBillModalProps {
+  selectedItem: Bill
+  closeModal: () => void
+  showToast: (message: string) => void
+  setBills: (bills: Bill[] | ((prev: Bill[]) => Bill[])) => void
+}
+
+export const PayBillModal = ({ selectedItem, closeModal, showToast, setBills }: PayBillModalProps) => {
   const [paymentMethod, setPaymentMethod] = useState('online')
   const [isLoading, setIsLoading] = useState(false)
 

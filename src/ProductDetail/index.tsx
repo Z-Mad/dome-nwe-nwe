@@ -862,7 +862,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   const [saasPlanType, setSaasPlanType] = useState<'monthly' | 'yearly' | 'usage'>('monthly')
   const [showPurchaseModal, setShowPurchaseModal] = useState(false)
   const [purchaseProcessing, setPurchaseProcessing] = useState(false)
-  const [purchaseType, setPurchaseType] = useState<'trial' | 'paid' | 'consultation'>('paid')
+  const [purchaseType, setPurchaseType] = useState<'trial' | 'paid' | 'consultation' | 'upgrade'>(
+    'paid',
+  )
   const [riskCheckStatus, setRiskCheckStatus] = useState<'idle' | 'checking' | 'passed' | 'failed'>(
     'idle',
   )
@@ -1517,7 +1519,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     <Clock size={18} className="text-green-600" /> 体验试用
                   </h3>
                   <span className="text-xs font-bold text-green-700 bg-green-50 px-2 py-1 rounded-md">
-                    {agent.trialConfig.duration}天
+                    {agent.trialConfig?.duration}天
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-3 mb-4">
@@ -1526,7 +1528,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       <Cpu size={12} /> 包含 Token
                     </div>
                     <div className="font-bold text-gray-900">
-                      {agent.trialConfig.tokenLimit.toLocaleString()}
+                      {agent.trialConfig?.tokenLimit.toLocaleString()}
                     </div>
                   </div>
                   <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
@@ -1534,14 +1536,14 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                       <Database size={12} /> 包含存储
                     </div>
                     <div className="font-bold text-gray-900">
-                      {agent.trialConfig.storageLimit} GB
+                      {agent.trialConfig?.storageLimit} GB
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center justify-between mb-4 px-1">
                   <span className="text-sm text-gray-600">初装费</span>
                   <span className="font-bold text-gray-900 font-mono">
-                    {agent.trialConfig.installationFee
+                    {agent.trialConfig?.installationFee
                       ? `¥${agent.trialConfig.installationFee.toLocaleString()}`
                       : '¥0.00'}
                   </span>

@@ -1,19 +1,24 @@
-import { create } from "zustand";
-import { INITIAL_BILLS, INITIAL_INVOICE_HEADERS } from "./constants";
-import type { Bill, Invoice, InvoiceHeader } from '../types/index';
+import { create } from 'zustand'
+import { INITIAL_BILLS, INITIAL_INVOICE_HEADERS } from './constants'
+import type { Bill, Invoice, InvoiceHeader } from '../types/index'
 
 interface BuyerState {
-  bills: Bill[];
-  setBills: (bills: Bill[]) => void;
-  invoices: Invoice[];
-  setInvoices: (invoices: Invoice[]) => void;
-  invoiceHeaders: InvoiceHeader[];
-  setInvoiceHeaders: (headers: InvoiceHeader[] | ((prev: InvoiceHeader[]) => InvoiceHeader[])) => void;
+  bills: Bill[]
+  setBills: (bills: Bill[]) => void
+  invoices: Invoice[]
+  setInvoices: (invoices: Invoice[]) => void
+  invoiceHeaders: InvoiceHeader[]
+  setInvoiceHeaders: (
+    headers: InvoiceHeader[] | ((prev: InvoiceHeader[]) => InvoiceHeader[]),
+  ) => void
 }
 
 export const useBuyerStore = create<BuyerState>((set) => ({
   bills: INITIAL_BILLS,
-  setBills: (bills) => set({ bills }),
+  setBills: (updater) =>
+    set((state) => ({
+      bills: typeof updater === 'function' ? updater(state.bills) : updater,
+    })),
   invoiceHeaders: INITIAL_INVOICE_HEADERS,
   setInvoiceHeaders: (updater) =>
     set((state) => ({

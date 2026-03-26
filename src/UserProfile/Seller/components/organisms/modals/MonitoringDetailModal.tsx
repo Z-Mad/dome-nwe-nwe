@@ -1,8 +1,19 @@
 import { Box, FileText, Scale, X } from 'lucide-react'
 
-export const MonitoringDetailModal = ({ selectedItem, closeModal, localOrders }: any) => {
+interface Order {
+  id: string
+  [key: string]: any
+}
+
+interface MonitoringDetailModalProps {
+  selectedItem: any
+  closeModal: () => void
+  localOrders: Order[]
+}
+
+export const MonitoringDetailModal = ({ selectedItem, closeModal, localOrders }: MonitoringDetailModalProps) => {
   if (!selectedItem) return null
-  const order = localOrders.find((o) => o.id === selectedItem.orderId)
+  const order = localOrders.find((o: Order) => o.id === selectedItem.orderId)
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex justify-end animate-in fade-in">

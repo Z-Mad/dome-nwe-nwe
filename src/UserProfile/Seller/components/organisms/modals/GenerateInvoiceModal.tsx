@@ -1,13 +1,26 @@
 import { AlertCircle, Download, FileText, Loader2, X } from 'lucide-react'
 import { useState } from 'react'
 
+interface Order {
+  id: string
+  [key: string]: any
+}
+
+interface GenerateInvoiceModalProps {
+  selectedItem: Order
+  showToast: (message: string) => void
+  setLocalOrders: (orders: Order[] | ((prev: Order[]) => Order[])) => void
+  setMonitoringData: (data: any[] | ((prev: any[]) => any[])) => void
+  setActiveModal: (modal: string) => void
+}
+
 export const GenerateInvoiceModal = ({
   selectedItem,
   showToast,
   setLocalOrders,
   setMonitoringData,
   setActiveModal,
-}: any) => {
+}: GenerateInvoiceModalProps) => {
   const [invoiceStartDate] = useState('')
   const [invoiceEndDate] = useState('')
   const [isQueryingUsage] = useState(false)

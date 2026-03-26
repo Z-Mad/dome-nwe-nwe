@@ -1,8 +1,13 @@
 import { Download, Loader2, X } from 'lucide-react'
 import { useState } from 'react'
 
+interface Bill {
+  period: string
+  [key: string]: any
+}
+
 export const ExportStatementModal = ({ closeModal, showToast }: any) => {
-  const [bills] = useState([])
+  const [bills] = useState<Bill[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
   return (
