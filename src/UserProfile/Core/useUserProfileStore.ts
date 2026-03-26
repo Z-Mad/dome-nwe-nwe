@@ -1,26 +1,21 @@
 import { create } from 'zustand';
 import { Account } from '@/types';
+import type { Order, Resource, UserProfileCallbacks } from '../types/index';
 
-interface UserProfileState {
+interface UserProfileState extends UserProfileCallbacks {
   currentAccount: Account | null;
   displayAccount: (Account & { displayName: string; orgInfo: string }) | null;
   consoleMode: 'buyer' | 'seller';
   setConsoleMode: (mode: 'buyer' | 'seller') => void;
-  globalOrders: any[];
-  globalResources: any[];
+  globalOrders: Order[];
+  globalResources: Resource[];
   extraAssets: any[];
   
-  onNavigate: (view: string, params?: any) => void;
-  onUpgrade?: (orderId: string, planDetails: any) => void;
-  onUpdateOrder?: (orderId: string, updates: any) => void;
-  onUpdateResource?: (resourceId: string, updates: any) => void;
-  onAddResource?: (resource: any) => void;
+  localOrders: Order[];
+  setLocalOrders: (orders: Order[] | ((prev: Order[]) => Order[])) => void;
   
-  localOrders: any[];
-  setLocalOrders: (orders: any[] | ((prev: any[]) => any[])) => void;
-  
-  localResources: any[];
-  setLocalResources: (resources: any[] | ((prev: any[]) => any[])) => void;
+  localResources: Resource[];
+  setLocalResources: (resources: Resource[] | ((prev: Resource[]) => Resource[])) => void;
   
   toastMsg: string | null;
   showToast: (msg: string) => void;
@@ -29,11 +24,11 @@ interface UserProfileState {
   activeModal: string | null;
   setActiveModal: (modal: string | null) => void;
   
-  setSearchParamsFn: ((fn: any) => void) | null;
+  setSearchParamsFn: ((fn: (prev: URLSearchParams) => URLSearchParams) => void) | null;
   openModal: (modalName: string, params?: Record<string, string>) => void;
   closeModal: () => void;
   
-  processSuccessfulPayment: (order: any) => void;
+  processSuccessfulPayment: (order: Order) => void;
   
   initStore: (props: Partial<UserProfileState>) => void;
 }

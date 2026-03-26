@@ -3,10 +3,6 @@ import { Navigate, Route, Routes, useLocation, useNavigate, useSearchParams } fr
 import { Account } from "@/types";
 import { BuyerTab, isBuyerTab } from "./Buyer/buyerTabs";
 import { SellerTab, isSellerTab } from "./Seller/sellerTabs";
-import { useDebouncedValue } from "./Shared/useDebouncedValue";
-import { useOrderFilterWorker } from "./Order/useOrderFilterWorker";
-import { useVirtualPagination } from "./Shared/useVirtualPagination";
-import { useUserProfileUIStore } from "./Core/useUserProfileUIStore";
 import { useUserProfileStore } from "./Core/useUserProfileStore";
 import { useUserStore } from "@/utils/user";
 
@@ -92,41 +88,30 @@ const UserProfileContent: React.FC<UserProfileProps> = ({
       }
       return;
     }
-    if (location.pathname === "/profile" || location.pathname === "/profile/") {
-      if (currentAccount.role === "viewer") {
-        navigate("/profile/buyer/dashboard", { replace: true });
-      } else {
-        navigate("/profile/seller/assets", { replace: true });
-      }
-      return;
-    }
+   
     const pathParts = location.pathname.split("/").filter(Boolean);
     const routeMode = pathParts[1];
     const routeTab = pathParts[2];
+    console.log(pathParts)
     if (routeMode === "buyer" && routeTab && isBuyerTab(routeTab)) {
       setConsoleMode("buyer");
-      return;
     }
     if (routeMode === "seller" && routeTab && isSellerTab(routeTab)) {
-      if (currentAccount.role === "viewer") {
-        navigate("/profile/buyer/dashboard", { replace: true });
-        return;
-      }
       setConsoleMode("seller");
-      return;
     }
-    if (currentAccount.role === "viewer") {
-      navigate("/profile/buyer/dashboard", { replace: true });
-    } else {
-      navigate("/profile/seller/assets", { replace: true });
-    }
+   
   }, [initialParams, location.pathname, searchParams, currentAccount.role]);
 
   const handleConsoleModeChange = useCallback((mode: "buyer" | "seller") => {
-    if (mode === "buyer") {
-      navigateBuyerTab("dashboard");
-      return;
-    }
+    // console.log(mode,consoleMode)
+    // if (mode === consoleMode) return
+    // setConsoleMode(mode);
+    // navigateBuyerTab("dashboard");
+    console.log(mode)
+    // if (mode === "buyer") {
+    //   navigateBuyerTab("dashboard");
+    //   return;
+    // }
     navigateSellerTab("assets");
   }, [navigateBuyerTab, navigateSellerTab]);
 
