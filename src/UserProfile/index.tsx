@@ -1,17 +1,10 @@
-import { type Account } from '@/types'
-import { useUserStore } from '@/utils/user'
-import React, { Suspense, lazy, useCallback, useEffect, useMemo } from 'react'
-import {
-  Navigate,
-  Route,
-  Routes,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from 'react-router-dom'
-import { type BuyerTab, isBuyerTab } from './Buyer/buyerTabs'
-import { useUserProfileStore } from './Core/useUserProfileStore'
-import { type SellerTab, isSellerTab } from './Seller/sellerTabs'
+import React, { Suspense, lazy, useCallback, useEffect, useMemo } from "react";
+import { Navigate, Route, Routes, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import type { Account } from "@/types";
+import { type BuyerTab, isBuyerTab } from "./Buyer/buyerTabs";
+import { type SellerTab, isSellerTab } from "./Seller/sellerTabs";
+import { useUserProfileStore } from "./Core/useUserProfileStore";
+import { useUserStore } from "@/utils/user";
 
 const BuyerConsole = lazy(() => import('./Buyer/BuyerConsole'))
 const SellerConsole = lazy(() => import('./Seller/SellerConsole'))
@@ -102,46 +95,32 @@ const UserProfileContent: React.FC<UserProfileProps> = ({ currentAccount, initia
       }
       return
     }
-    if (location.pathname === '/profile' || location.pathname === '/profile/') {
-      if (currentAccount.role === 'viewer') {
-        navigate('/profile/buyer/dashboard', { replace: true })
-      } else {
-        navigate('/profile/seller/assets', { replace: true })
-      }
-      return
-    }
-    const pathParts = location.pathname.split('/').filter(Boolean)
-    const routeMode = pathParts[1]
-    const routeTab = pathParts[2]
-    if (routeMode === 'buyer' && routeTab && isBuyerTab(routeTab)) {
-      setConsoleMode('buyer')
-      return
-    }
-    if (routeMode === 'seller' && routeTab && isSellerTab(routeTab)) {
-      if (currentAccount.role === 'viewer') {
-        navigate('/profile/buyer/dashboard', { replace: true })
-        return
-      }
-      setConsoleMode('seller')
-      return
-    }
-    if (currentAccount.role === 'viewer') {
-      navigate('/profile/buyer/dashboard', { replace: true })
-    } else {
-      navigate('/profile/seller/assets', { replace: true })
-    }
-  }, [initialParams, location.pathname, searchParams, currentAccount.role])
 
-  const handleConsoleModeChange = useCallback(
-    (mode: 'buyer' | 'seller') => {
-      if (mode === 'buyer') {
-        navigateBuyerTab('dashboard')
-        return
-      }
-      navigateSellerTab('assets')
-    },
-    [navigateBuyerTab, navigateSellerTab],
-  )
+    const pathParts = location.pathname.split("/").filter(Boolean);
+    const routeMode = pathParts[1];
+    const routeTab = pathParts[2];
+    console.log(pathParts)
+    if (routeMode === "buyer" && routeTab && isBuyerTab(routeTab)) {
+      setConsoleMode("buyer");
+    }
+    if (routeMode === "seller" && routeTab && isSellerTab(routeTab)) {
+      setConsoleMode("seller");
+    }
+
+  }, [initialParams, location.pathname, searchParams, currentAccount.role]);
+
+  const handleConsoleModeChange = useCallback((mode: "buyer" | "seller") => {
+    // console.log(mode,consoleMode)
+    // if (mode === consoleMode) return
+    // setConsoleMode(mode);
+    // navigateBuyerTab("dashboard");
+    console.log(mode)
+    // if (mode === "buyer") {
+    //   navigateBuyerTab("dashboard");
+    //   return;
+    // }
+    navigateSellerTab("assets");
+  }, [navigateBuyerTab, navigateSellerTab]);
 
   return (
     <div className="flex-1 bg-gray-50 overflow-y-auto h-full p-6 md:p-8 relative">

@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { SELLER_MONITORING_MOCK, SELLER_REFUNDS_MOCK, RICH_ASSETS_MOCK } from './constants'
+import type { MonitoringData, SellerAsset, Refund } from '../types/index'
 
 interface MonitoringItem {
   id: string
@@ -11,14 +12,12 @@ interface MonitoringItem {
 }
 
 interface SellerState {
-  monitoringData: MonitoringItem[]
-  setMonitoringData: (
-    data: MonitoringItem[] | ((prev: MonitoringItem[]) => MonitoringItem[]),
-  ) => void
-  sellerAssets: any[]
-  setSellerAssets: (assets: any[]) => void
-  sellerRefunds: any[]
-  setSellerRefunds: (refunds: any[]) => void
+  monitoringData: MonitoringData[]
+  setMonitoringData: (data: MonitoringData[]) => void
+  sellerAssets: SellerAsset[]
+  setSellerAssets: (assets: SellerAsset[]) => void
+  sellerRefunds: Refund[]
+  setSellerRefunds: (refunds: Refund[]) => void
 }
 
 export const useSellerStore = create<SellerState>((set) => ({

@@ -1,41 +1,36 @@
-import { create } from 'zustand'
-import { type Account } from '@/types'
+import { create } from 'zustand';
+import type { Account } from '@/types';
+import type { Order, Resource, UserProfileCallbacks } from '../types/index';
 
-interface UserProfileState {
-  currentAccount: Account | null
-  displayAccount: (Account & { displayName: string; orgInfo: string }) | null
-  consoleMode: 'buyer' | 'seller'
-  setConsoleMode: (mode: 'buyer' | 'seller') => void
-  globalOrders: any[]
-  globalResources: any[]
-  extraAssets: any[]
+interface UserProfileState extends UserProfileCallbacks {
+  currentAccount: Account | null;
+  displayAccount: (Account & { displayName: string; orgInfo: string }) | null;
+  consoleMode: 'buyer' | 'seller';
+  setConsoleMode: (mode: 'buyer' | 'seller') => void;
+  globalOrders: Order[];
+  globalResources: Resource[];
+  extraAssets: any[];
 
-  onNavigate: (view: string, params?: any) => void
-  onUpgrade?: (orderId: string, planDetails: any) => void
-  onUpdateOrder?: (orderId: string, updates: any) => void
-  onUpdateResource?: (resourceId: string, updates: any) => void
-  onAddResource?: (resource: any) => void
+  localOrders: Order[];
+  setLocalOrders: (orders: Order[] | ((prev: Order[]) => Order[])) => void;
 
-  localOrders: any[]
-  setLocalOrders: (orders: any[] | ((prev: any[]) => any[])) => void
+  localResources: Resource[];
+  setLocalResources: (resources: Resource[] | ((prev: Resource[]) => Resource[])) => void;
 
-  localResources: any[]
-  setLocalResources: (resources: any[] | ((prev: any[]) => any[])) => void
+  toastMsg: string | null;
+  showToast: (msg: string) => void;
+  hideToast: () => void;
 
-  toastMsg: string | null
-  showToast: (msg: string) => void
-  hideToast: () => void
+  activeModal: string | null;
+  setActiveModal: (modal: string | null) => void;
 
-  activeModal: string | null
-  setActiveModal: (modal: string | null) => void
+  setSearchParamsFn: ((fn: (prev: URLSearchParams) => URLSearchParams) => void) | null;
+  openModal: (modalName: string, params?: Record<string, string>) => void;
+  closeModal: () => void;
 
-  setSearchParamsFn: ((fn: any) => void) | null
-  openModal: (modalName: string, params?: Record<string, string>) => void
-  closeModal: () => void
+  processSuccessfulPayment: (order: Order) => void;
 
-  processSuccessfulPayment: (order: any) => void
-
-  initStore: (props: Partial<UserProfileState>) => void
+  initStore: (props: Partial<UserProfileState>) => void;
 }
 
 export const useUserProfileStore = create<UserProfileState>((set, get) => ({
@@ -47,7 +42,7 @@ export const useUserProfileStore = create<UserProfileState>((set, get) => ({
   globalResources: [],
   extraAssets: [],
 
-  onNavigate: () => {},
+  onNavigate: () => { },
 
   localOrders: [],
   setLocalOrders: (updater) =>
@@ -105,12 +100,12 @@ export const useUserProfileStore = create<UserProfileState>((set, get) => ({
           orderId: order.id,
           orderType: order.orderType,
           productName: order.productName,
-          version: order.version,
-          provider: order.provider,
+          version: order.version || '',
+          provider: order.provider || '',
           instanceName: order.instanceName || '默认实例',
           status: 'PendingActivation',
-          expireDate: order.expireDate,
-          autoRenew: order.autoRenew,
+          expireDate: order.expireDate || '',
+          autoRenew: order.autoRenew || false,
           quota: { tokens: 500000, storage: 5 },
           usage: { tokens: 0, storage: 0 },
         })
