@@ -1,3 +1,4 @@
+import type { TenantInfo } from '@/services/system'
 import { useUserStore } from '@/utils/user'
 import {
   Bell,
