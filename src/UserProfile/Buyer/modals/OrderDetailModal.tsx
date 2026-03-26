@@ -1,21 +1,20 @@
-import React from 'react'
+import { PaymentStatusBadge, StatusBadge } from '@/src/UserProfile/Shared/components/atoms/badges'
 import {
-  FileText,
-  X,
-  Box,
-  Scale,
-  Receipt,
-  Headphones,
   ArrowUpRight,
+  Box,
+  FileText,
+  Headphones,
+  History,
   PlayCircle,
   PlusCircle,
+  Receipt,
   RefreshCcw,
   Repeat,
-  History,
+  Scale,
+  X,
 } from 'lucide-react'
-import { StatusBadge, PaymentStatusBadge } from '@/src/UserProfile/Shared/components/atoms/badges'
-import { useUserProfile } from '../../Core/useUserProfileStore'
 import { useSearchParams } from 'react-router-dom'
+import { useUserProfile } from '../../Core/useUserProfileStore'
 
 export const OrderDetailModal = () => {
   const { localOrders, closeModal, onNavigate, openModal } = useUserProfile()
@@ -47,18 +46,18 @@ export const OrderDetailModal = () => {
 
   const baseAmount = Math.max(0, selectedItem.amount - installationFee)
 
-  const formatQuota = (quota: any) => {
-    if (!quota) return null
-    if (typeof quota === 'string') return quota
-    if (typeof quota === 'object') {
-      const parts = []
-      if (quota.tokens) parts.push(`${(quota.tokens / 1000).toFixed(0)}k Tokens`)
-      if (quota.storage) parts.push(`${quota.storage}G 存储`)
-      if (quota.users) parts.push(`${quota.users} 用户`)
-      return parts.join(' / ') || null
-    }
-    return null
-  }
+  // const formatQuota = (quota: any) => {
+  //   if (!quota) return null
+  //   if (typeof quota === 'string') return quota
+  //   if (typeof quota === 'object') {
+  //     const parts = []
+  //     if (quota.tokens) parts.push(`${(quota.tokens / 1000).toFixed(0)}k Tokens`)
+  //     if (quota.storage) parts.push(`${quota.storage}G 存储`)
+  //     if (quota.users) parts.push(`${quota.users} 用户`)
+  //     return parts.join(' / ') || null
+  //   }
+  //   return null
+  // }
 
   const getTimelineSteps = () => {
     const steps = [

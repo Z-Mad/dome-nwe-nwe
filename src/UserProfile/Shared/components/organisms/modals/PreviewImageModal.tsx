@@ -1,35 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import {
-  X,
-  Download,
-  FileText,
-  Settings,
-  Plus,
-  CreditCard,
-  Wallet,
-  Building,
-  Upload,
-  ShieldCheck,
-  Activity,
-  AlertCircle,
-  Edit3,
-  Terminal,
-  TrendingUp,
-  CheckCircle,
-  Loader2,
-  Scale,
-  Box,
-  Receipt,
-  Scan,
-} from 'lucide-react'
+import { Download, Receipt, X } from 'lucide-react'
 
-export const PreviewImageModal = ({
-  previewImageUrl,
-  selectedItem,
-  setActiveModal,
-  closeModal,
-  showToast,
-}: any) => {
+export const PreviewImageModal = ({ previewImageUrl, selectedItem, setActiveModal }: any) => {
   if (!previewImageUrl) return null
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] flex items-center justify-center p-4 animate-in fade-in">

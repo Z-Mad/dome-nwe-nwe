@@ -1,26 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import { X, Download, Loader2 } from 'lucide-react'
+import { Download, Loader2, X } from 'lucide-react'
+import { useState } from 'react'
 
-export const ExportStatementModal = ({
-  selectedItem,
-  closeModal,
-  showToast,
-  localOrders,
-  setLocalOrders,
-  setMonitoringData,
-  processSuccessfulPayment,
-  setActiveModal,
-  setBills,
-  onNavigate,
-  setPreviewImageUrl,
-  selectedVersion,
-  handleVersionAction,
-  handleSaveAssetInfo,
-  handleTakedownAsset,
-  handleSellerRefundAudit,
-  openModal,
-  handleSimulatePayment,
-}: any) => {
+export const ExportStatementModal = ({ closeModal, showToast }: any) => {
   const [bills] = useState([])
   const [isLoading, setIsLoading] = useState(false)
 

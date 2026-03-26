@@ -1,48 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import {
-  X,
-  Download,
-  FileText,
-  Settings,
-  Plus,
-  CreditCard,
-  Wallet,
-  Building,
-  Upload,
-  ShieldCheck,
-  Activity,
-  AlertCircle,
-  Edit3,
-  Terminal,
-  TrendingUp,
-  CheckCircle,
-  Loader2,
-  Scale,
-  Box,
-  Receipt,
-  Scan,
-} from 'lucide-react'
+import { FileText, Loader2, Upload, X } from 'lucide-react'
+import { useState } from 'react'
 
-export const IssueInvoiceModal = ({
-  selectedItem,
-  closeModal,
-  showToast,
-  localOrders,
-  setLocalOrders,
-  setMonitoringData,
-  processSuccessfulPayment,
-  setActiveModal,
-  setBills,
-  onNavigate,
-  setPreviewImageUrl,
-  selectedVersion,
-  handleVersionAction,
-  handleSaveAssetInfo,
-  handleTakedownAsset,
-  handleSellerRefundAudit,
-  openModal,
-  handleSimulatePayment,
-}: any) => {
+export const IssueInvoiceModal = ({ selectedItem, closeModal, showToast, setLocalOrders }: any) => {
   const [isLoading, setIsLoading] = useState(false)
 
   if (!selectedItem) return null

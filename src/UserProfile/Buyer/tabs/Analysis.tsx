@@ -1,5 +1,5 @@
-import React from 'react'
 import { PieChart, TrendingUp } from 'lucide-react'
+import React from 'react'
 import { COST_BREAKDOWN } from '../constants'
 
 const BuyerAnalysis: React.FC = () => {

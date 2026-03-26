@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { OrderStatusFilter } from '../Order/orderUtils'
+import { type OrderStatusFilter } from '../Order/orderUtils'
 
 interface UserProfileUIState {
   orderSearch: string

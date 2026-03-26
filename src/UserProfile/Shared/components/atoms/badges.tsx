@@ -1,5 +1,4 @@
-import React from 'react'
-import { Clock, Zap, AlertTriangle, Archive } from 'lucide-react'
+import { AlertTriangle, Archive, Clock, Zap } from 'lucide-react'
 
 export const PaymentStatusBadge = ({ status }: { status: string }) => {
   switch (status) {

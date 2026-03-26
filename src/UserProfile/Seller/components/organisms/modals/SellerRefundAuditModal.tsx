@@ -1,47 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import {
-  X,
-  Download,
-  FileText,
-  Settings,
-  Plus,
-  CreditCard,
-  Wallet,
-  Building,
-  Upload,
-  ShieldCheck,
-  Activity,
-  AlertCircle,
-  Edit3,
-  Terminal,
-  TrendingUp,
-  CheckCircle,
-  Loader2,
-  Scale,
-  Box,
-  Receipt,
-  Scan,
-} from 'lucide-react'
+import { Activity, AlertCircle, ShieldCheck, X } from 'lucide-react'
+import { useState } from 'react'
 
 export const SellerRefundAuditModal = ({
   selectedItem,
   closeModal,
-  showToast,
-  localOrders,
-  setLocalOrders,
-  setMonitoringData,
-  processSuccessfulPayment,
-  setActiveModal,
-  setBills,
-  onNavigate,
-  setPreviewImageUrl,
-  selectedVersion,
-  handleVersionAction,
-  handleSaveAssetInfo,
-  handleTakedownAsset,
   handleSellerRefundAudit,
-  openModal,
-  handleSimulatePayment,
 }: any) => {
   const [auditComment, setAuditComment] = useState('')
 

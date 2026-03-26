@@ -1,25 +1,23 @@
-import React, { useState } from 'react'
-import {
-  Search,
-  LayoutGrid,
-  Box,
-  LineChart,
-  Zap,
-  Layers,
-  User,
-  Settings,
-  LogOut,
-  PlusCircle,
-  Shield,
-  ChevronDown,
-  Check,
-  Package,
-  Book,
-  Bell,
-  MessageSquare,
-} from 'lucide-react'
 import { useUserStore } from '@/utils/user'
-import { useAuthStore } from '@/store/authStore'
+import {
+  Bell,
+  Book,
+  Box,
+  Check,
+  ChevronDown,
+  Layers,
+  LayoutGrid,
+  LineChart,
+  LogOut,
+  Package,
+  PlusCircle,
+  Search,
+  Settings,
+  Shield,
+  User,
+  Zap,
+} from 'lucide-react'
+import React, { useState } from 'react'
 
 interface SidebarProps {
   currentView: string
@@ -30,7 +28,6 @@ interface SidebarProps {
 const MarketplaceSidebar: React.FC<SidebarProps> = ({ currentView, onChangeView, onPublish }) => {
   const [showAccountMenu, setShowAccountMenu] = useState(false)
   const { userInfo, tenantList, refreshUser, checkDeveloper } = useUserStore()
-  const { currentAccount } = useAuthStore()
 
   const handleSwitchAccount = async (tenantId: string) => {
     try {
@@ -107,7 +104,7 @@ const MarketplaceSidebar: React.FC<SidebarProps> = ({ currentView, onChangeView,
           <div className="absolute top-full left-4 right-4 mt-1 bg-white rounded-xl shadow-xl border border-gray-100 p-1 z-50 animate-in fade-in zoom-in-95 duration-200">
             <div className="text-[10px] font-bold text-gray-400 px-3 py-2 uppercase">切换账号</div>
             <div className="max-h-[400px] overflow-auto">
-              {tenantList.map((tenant) => (
+              {tenantList.map((tenant: TenantInfo) => (
                 <button
                   key={tenant.tenantId}
                   onClick={() => handleSwitchAccount(tenant.tenantId)}

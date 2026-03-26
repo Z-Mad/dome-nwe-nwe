@@ -1,47 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import {
-  X,
-  Download,
-  FileText,
-  Settings,
-  Plus,
-  CreditCard,
-  Wallet,
-  Building,
-  Upload,
-  ShieldCheck,
-  Activity,
-  AlertCircle,
-  Edit3,
-  Terminal,
-  TrendingUp,
-  CheckCircle,
-  Loader2,
-  Scale,
-  Box,
-  Receipt,
-  Scan,
-} from 'lucide-react'
+import { Activity, Settings, Terminal, X } from 'lucide-react'
 
 export const ManageVersionModal = ({
   selectedItem,
   closeModal,
-  showToast,
-  localOrders,
-  setLocalOrders,
-  setMonitoringData,
-  processSuccessfulPayment,
-  setActiveModal,
-  setBills,
-  onNavigate,
-  setPreviewImageUrl,
   selectedVersion,
   handleVersionAction,
-  handleSaveAssetInfo,
-  handleTakedownAsset,
-  handleSellerRefundAudit,
-  openModal,
-  handleSimulatePayment,
 }: any) => {
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4 animate-in fade-in">

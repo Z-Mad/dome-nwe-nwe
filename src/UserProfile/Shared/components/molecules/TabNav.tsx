@@ -1,4 +1,4 @@
-import { LucideIcon } from 'lucide-react'
+import { type LucideIcon } from 'lucide-react'
 
 export type TabItem<T extends string> = {
   id: T

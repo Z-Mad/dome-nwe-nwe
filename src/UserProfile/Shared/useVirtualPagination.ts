@@ -1,4 +1,4 @@
-import { UIEvent, useCallback, useMemo, useState } from 'react'
+import { type UIEvent, useCallback, useMemo, useState } from 'react'
 
 interface UseVirtualPaginationOptions {
   itemHeight: number

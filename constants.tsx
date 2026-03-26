@@ -1,15 +1,4 @@
-import { ReportItem, DocType, RelatedRecord, Message } from './types'
-import {
-  FileBarChart,
-  Layers,
-  AlertTriangle,
-  Zap,
-  Database,
-  Activity,
-  ShieldCheck,
-  Factory,
-} from 'lucide-react'
-import React from 'react'
+import { DocType, type Message, type RelatedRecord, type ReportItem } from './types'
 
 export const MOCK_REPORTS: ReportItem[] = [
   {

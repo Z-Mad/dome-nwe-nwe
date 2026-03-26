@@ -1,49 +1,12 @@
-import React, { useState, useEffect } from 'react'
-import {
-  X,
-  Download,
-  FileText,
-  Settings,
-  Plus,
-  CreditCard,
-  Wallet,
-  Building,
-  Upload,
-  ShieldCheck,
-  Activity,
-  AlertCircle,
-  Edit3,
-  Terminal,
-  TrendingUp,
-  CheckCircle,
-  Loader2,
-  Scale,
-  Box,
-  Receipt,
-  Scan,
-} from 'lucide-react'
+import { FileText, Loader2, Plus, X } from 'lucide-react'
+import { useState } from 'react'
 
 export const RequestInvoiceModal = ({
   selectedItem,
   closeModal,
   showToast,
-  localOrders,
-  setLocalOrders,
-  setMonitoringData,
-  processSuccessfulPayment,
-  setActiveModal,
-  setBills,
-  onNavigate,
-  setPreviewImageUrl,
-  selectedVersion,
-  handleVersionAction,
-  handleSaveAssetInfo,
-  handleTakedownAsset,
-  handleSellerRefundAudit,
   openModal,
-  handleSimulatePayment,
   invoiceHeaders = [],
-  setInvoiceHeaders,
 }: any) => {
   const [invoiceForm, setInvoiceForm] = useState({
     type: 'enterprise',
@@ -58,7 +21,7 @@ export const RequestInvoiceModal = ({
     const defaultHeader = invoiceHeaders.find((h: any) => h.isDefault)
     return defaultHeader ? defaultHeader.id : invoiceHeaders[0]?.id || ''
   })
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading] = useState(false)
 
   if (!selectedItem) return null
   return (

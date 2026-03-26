@@ -1,50 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import {
-  X,
-  Download,
-  FileText,
-  Settings,
-  Plus,
-  CreditCard,
-  Wallet,
-  Building,
-  Upload,
-  ShieldCheck,
-  Activity,
-  AlertCircle,
-  Edit3,
-  Terminal,
-  TrendingUp,
-  CheckCircle,
-  Loader2,
-  Scale,
-  Box,
-  Receipt,
-  Scan,
-} from 'lucide-react'
+import { Edit3, Loader2, X } from 'lucide-react'
+import { useState } from 'react'
 
-export const EditAssetModal = ({
-  selectedItem,
-  closeModal,
-  showToast,
-  localOrders,
-  setLocalOrders,
-  setMonitoringData,
-  processSuccessfulPayment,
-  setActiveModal,
-  setBills,
-  onNavigate,
-  setPreviewImageUrl,
-  selectedVersion,
-  handleVersionAction,
-  handleSaveAssetInfo,
-  handleTakedownAsset,
-  handleSellerRefundAudit,
-  openModal,
-  handleSimulatePayment,
-}: any) => {
+export const EditAssetModal = ({ selectedItem, closeModal, handleSaveAssetInfo }: any) => {
   const [editAssetForm, setEditAssetForm] = useState({ title: '', desc: '', tags: '' })
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading] = useState(false)
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4 animate-in fade-in">

@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { Account } from '../types'
+import { type Account } from '../types'
 import { ACCOUNTS } from '../data'
 
 interface AuthState {

@@ -1,4 +1,6 @@
-import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { type Account } from '@/types'
+import { useUserStore } from '@/utils/user'
+import React, { Suspense, lazy, useCallback, useEffect, useMemo } from 'react'
 import {
   Navigate,
   Route,
@@ -7,15 +9,9 @@ import {
   useNavigate,
   useSearchParams,
 } from 'react-router-dom'
-import { Account } from '@/types'
-import { BuyerTab, isBuyerTab } from './Buyer/buyerTabs'
-import { SellerTab, isSellerTab } from './Seller/sellerTabs'
-import { useDebouncedValue } from './Shared/useDebouncedValue'
-import { useOrderFilterWorker } from './Order/useOrderFilterWorker'
-import { useVirtualPagination } from './Shared/useVirtualPagination'
-import { useUserProfileUIStore } from './Core/useUserProfileUIStore'
+import { type BuyerTab, isBuyerTab } from './Buyer/buyerTabs'
 import { useUserProfileStore } from './Core/useUserProfileStore'
-import { useUserStore } from '@/utils/user'
+import { type SellerTab, isSellerTab } from './Seller/sellerTabs'
 
 const BuyerConsole = lazy(() => import('./Buyer/BuyerConsole'))
 const SellerConsole = lazy(() => import('./Seller/SellerConsole'))
@@ -193,7 +189,6 @@ const UserProfileContent: React.FC<UserProfileProps> = ({ currentAccount, initia
 const UserProfile: React.FC<UserProfileProps> = (props) => {
   const initStore = useUserProfileStore((state) => state.initStore)
   const toastMsg = useUserProfileStore((state) => state.toastMsg)
-  const setSearchParamsFn = useUserProfileStore((state) => state.setSearchParamsFn)
   const setActiveModal = useUserProfileStore((state) => state.setActiveModal)
   const [, setSearchParams] = useSearchParams()
   const location = useLocation()

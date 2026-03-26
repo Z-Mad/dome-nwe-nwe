@@ -1,48 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import {
-  X,
-  Download,
-  FileText,
-  Settings,
-  Plus,
-  CreditCard,
-  Wallet,
-  Building,
-  Upload,
-  ShieldCheck,
-  Activity,
-  AlertCircle,
-  Edit3,
-  Terminal,
-  TrendingUp,
-  CheckCircle,
-  Loader2,
-  Scale,
-  Box,
-  Receipt,
-  Scan,
-} from 'lucide-react'
+import { Download, FileText, X } from 'lucide-react'
 
-export const PaymentApplicationModal = ({
-  selectedItem,
-  closeModal,
-  showToast,
-  localOrders,
-  setLocalOrders,
-  setMonitoringData,
-  processSuccessfulPayment,
-  setActiveModal,
-  setBills,
-  onNavigate,
-  setPreviewImageUrl,
-  selectedVersion,
-  handleVersionAction,
-  handleSaveAssetInfo,
-  handleTakedownAsset,
-  handleSellerRefundAudit,
-  openModal,
-  handleSimulatePayment,
-}: any) => {
+export const PaymentApplicationModal = ({ selectedItem, closeModal, showToast }: any) => {
   if (!selectedItem) return null
   const item = selectedItem
   const isBill = 'period' in item

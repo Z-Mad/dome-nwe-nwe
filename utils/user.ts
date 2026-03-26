@@ -4,8 +4,8 @@ import { refreshToken, logout as logoutApi } from '../services/auth'
 import {
   getUserInfo as getUserInfoApi,
   getTenantList as getTenantListApi,
-  UserInfo,
-  TenantInfo,
+  type UserInfo,
+  type TenantInfo,
 } from '../services/system'
 
 // 声明全局变量以避免 TS 报错（建议放到全局 vite-env.d.ts 中）

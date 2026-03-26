@@ -1,17 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react'
 import {
+  AlertTriangle,
+  BarChart2,
+  CheckCircle,
+  FileBarChart,
+  GitBranch,
+  Layers,
+  MessageCircle,
   Send,
   Sparkles,
-  FileText,
-  BarChart2,
-  GitBranch,
-  MessageCircle,
   X,
-  Layers,
-  FileBarChart,
-  AlertTriangle,
-  CheckCircle,
 } from 'lucide-react'
+import React, { useEffect, useRef, useState } from 'react'
 import { INITIAL_CHAT_HISTORY } from '../constants'
 import { Message } from '../types'
 
@@ -112,7 +111,9 @@ const ChatPanel: React.FC = () => {
               <p className="text-gray-700 leading-relaxed text-xs">
                 厚度控制尚在公差范围内，但板形I-Unit值出现高频波动。建议立即检查{' '}
                 <strong>3号机架弯辊力设定</strong>
-                ，并关注冷却液喷嘴是否堵塞。对于表面缺陷，建议下一卷降速至 <strong>800mpm</strong>{' '}
+                ，并关注冷却液喷嘴是否堵塞。对于表面缺陷，建议下一卷降速至 <strong>
+                  800mpm
+                </strong>{' '}
                 运行并进行人工复检。
               </p>
             </div>

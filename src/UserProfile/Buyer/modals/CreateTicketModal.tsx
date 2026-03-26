@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { LifeBuoy, X, Loader2, Upload, Send } from 'lucide-react'
+import { LifeBuoy, Loader2, X } from 'lucide-react'
+import { useState } from 'react'
 
 export const CreateTicketModal = ({ closeModal, showToast }: any) => {
   const [ticketForm, setTicketForm] = useState({ type: 'technical', desc: '' })

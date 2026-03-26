@@ -55,7 +55,7 @@ const SellerAssets: React.FC = () => {
       <div className="space-y-6">
         {sellerAssets
           .filter((a) => sellerAssetFilter === 'all' || a.status === sellerAssetFilter)
-          .map((asset, i) => (
+          .map((asset) => (
             <div
               key={asset.id}
               className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"

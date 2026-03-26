@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { Send, Heart, User, Gift, X, Radio } from 'lucide-react'
+import { Gift, Heart, Radio, Send, User } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
 
 const LiveView: React.FC = () => {
   const [messages, setMessages] = useState([

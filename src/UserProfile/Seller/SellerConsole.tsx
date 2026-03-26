@@ -1,7 +1,7 @@
 import React from 'react'
 import { Navigate, Route, Routes, useNavigate, useLocation } from 'react-router-dom'
 import TabNav from '../Shared/components/molecules/TabNav'
-import { SELLER_TABS, SellerTab } from './sellerTabs'
+import { SELLER_TABS, type SellerTab } from './sellerTabs'
 import { Dashboard, Assets, Finance, Support, Analysis, Health } from './tabs'
 import { SellerModals } from './SellerModals'
 

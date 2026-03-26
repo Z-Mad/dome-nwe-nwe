@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { RefreshCcw, X, AlertTriangle, CheckCircle, Loader2 } from 'lucide-react'
+import { AlertTriangle, CheckCircle, Loader2, RefreshCcw, X } from 'lucide-react'
+import { useState } from 'react'
 
 export const RefundRequestModal = ({ selectedItem, closeModal, showToast }: any) => {
   const [refundReason, setRefundReason] = useState('')

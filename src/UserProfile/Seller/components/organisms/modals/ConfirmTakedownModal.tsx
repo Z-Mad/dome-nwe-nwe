@@ -1,50 +1,8 @@
-import React, { useState, useEffect } from 'react'
-import {
-  X,
-  Download,
-  FileText,
-  Settings,
-  Plus,
-  CreditCard,
-  Wallet,
-  Building,
-  Upload,
-  ShieldCheck,
-  Activity,
-  AlertCircle,
-  Edit3,
-  Terminal,
-  TrendingUp,
-  CheckCircle,
-  Loader2,
-  Scale,
-  Box,
-  Receipt,
-  Scan,
-  AlertTriangle,
-} from 'lucide-react'
+import { AlertTriangle, Loader2 } from 'lucide-react'
+import { useState } from 'react'
 
-export const ConfirmTakedownModal = ({
-  selectedItem,
-  closeModal,
-  showToast,
-  localOrders,
-  setLocalOrders,
-  setMonitoringData,
-  processSuccessfulPayment,
-  setActiveModal,
-  setBills,
-  onNavigate,
-  setPreviewImageUrl,
-  selectedVersion,
-  handleVersionAction,
-  handleSaveAssetInfo,
-  handleTakedownAsset,
-  handleSellerRefundAudit,
-  openModal,
-  handleSimulatePayment,
-}: any) => {
-  const [isLoading, setIsLoading] = useState(false)
+export const ConfirmTakedownModal = ({ closeModal, handleTakedownAsset }: any) => {
+  const [isLoading] = useState(false)
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4 animate-in fade-in">

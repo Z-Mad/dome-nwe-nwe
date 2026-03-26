@@ -7,7 +7,6 @@ interface AgentCategoryViewProps {
 }
 
 const AgentCategoryView: React.FC<AgentCategoryViewProps> = ({ category, onNavigateToDetail }) => {
-  const [activeFilter, setActiveFilter] = useState('all')
   const [serviceSubCategory, setServiceSubCategory] = useState('all')
 
   // --- Production Service Specific Layout ---

@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { X, Upload, Building, Loader2 } from 'lucide-react'
+import { Building, Loader2, Upload, X } from 'lucide-react'
+import { useState } from 'react'
 
 export const UploadReceiptModal = ({
   selectedItem,

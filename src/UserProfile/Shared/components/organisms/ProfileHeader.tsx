@@ -1,6 +1,6 @@
 import React from 'react'
 import { BadgeCheck, HardHat, Home, ShoppingBag } from 'lucide-react'
-import { Account } from '@/types'
+import { type Account } from '@/types'
 import { useUserStore } from '@/utils/user'
 
 interface ProfileHeaderProps {
@@ -14,7 +14,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   displayAccount,
   consoleMode,
   onConsoleModeChange,
-  role,
 }) => {
   const { checkDeveloper } = useUserStore()
 

@@ -1,5 +1,5 @@
+import { Heart, MessageCircle, Play, Share2 } from 'lucide-react'
 import React from 'react'
-import { Heart, MessageCircle, Share2, Play, ThumbsUp, MoreHorizontal } from 'lucide-react'
 
 const VideoView: React.FC = () => {
   const videos = [

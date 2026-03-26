@@ -1,15 +1,15 @@
-import React, { useState } from 'react'
 import {
-  FileText,
-  Calendar,
-  MoreVertical,
-  BellOff,
   Activity,
-  Layers,
   AlertTriangle,
+  BellOff,
+  Calendar,
+  FileText,
+  Layers,
+  MoreVertical,
 } from 'lucide-react'
+import React, { useState } from 'react'
 import { MOCK_REPORTS } from '../constants'
-import { ReportItem, DocType, ReportType } from '../types'
+import { DocType } from '../types'
 
 const ReportPanel: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('Daily')
