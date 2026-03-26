@@ -2,7 +2,7 @@ name: perf-regression
 
 on:
   push:
-    branches: ["main", "master"]
+    branches: ['main', 'master']
   pull_request:
 
 jobs:
@@ -20,4 +20,4 @@ jobs:
       - run: npm run build
       - run: npm run perf:profile
         env:
-          PERF_MAX_INITIAL_JS_KB: "150"
+          PERF_MAX_INITIAL_JS_KB: '150'

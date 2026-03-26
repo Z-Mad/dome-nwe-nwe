@@ -1,7 +1,15 @@
-
-import { ReportItem, DocType, RelatedRecord, Message } from './types';
-import { FileBarChart, Layers, AlertTriangle, Zap, Database, Activity, ShieldCheck, Factory } from 'lucide-react';
-import React from 'react';
+import { ReportItem, DocType, RelatedRecord, Message } from './types'
+import {
+  FileBarChart,
+  Layers,
+  AlertTriangle,
+  Zap,
+  Database,
+  Activity,
+  ShieldCheck,
+  Factory,
+} from 'lucide-react'
+import React from 'react'
 
 export const MOCK_REPORTS: ReportItem[] = [
   {
@@ -39,7 +47,7 @@ export const MOCK_REPORTS: ReportItem[] = [
     type: DocType.PRODUCTION,
     status: 'ready',
   },
-];
+]
 
 export const RELATED_RECORDS: RelatedRecord[] = [
   { id: '1', title: '轧机运行日报', category: '工厂生产', icon: 'factory' },
@@ -47,7 +55,7 @@ export const RELATED_RECORDS: RelatedRecord[] = [
   { id: '3', title: '支承辊库存状态', category: '库存管理', icon: 'database' },
   { id: '4', title: 'AGC传感器状态', category: '产线监控', icon: 'activity' },
   { id: '5', title: '缺陷图谱库 v2.4', category: '质量标准', icon: 'shield' },
-];
+]
 
 export const INITIAL_CHAT_HISTORY: Message[] = [
   {
@@ -65,4 +73,4 @@ export const INITIAL_CHAT_HISTORY: Message[] = [
     ),
     timestamp: new Date(),
   },
-];
+]

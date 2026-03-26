@@ -1,18 +1,18 @@
-import React from "react";
-import { PieChart, TrendingUp } from "lucide-react";
-import { COST_BREAKDOWN } from "../constants";
+import React from 'react'
+import { PieChart, TrendingUp } from 'lucide-react'
+import { COST_BREAKDOWN } from '../constants'
 
 const BuyerAnalysis: React.FC = () => {
   // Chart Mock Data Calculation
   const chartData = [
-    { month: "1月", sub: 9800, pack: 0, usage: 200, total: 10000 },
-    { month: "2月", sub: 9800, pack: 0, usage: 300, total: 10100 },
-    { month: "3月", sub: 9800, pack: 2000, usage: 400, total: 12200 },
-    { month: "4月", sub: 5800, pack: 2000, usage: 650, total: 8450 },
-    { month: "5月", sub: 5800, pack: 2000, usage: 300, total: 8100 },
-    { month: "6月", sub: 5800, pack: 1000, usage: 500, total: 7300 },
-  ];
-  const maxTotal = Math.max(...chartData.map((d) => d.total)) * 1.1;
+    { month: '1月', sub: 9800, pack: 0, usage: 200, total: 10000 },
+    { month: '2月', sub: 9800, pack: 0, usage: 300, total: 10100 },
+    { month: '3月', sub: 9800, pack: 2000, usage: 400, total: 12200 },
+    { month: '4月', sub: 5800, pack: 2000, usage: 650, total: 8450 },
+    { month: '5月', sub: 5800, pack: 2000, usage: 300, total: 8100 },
+    { month: '6月', sub: 5800, pack: 1000, usage: 500, total: 7300 },
+  ]
+  const maxTotal = Math.max(...chartData.map((d) => d.total)) * 1.1
 
   return (
     <div className="space-y-6 animate-in fade-in">
@@ -20,18 +20,14 @@ const BuyerAnalysis: React.FC = () => {
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
         <div className="flex items-center gap-2 mb-6">
           <PieChart size={20} className="text-purple-600" />
-          <h3 className="font-bold text-gray-900">
-            成本与用量分析 (Cost Analysis)
-          </h3>
+          <h3 className="font-bold text-gray-900">成本与用量分析 (Cost Analysis)</h3>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Chart Area */}
           <div className="flex-1">
             <div className="flex justify-between items-center mb-4">
-              <h4 className="text-sm font-bold text-gray-800">
-                月度支出趋势
-              </h4>
+              <h4 className="text-sm font-bold text-gray-800">月度支出趋势</h4>
               <div className="flex gap-4 text-xs">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-blue-500"></div>
@@ -51,10 +47,7 @@ const BuyerAnalysis: React.FC = () => {
             <div className="h-48 flex items-end justify-between gap-3 relative border-b border-gray-100 pb-2">
               <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
                 {[1, 2, 3, 4].map((i) => (
-                  <div
-                    key={i}
-                    className="border-t border-dashed border-gray-100 w-full h-0"
-                  ></div>
+                  <div key={i} className="border-t border-dashed border-gray-100 w-full h-0"></div>
                 ))}
               </div>
               {chartData.map((d, i) => (
@@ -98,9 +91,7 @@ const BuyerAnalysis: React.FC = () => {
           <div className="w-full lg:w-72 border-l border-gray-100 pl-8 pt-2">
             <div className="mb-6">
               <div className="text-xs text-gray-500 mb-1">本月总支出</div>
-              <div className="text-3xl font-bold text-gray-900">
-                ¥ 12,450.00
-              </div>
+              <div className="text-3xl font-bold text-gray-900">¥ 12,450.00</div>
               <div className="text-xs text-red-500 font-bold mt-1 flex items-center gap-1">
                 <TrendingUp size={12} /> ↑ 12% 环比增长
               </div>
@@ -141,9 +132,7 @@ const BuyerAnalysis: React.FC = () => {
 
       {/* Cost Breakdown Table */}
       <div>
-        <h3 className="font-bold text-gray-900 mb-4">
-          成本构成明细 (Cost Breakdown)
-        </h3>
+        <h3 className="font-bold text-gray-900 mb-4">成本构成明细 (Cost Breakdown)</h3>
         <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
           <table className="w-full text-sm text-left">
             <thead className="bg-gray-50 text-gray-500 font-bold border-b border-gray-100">
@@ -157,17 +146,11 @@ const BuyerAnalysis: React.FC = () => {
             <tbody className="divide-y divide-gray-50">
               {COST_BREAKDOWN.map((item, i) => (
                 <tr key={i} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 font-bold text-gray-800">
-                    {item.item}
-                  </td>
-                  <td className="px-6 py-4 text-gray-500 text-xs">
-                    {item.type}
-                  </td>
-                  <td className="px-6 py-4 text-right font-mono text-gray-600">
-                    {item.usage}
-                  </td>
+                  <td className="px-6 py-4 font-bold text-gray-800">{item.item}</td>
+                  <td className="px-6 py-4 text-gray-500 text-xs">{item.type}</td>
+                  <td className="px-6 py-4 text-right font-mono text-gray-600">{item.usage}</td>
                   <td className="px-6 py-4 text-right font-mono font-bold text-gray-900">
-                    ¥{" "}
+                    ¥{' '}
                     {item.amount.toLocaleString(undefined, {
                       minimumFractionDigits: 2,
                     })}
@@ -179,7 +162,7 @@ const BuyerAnalysis: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default BuyerAnalysis;
+export default BuyerAnalysis

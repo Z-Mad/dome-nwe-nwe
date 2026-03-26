@@ -1,5 +1,5 @@
-import React from "react";
-import { TrendingUp, User, LayoutDashboard } from "lucide-react";
+import React from 'react'
+import { TrendingUp, User, LayoutDashboard } from 'lucide-react'
 
 const SellerAnalysis: React.FC = () => (
   <div className="space-y-6 animate-in fade-in">
@@ -37,8 +37,7 @@ const SellerAnalysis: React.FC = () => (
       {/* 1. User Persona */}
       <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
         <h3 className="font-bold text-gray-900 mb-6 flex items-center gap-2">
-          <User size={20} className="text-blue-600" /> 用户画像分析 (User
-          Persona)
+          <User size={20} className="text-blue-600" /> 用户画像分析 (User Persona)
         </h3>
 
         <div className="space-y-6">
@@ -78,16 +77,14 @@ const SellerAnalysis: React.FC = () => (
           <div>
             <div className="text-xs text-gray-500 mb-2">主要用户角色</div>
             <div className="flex flex-wrap gap-2">
-              {["工艺工程师", "IT 管理员", "采购经理", "产线厂长"].map(
-                (role) => (
-                  <span
-                    key={role}
-                    className="bg-gray-50 border border-gray-200 text-gray-600 text-xs px-2 py-1 rounded"
-                  >
-                    {role}
-                  </span>
-                ),
-              )}
+              {['工艺工程师', 'IT 管理员', '采购经理', '产线厂长'].map((role) => (
+                <span
+                  key={role}
+                  className="bg-gray-50 border border-gray-200 text-gray-600 text-xs px-2 py-1 rounded"
+                >
+                  {role}
+                </span>
+              ))}
             </div>
           </div>
         </div>
@@ -96,21 +93,17 @@ const SellerAnalysis: React.FC = () => (
       {/* 2. Usage Scenarios */}
       <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
         <h3 className="font-bold text-gray-900 mb-6 flex items-center gap-2">
-          <LayoutDashboard size={20} className="text-orange-600" />{" "}
-          调用场景分布 (Usage Scenarios)
+          <LayoutDashboard size={20} className="text-orange-600" /> 调用场景分布 (Usage Scenarios)
         </h3>
         <div className="h-48 flex items-end justify-between px-4 gap-4">
           {[
-            { name: "质量分析", val: 80, color: "bg-blue-500" },
-            { name: "工艺优化", val: 65, color: "bg-cyan-500" },
-            { name: "能耗管理", val: 45, color: "bg-green-500" },
-            { name: "设备预维", val: 30, color: "bg-orange-500" },
-            { name: "其他", val: 15, color: "bg-gray-400" },
+            { name: '质量分析', val: 80, color: 'bg-blue-500' },
+            { name: '工艺优化', val: 65, color: 'bg-cyan-500' },
+            { name: '能耗管理', val: 45, color: 'bg-green-500' },
+            { name: '设备预维', val: 30, color: 'bg-orange-500' },
+            { name: '其他', val: 15, color: 'bg-gray-400' },
           ].map((item, i) => (
-            <div
-              key={i}
-              className="flex-1 flex flex-col items-center gap-2 group"
-            >
+            <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
               <div
                 className={`w-12 md:w-16 rounded-t-lg relative ${item.color} opacity-90 group-hover:opacity-100 transition-opacity`}
                 style={{ height: `${item.val}%` }}
@@ -139,15 +132,11 @@ const SellerAnalysis: React.FC = () => (
 
       {/* 4. API Error Rates */}
       <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-        <h3 className="font-bold text-gray-900 mb-6">
-          API 错误率分布 (Error Rates)
-        </h3>
+        <h3 className="font-bold text-gray-900 mb-6">API 错误率分布 (Error Rates)</h3>
         <div className="space-y-6">
           <div>
             <div className="flex justify-between text-sm mb-1">
-              <span className="text-gray-700">
-                401 鉴权失败 (Unauthorized)
-              </span>
+              <span className="text-gray-700">401 鉴权失败 (Unauthorized)</span>
               <span className="font-bold text-gray-900">45%</span>
             </div>
             <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
@@ -156,9 +145,7 @@ const SellerAnalysis: React.FC = () => (
           </div>
           <div>
             <div className="flex justify-between text-sm mb-1">
-              <span className="text-gray-700">
-                429 请求过多 (Too Many Requests)
-              </span>
+              <span className="text-gray-700">429 请求过多 (Too Many Requests)</span>
               <span className="font-bold text-gray-900">30%</span>
             </div>
             <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
@@ -167,9 +154,7 @@ const SellerAnalysis: React.FC = () => (
           </div>
           <div>
             <div className="flex justify-between text-sm mb-1">
-              <span className="text-gray-700">
-                500 服务器内部错误 (Internal Error)
-              </span>
+              <span className="text-gray-700">500 服务器内部错误 (Internal Error)</span>
               <span className="font-bold text-gray-900">5%</span>
             </div>
             <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
@@ -180,6 +165,6 @@ const SellerAnalysis: React.FC = () => (
       </div>
     </div>
   </div>
-);
+)
 
-export default SellerAnalysis;
+export default SellerAnalysis

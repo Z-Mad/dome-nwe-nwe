@@ -1,16 +1,16 @@
-import { LucideIcon } from "lucide-react";
+import { LucideIcon } from 'lucide-react'
 
 export type TabItem<T extends string> = {
-  id: T;
-  label: string;
-  icon: LucideIcon;
-};
+  id: T
+  label: string
+  icon: LucideIcon
+}
 
 interface TabNavProps<T extends string> {
-  tabs: TabItem<T>[];
-  currentTab: T;
-  onChange: (tab: T) => void;
-  activeClassName: string;
+  tabs: TabItem<T>[]
+  currentTab: T
+  onChange: (tab: T) => void
+  activeClassName: string
 }
 
 const TabNav = <T extends string>({
@@ -28,14 +28,14 @@ const TabNav = <T extends string>({
           className={`px-6 py-3 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors whitespace-nowrap ${
             currentTab === tab.id
               ? activeClassName
-              : "border-transparent text-gray-500 hover:text-gray-800"
+              : 'border-transparent text-gray-500 hover:text-gray-800'
           }`}
         >
           <tab.icon size={16} /> {tab.label}
         </button>
       ))}
     </div>
-  );
-};
+  )
+}
 
-export default TabNav;
+export default TabNav
