@@ -35,71 +35,17 @@ const UserProfileContent: React.FC<UserProfileProps> = ({ currentAccount, initia
   const displayAccount = useMemo(
     () => ({
       ...currentAccount,
-      displayName: userInfo.userName,
-      orgInfo: `${userInfo.tenantName} ID:${userInfo.tenantId}`,
+      avatar: userInfo?.avatar,
+      displayName: userInfo?.userName,
+      orgInfo: `${userInfo?.tenantName} ID:${userInfo?.tenantId}`,
     }),
     [currentAccount],
   )
 
-  const navigateBuyerTab = useCallback(
-    (tab: BuyerTab) => {
-      setConsoleMode('buyer')
-      navigate(`/profile/buyer/${tab}`)
-    },
-    [navigate],
-  )
-
-  const navigateSellerTab = useCallback(
-    (tab: SellerTab) => {
-      if (currentAccount.role === 'viewer') {
-        navigate('/profile/buyer/dashboard', { replace: true })
-        return
-      }
-      setConsoleMode('seller')
-      navigate(`/profile/seller/${tab}`)
-    },
-    [currentAccount.role, navigate],
-  )
-
   useEffect(() => {
-    if (
-      initialParams?.tab &&
-      !location.pathname.startsWith('/profile/buyer/') &&
-      !location.pathname.startsWith('/profile/seller/')
-    ) {
-      if (initialParams.tab === 'assets') {
-        navigateSellerTab('assets')
-      } else if (initialParams.tab === 'orders') {
-        navigateBuyerTab('orders')
-      } else if (isBuyerTab(initialParams.tab)) {
-        navigateBuyerTab(initialParams.tab)
-      } else if (isSellerTab(initialParams.tab)) {
-        navigateSellerTab(initialParams.tab)
-      } else {
-        navigateBuyerTab('dashboard')
-      }
-      return
-    }
-    const queryTab = searchParams.get('tab')
-    if (queryTab) {
-      if (queryTab === 'assets') {
-        navigateSellerTab('assets')
-      } else if (queryTab === 'orders') {
-        navigateBuyerTab('orders')
-      } else if (isBuyerTab(queryTab)) {
-        navigateBuyerTab(queryTab)
-      } else if (isSellerTab(queryTab)) {
-        navigateSellerTab(queryTab)
-      } else {
-        navigateBuyerTab('dashboard')
-      }
-      return
-    }
-
     const pathParts = location.pathname.split("/").filter(Boolean);
     const routeMode = pathParts[1];
     const routeTab = pathParts[2];
-    console.log(pathParts)
     if (routeMode === "buyer" && routeTab && isBuyerTab(routeTab)) {
       setConsoleMode("buyer");
     }
@@ -107,24 +53,16 @@ const UserProfileContent: React.FC<UserProfileProps> = ({ currentAccount, initia
       setConsoleMode("seller");
     }
 
-  }, [initialParams, location.pathname, searchParams, currentAccount.role]);
-
-  const handleConsoleModeChange = useCallback((mode: "buyer" | "seller") => {
-    // console.log(mode,consoleMode)
-    // if (mode === consoleMode) return
-    // setConsoleMode(mode);
-    // navigateBuyerTab("dashboard");
-    console.log(mode)
-    // if (mode === "buyer") {
-    //   navigateBuyerTab("dashboard");
-    //   return;
-    // }
-    navigateSellerTab("assets");
-  }, [navigateBuyerTab, navigateSellerTab]);
+  }, [location.pathname, setConsoleMode, isBuyerTab, isSellerTab]);
+  const handleConsoleModeChange = (mode: "buyer" | "seller") => {
+    if (mode === consoleMode) return
+    navigate(`/profile/${mode}/dashboard`)
+  };
 
   return (
     <div className="flex-1 bg-gray-50 overflow-y-auto h-full p-6 md:p-8 relative">
       <div className="max-w-6xl mx-auto pb-20">
+
         <Suspense
           fallback={
             <div className="bg-white rounded-2xl p-6 border border-gray-100 text-sm text-gray-500">
@@ -136,7 +74,6 @@ const UserProfileContent: React.FC<UserProfileProps> = ({ currentAccount, initia
             displayAccount={displayAccount}
             consoleMode={consoleMode}
             onConsoleModeChange={handleConsoleModeChange}
-            role={currentAccount.role}
           />
         </Suspense>
         <Suspense
@@ -193,7 +130,7 @@ const UserProfile: React.FC<UserProfileProps> = (props) => {
     <>
       <UserProfileContent {...props} />
       {toastMsg && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-gray-900/90 text-white px-6 py-3 rounded-xl shadow-2xl z-[9999] flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4">
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-gray-900/90 text-white px-6 py-3 rounded-xl shadow-2xl z-[9999] flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4" >
           <div className="w-2 h-2 rounded-full bg-green-400"></div>
           <span className="font-medium text-sm">{toastMsg}</span>
         </div>

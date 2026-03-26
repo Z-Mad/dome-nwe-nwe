@@ -45,7 +45,6 @@ export const request = async <T>(url: string, options: RequestOptions = {}): Pro
   if (authorization) {
     headers['Authorization'] = authorization
   }
-  console.log(headers, useAuthStore.getState())
 
   let finalUrl = url.startsWith('http') ? url : `${BASE_URL}${url}`
 
@@ -66,7 +65,6 @@ export const request = async <T>(url: string, options: RequestOptions = {}): Pro
     })
 
     const status = response.status
-    console.log(status, response)
     if (response.url?.includes('/oauth/token') && status === 412) {
       await outLog()
       return {} as T

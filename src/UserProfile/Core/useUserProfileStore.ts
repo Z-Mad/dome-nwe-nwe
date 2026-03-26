@@ -159,8 +159,11 @@ export const useUserProfileStore = create<UserProfileState>((set, get) => ({
         nextLocalResources = props.globalResources
       }
 
+      // 保留当前的 consoleMode，除非明确指定
+      const { consoleMode: _, ...propsWithoutConsoleMode } = props
+
       return {
-        ...props,
+        ...propsWithoutConsoleMode,
         ...(props.currentAccount ? { displayAccount: nextDisplayAccount } : {}),
         ...(props.globalOrders ? { localOrders: nextLocalOrders } : {}),
         ...(props.globalResources ? { localResources: nextLocalResources } : {}),

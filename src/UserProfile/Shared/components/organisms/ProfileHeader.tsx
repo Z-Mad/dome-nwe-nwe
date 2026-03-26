@@ -7,7 +7,6 @@ interface ProfileHeaderProps {
   displayAccount: Account & { displayName: string; orgInfo: string }
   consoleMode: 'buyer' | 'seller'
   onConsoleModeChange: (mode: 'buyer' | 'seller') => void
-  role: Account['role']
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
@@ -25,7 +24,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         </div>
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <h2 className="text-2xl font-bold text-gray-900">{displayAccount.displayName} {consoleMode}</h2>
+            <h2 className="text-2xl font-bold text-gray-900">{displayAccount.displayName}</h2>
             <BadgeCheck size={20} className="text-blue-500 fill-blue-50" />
           </div>
           <div className="text-sm text-gray-500 flex items-center gap-2">

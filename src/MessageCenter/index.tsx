@@ -50,6 +50,7 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams }) => {
   const [chatHistory, setChatHistory] = useState<Record<string, Message[]>>({})
   const [inputText, setInputText] = useState('')
   const [uploadingImage, setUploadingImage] = useState(false)
+  const [loading, setLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const imageInputRef = useRef<HTMLInputElement>(null)
   const pollingTimerRef = useRef<NodeJS.Timeout | null>(null)
@@ -141,7 +142,7 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams }) => {
     if (contact && !chatHistory[activeChatId]) {
       fetchHistory(contact.rawSessionId)
     }
-  }, [activeChatId, contacts])
+  }, [activeChatId, contacts, chatHistory])
 
   // 3. 滚动到底部
   useEffect(() => {
@@ -167,23 +168,36 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams }) => {
           }))
 
           // 标记已读
-          const latestId = res.data.lastMsgId || newMsgs[newMsgs.length - 1].rawId
-          await chatService.markRead(activeSessionId, latestId)
+          // const latestId = res.data.lastMsgId || newMsgs[newMsgs.length - 1].rawId
+          // await chatService.markRead(activeSessionId, latestId)
         }
       } catch (error) {
         console.error('轮询消息失败', error)
       } finally {
-        pollingTimerRef.current = setTimeout(pollMessages, 3000)
+        // 确保定时器在组件卸载后不会设置
+        if (pollingTimerRef.current !== null) {
+          pollingTimerRef.current = setTimeout(pollMessages, 3000)
+        }
       }
     }
 
-    if (pollingTimerRef.current) clearTimeout(pollingTimerRef.current)
+    // 清除之前的定时器
+    if (pollingTimerRef.current) {
+      clearTimeout(pollingTimerRef.current)
+      pollingTimerRef.current = null
+    }
+    
+    // 启动新的轮询
     pollingTimerRef.current = setTimeout(pollMessages, 3000)
 
+    // 清理函数：确保页面关闭时轮询停止
     return () => {
-      if (pollingTimerRef.current) clearTimeout(pollingTimerRef.current)
+      if (pollingTimerRef.current) {
+        clearTimeout(pollingTimerRef.current)
+        pollingTimerRef.current = null
+      }
     }
-  }, [activeChatId, chatHistory])
+  }, [activeChatId])
 
   // --- Handlers ---
   const handleSend = async () => {
