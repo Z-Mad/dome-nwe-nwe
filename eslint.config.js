@@ -1,37 +1,23 @@
-import js from "@eslint/js";
-import tsParser from "@typescript-eslint/parser";
-import tsPlugin from "@typescript-eslint/eslint-plugin";
-import reactHooks from "eslint-plugin-react-hooks";
+import js from '@eslint/js'
+import globals from 'globals'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import tseslint from 'typescript-eslint'
+import { defineConfig, globalIgnores } from 'eslint/config'
 
-export default [
+export default defineConfig([
+  globalIgnores(['dist']),
   {
-    ignores: ["dist/**", "node_modules/**", "coverage/**", "src/UserProfile/index.tsx"],
-  },
-  js.configs.recommended,
-  {
-    files: ["**/*.{ts,tsx}"],
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      js.configs.recommended,
+      tseslint.configs.recommended,
+      reactHooks.configs.flat.recommended,
+      reactRefresh.configs.vite,
+    ],
     languageOptions: {
-      parser: tsParser,
-    },
-    plugins: {
-      "@typescript-eslint": tsPlugin,
-      "react-hooks": reactHooks,
-    },
-    rules: {
-      ...tsPlugin.configs.recommended.rules,
-      "no-undef": "off",
-      "no-console": "off",
-      "@typescript-eslint/no-explicit-any": "off",
-      "react-hooks/rules-of-hooks": "error",
-      "react-hooks/exhaustive-deps": "warn",
+      ecmaVersion: 2020,
+      globals: globals.browser,
     },
   },
-  {
-    files: ["src/UserProfile/**/*.{ts,tsx}"],
-    ignores: ["src/UserProfile/index.tsx"],
-    rules: {
-      complexity: ["error", 8],
-      "max-lines": ["error", { max: 120, skipBlankLines: true, skipComments: true }],
-    },
-  },
-];
+])

@@ -1,9 +1,9 @@
-import React from "react";
-import { Activity, TrendingUp } from "lucide-react";
-import { BUYER_STATS, RESOURCE_TREND_DATA } from "../constants";
+import React from 'react'
+import { Activity, TrendingUp } from 'lucide-react'
+import { BUYER_STATS, RESOURCE_TREND_DATA } from '../constants'
 
 const BuyerDashboard: React.FC = () => {
-  const chartMax = Math.max(...RESOURCE_TREND_DATA.map((d) => d.token + d.storage)) * 1.1;
+  const chartMax = Math.max(...RESOURCE_TREND_DATA.map((d) => d.token + d.storage)) * 1.1
 
   return (
     <div className="space-y-6 animate-in fade-in">
@@ -13,30 +13,22 @@ const BuyerDashboard: React.FC = () => {
           <div className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">
             本月已付款 (PAID)
           </div>
-          <div className="text-3xl font-bold text-gray-900 mb-1">
-            {BUYER_STATS.spend}
-          </div>
+          <div className="text-3xl font-bold text-gray-900 mb-1">{BUYER_STATS.spend}</div>
           <div className="text-xs text-red-500 font-bold flex items-center gap-1">
             <TrendingUp size={12} /> {BUYER_STATS.spendTrend}
           </div>
         </div>
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
           <div className="text-gray-500 text-xs font-bold mb-2">活跃实例</div>
-          <div className="text-3xl font-bold text-gray-900 mb-1">
-            {BUYER_STATS.activeInstances}
-          </div>
+          <div className="text-3xl font-bold text-gray-900 mb-1">{BUYER_STATS.activeInstances}</div>
         </div>
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
           <div className="text-gray-500 text-xs font-bold mb-2">待支付</div>
-          <div className="text-3xl font-bold text-gray-900 mb-1">
-            {BUYER_STATS.unpaid}
-          </div>
+          <div className="text-3xl font-bold text-gray-900 mb-1">{BUYER_STATS.unpaid}</div>
         </div>
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
           <div className="text-gray-500 text-xs font-bold mb-2">工单</div>
-          <div className="text-3xl font-bold text-orange-500 mb-1">
-            {BUYER_STATS.tickets}
-          </div>
+          <div className="text-3xl font-bold text-orange-500 mb-1">{BUYER_STATS.tickets}</div>
         </div>
       </div>
 
@@ -44,9 +36,7 @@ const BuyerDashboard: React.FC = () => {
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
         <div className="flex items-center gap-2 mb-6">
           <Activity size={20} className="text-blue-600" />
-          <h3 className="font-bold text-gray-900">
-            资源概览 (Resource Overview)
-          </h3>
+          <h3 className="font-bold text-gray-900">资源概览 (Resource Overview)</h3>
         </div>
 
         {/* Chart Container */}
@@ -61,10 +51,7 @@ const BuyerDashboard: React.FC = () => {
           </div>
 
           {RESOURCE_TREND_DATA.map((d, i) => (
-            <div
-              key={i}
-              className="flex-1 flex flex-col justify-end group h-full relative z-10"
-            >
+            <div key={i} className="flex-1 flex flex-col justify-end group h-full relative z-10">
               {/* Tooltip */}
               <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-900 text-white text-[10px] px-2 py-1 rounded whitespace-nowrap shadow-lg z-20 transition-all">
                 <div className="font-bold mb-0.5">Day {i + 1}</div>
@@ -103,7 +90,7 @@ const BuyerDashboard: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default BuyerDashboard;
+export default BuyerDashboard

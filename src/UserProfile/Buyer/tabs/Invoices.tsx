@@ -1,26 +1,27 @@
-import React, { useState } from "react";
-import { Receipt, Settings, CheckCircle, Download, FileText, AlertCircle, Trash2, Box, Clock } from "lucide-react";
-import { useUserProfile } from "../../Core/useUserProfileStore";
-import { INITIAL_INVOICE_HEADERS } from "../constants";
-import { useBuyerStore } from "../useBuyerStore";
+import { Box, CheckCircle, Clock, Download, FileText, Settings } from 'lucide-react'
+import React, { useState } from 'react'
+import { useUserProfile } from '../../Core/useUserProfileStore'
+import { useBuyerStore } from '../useBuyerStore'
 
 const BuyerInvoices: React.FC = () => {
-  const { localOrders, openModal, showToast } = useUserProfile();
-  const [invoiceSubTab, setInvoiceSubTab] = useState<"invoiceable" | "history">("invoiceable");
-  const { invoices, invoiceHeaders, setInvoiceHeaders } = useBuyerStore();
+  const { localOrders, openModal, showToast } = useUserProfile()
+  const [invoiceSubTab, setInvoiceSubTab] = useState<'invoiceable' | 'history'>('invoiceable')
+  const { invoices, invoiceHeaders, setInvoiceHeaders } = useBuyerStore()
   // Mock bills data for rendering "unissued" logic
   // Real implementation might need this from a global context if shared with Bills
-  const bills: any[] = []; 
+  const bills: any[] = []
 
   const invoiceableBills = React.useMemo(() => {
-    return bills.filter(b => b.status === "paid" && b.invoiceStatus === "unissued");
-  }, [bills]);
+    return bills.filter((b) => b.status === 'paid' && b.invoiceStatus === 'unissued')
+  }, [bills])
 
   const invoiceableOrders = React.useMemo(() => {
-    return localOrders.filter(o => o.paymentStatus === "Paid" && o.invoiceStatus === "Unissued" && o.amount > 0);
-  }, [localOrders]);
+    return localOrders.filter(
+      (o) => o.paymentStatus === 'Paid' && o.invoiceStatus === 'Unissued' && o.amount > 0,
+    )
+  }, [localOrders])
 
-  const hasInvoiceableItems = invoiceableBills.length > 0 || invoiceableOrders.length > 0;
+  const hasInvoiceableItems = invoiceableBills.length > 0 || invoiceableOrders.length > 0
 
   return (
     <div className="space-y-6 animate-in fade-in">
@@ -31,7 +32,7 @@ const BuyerInvoices: React.FC = () => {
             <Settings size={20} className="text-gray-600" /> 发票抬头管理
           </h3>
           <button
-            onClick={() => openModal("invoice_header")}
+            onClick={() => openModal('invoice_header')}
             className="text-blue-600 text-sm font-bold hover:text-blue-800 transition-colors"
           >
             + 新增抬头
@@ -43,8 +44,8 @@ const BuyerInvoices: React.FC = () => {
               key={header.id}
               className={`p-4 rounded-xl border-2 transition-all relative ${
                 header.isDefault
-                  ? "border-blue-500 bg-blue-50/30"
-                  : "border-gray-200 hover:border-blue-300"
+                  ? 'border-blue-500 bg-blue-50/30'
+                  : 'border-gray-200 hover:border-blue-300'
               }`}
             >
               {header.isDefault && (
@@ -52,16 +53,14 @@ const BuyerInvoices: React.FC = () => {
                   默认
                 </div>
               )}
-              <div className="font-bold text-gray-900 mb-1 pr-8">
-                {header.title}
-              </div>
+              <div className="font-bold text-gray-900 mb-1 pr-8">{header.title}</div>
               <div className="text-xs text-gray-500 space-y-1 mb-4">
                 <div>税号: {header.taxId}</div>
                 <div className="truncate">类型: {header.type}</div>
               </div>
               <div className="flex justify-end gap-3 mt-auto">
                 <button
-                  onClick={() => openModal("invoice_header", { headerId: header.id })}
+                  onClick={() => openModal('invoice_header', { headerId: header.id })}
                   className="text-xs text-blue-600 hover:text-blue-800 font-bold"
                 >
                   编辑
@@ -70,9 +69,9 @@ const BuyerInvoices: React.FC = () => {
                   <button
                     onClick={() => {
                       setInvoiceHeaders((prev) =>
-                        prev.map((h) => ({ ...h, isDefault: h.id === header.id }))
-                      );
-                      showToast("已设为默认抬头");
+                        prev.map((h) => ({ ...h, isDefault: h.id === header.id })),
+                      )
+                      showToast('已设为默认抬头')
                     }}
                     className="text-xs text-gray-500 hover:text-gray-900 font-bold"
                   >
@@ -81,9 +80,9 @@ const BuyerInvoices: React.FC = () => {
                 )}
                 <button
                   onClick={() => {
-                    if (window.confirm("确定删除该发票抬头吗？")) {
-                      setInvoiceHeaders((prev) => prev.filter((h) => h.id !== header.id));
-                      showToast("发票抬头已删除");
+                    if (window.confirm('确定删除该发票抬头吗？')) {
+                      setInvoiceHeaders((prev) => prev.filter((h) => h.id !== header.id))
+                      showToast('发票抬头已删除')
                     }
                   }}
                   className="text-xs text-red-500 hover:text-red-700 font-bold"
@@ -101,28 +100,26 @@ const BuyerInvoices: React.FC = () => {
         <div className="border-b border-gray-100 px-6 py-4 flex justify-between items-center bg-gray-50/50">
           <div className="flex gap-6">
             <button
-              onClick={() => setInvoiceSubTab("invoiceable")}
+              onClick={() => setInvoiceSubTab('invoiceable')}
               className={`font-bold text-sm transition-colors relative ${
-                invoiceSubTab === "invoiceable"
-                  ? "text-blue-600"
-                  : "text-gray-500 hover:text-gray-900"
+                invoiceSubTab === 'invoiceable'
+                  ? 'text-blue-600'
+                  : 'text-gray-500 hover:text-gray-900'
               }`}
             >
               可开票订单/账单
-              {invoiceSubTab === "invoiceable" && (
+              {invoiceSubTab === 'invoiceable' && (
                 <div className="absolute -bottom-4.5 left-0 right-0 h-0.5 bg-blue-600 rounded-t-full"></div>
               )}
             </button>
             <button
-              onClick={() => setInvoiceSubTab("history")}
+              onClick={() => setInvoiceSubTab('history')}
               className={`font-bold text-sm transition-colors relative ${
-                invoiceSubTab === "history"
-                  ? "text-blue-600"
-                  : "text-gray-500 hover:text-gray-900"
+                invoiceSubTab === 'history' ? 'text-blue-600' : 'text-gray-500 hover:text-gray-900'
               }`}
             >
               开票记录
-              {invoiceSubTab === "history" && (
+              {invoiceSubTab === 'history' && (
                 <div className="absolute -bottom-4.5 left-0 right-0 h-0.5 bg-blue-600 rounded-t-full"></div>
               )}
             </button>
@@ -130,10 +127,13 @@ const BuyerInvoices: React.FC = () => {
         </div>
 
         <div className="p-0">
-          {invoiceSubTab === "invoiceable" ? (
+          {invoiceSubTab === 'invoiceable' ? (
             <div className="divide-y divide-gray-100">
               {invoiceableBills.map((bill) => (
-                <div key={`bill-${bill.id}`} className="p-4 hover:bg-gray-50 flex items-center justify-between transition-colors">
+                <div
+                  key={`bill-${bill.id}`}
+                  className="p-4 hover:bg-gray-50 flex items-center justify-between transition-colors"
+                >
                   <div>
                     <div className="font-bold text-gray-900 mb-1 flex items-center gap-2">
                       <FileText size={16} className="text-gray-400" />
@@ -146,11 +146,13 @@ const BuyerInvoices: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-6">
                     <div className="text-right">
-                      <div className="font-bold text-lg text-gray-900">¥{bill.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+                      <div className="font-bold text-lg text-gray-900">
+                        ¥{bill.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      </div>
                       <div className="text-[10px] text-gray-400">可开票金额</div>
                     </div>
                     <button
-                      onClick={() => openModal("request_invoice", { billId: bill.id })}
+                      onClick={() => openModal('request_invoice', { billId: bill.id })}
                       className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors shadow-sm"
                     >
                       申请开票
@@ -159,7 +161,10 @@ const BuyerInvoices: React.FC = () => {
                 </div>
               ))}
               {invoiceableOrders.map((order) => (
-                <div key={`order-${order.id}`} className="p-4 hover:bg-gray-50 flex items-center justify-between transition-colors">
+                <div
+                  key={`order-${order.id}`}
+                  className="p-4 hover:bg-gray-50 flex items-center justify-between transition-colors"
+                >
                   <div>
                     <div className="font-bold text-gray-900 mb-1 flex items-center gap-2">
                       <Box size={16} className="text-gray-400" />
@@ -172,11 +177,13 @@ const BuyerInvoices: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-6">
                     <div className="text-right">
-                      <div className="font-bold text-lg text-gray-900">¥{order.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+                      <div className="font-bold text-lg text-gray-900">
+                        ¥{order.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      </div>
                       <div className="text-[10px] text-gray-400">可开票金额</div>
                     </div>
                     <button
-                      onClick={() => openModal("request_invoice", { orderId: order.id })}
+                      onClick={() => openModal('request_invoice', { orderId: order.id })}
                       className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors shadow-sm"
                     >
                       申请开票
@@ -207,12 +214,8 @@ const BuyerInvoices: React.FC = () => {
               <tbody className="divide-y divide-gray-50">
                 {invoices.map((inv) => (
                   <tr key={inv.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 font-mono text-gray-600">
-                      {inv.id}
-                    </td>
-                    <td className="px-6 py-4 text-gray-800">
-                      {inv.relatedId}
-                    </td>
+                    <td className="px-6 py-4 font-mono text-gray-600">{inv.id}</td>
+                    <td className="px-6 py-4 text-gray-800">{inv.relatedId}</td>
                     <td className="px-6 py-4">
                       <div className="font-bold text-gray-900">{inv.title}</div>
                       <div className="text-xs text-gray-500">{inv.type}</div>
@@ -222,7 +225,7 @@ const BuyerInvoices: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 text-gray-600">{inv.date}</td>
                     <td className="px-6 py-4">
-                      {inv.status === "issued" ? (
+                      {inv.status === 'issued' ? (
                         <span className="text-xs bg-green-50 text-green-600 px-2 py-1 rounded font-bold flex items-center gap-1 w-fit">
                           <CheckCircle size={12} /> 已开具
                         </span>
@@ -233,12 +236,12 @@ const BuyerInvoices: React.FC = () => {
                       )}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      {inv.status === "issued" ? (
+                      {inv.status === 'issued' ? (
                         <div className="flex justify-end gap-3">
                           <button
                             onClick={() => {
-                              showToast("发票PDF下载中...");
-                              setTimeout(() => showToast("下载成功"), 1000);
+                              showToast('发票PDF下载中...')
+                              setTimeout(() => showToast('下载成功'), 1000)
                             }}
                             className="text-blue-600 font-bold hover:text-blue-800 text-xs flex items-center gap-1"
                           >
@@ -257,7 +260,7 @@ const BuyerInvoices: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default BuyerInvoices;
+export default BuyerInvoices

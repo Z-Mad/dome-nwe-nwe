@@ -21,6 +21,7 @@
 获取当前用户参与的所有会话。
 
 **请求:**
+
 ```
 GET /market/chat/session/list
 ```
@@ -32,6 +33,7 @@ GET /market/chat/session/list
 | size | Integer | 否 | 20 | 每页大小，最大100 |
 
 **响应:**
+
 ```json
 {
   "code": 200,
@@ -65,6 +67,7 @@ GET /market/chat/session/list
 向目标用户发起会话时调用，返回已存在或新创建的会话。
 
 **请求:**
+
 ```
 POST /market/chat/session/create
 ```
@@ -75,6 +78,7 @@ POST /market/chat/session/create
 | targetId | Long | 是 | 目标用户ID |
 
 **响应:**
+
 ```json
 {
   "code": 200,
@@ -102,11 +106,13 @@ POST /market/chat/session/create
 向指定会话发送文本消息。
 
 **请求:**
+
 ```
 POST /market/chat/message/send
 ```
 
 **Body:**
+
 ```json
 {
   "sessionId": 1,
@@ -116,6 +122,7 @@ POST /market/chat/message/send
 ```
 
 发送图片：
+
 ```json
 {
   "sessionId": 1,
@@ -132,6 +139,7 @@ POST /market/chat/message/send
 | contentType | Integer | 否 | 1 | 内容类型：1=文本, 2=图片 |
 
 **响应:**
+
 ```json
 {
   "code": 200,
@@ -151,6 +159,7 @@ POST /market/chat/message/send
 ```
 
 **错误响应:**
+
 ```json
 {
   "code": 400,
@@ -166,6 +175,7 @@ POST /market/chat/message/send
 分页查询会话的历史消息（游标分页，倒序返回）。
 
 **请求:**
+
 ```
 GET /market/chat/message/history
 ```
@@ -178,6 +188,7 @@ GET /market/chat/message/history
 | limit | Integer | 否 | 20 | 查询条数，最大50 |
 
 **响应:**
+
 ```json
 {
   "code": 200,
@@ -215,6 +226,7 @@ GET /market/chat/message/history
 增量获取新消息（游标分页，正序返回）。
 
 **请求:**
+
 ```
 GET /market/chat/message/poll
 ```
@@ -227,6 +239,7 @@ GET /market/chat/message/poll
 | limit | Integer | 否 | 50 | 查询条数，最大50 |
 
 **响应:**
+
 ```json
 {
   "code": 200,
@@ -258,11 +271,13 @@ GET /market/chat/message/poll
 标记单条或批量消息为已读。
 
 **请求:**
+
 ```
 POST /market/chat/message/read
 ```
 
 **Body:**
+
 ```json
 {
   "sessionId": 1,
@@ -271,6 +286,7 @@ POST /market/chat/message/read
 ```
 
 或批量标记：
+
 ```json
 {
   "sessionId": 1,
@@ -285,9 +301,10 @@ POST /market/chat/message/read
 | messageId | Long | 否* | 单条标记时的消息ID |
 | upToMessageId | Long | 否* | 批量标记上限ID（标记该ID及之前发给当前用户的所有消息） |
 
-*注：messageId 和 upToMessageId 至少提供一个
+\*注：messageId 和 upToMessageId 至少提供一个
 
 **响应:**
+
 ```json
 {
   "code": 200,
@@ -306,55 +323,55 @@ POST /market/chat/message/read
 
 ### SessionVO 会话视图对象
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| sessionId | Long | 会话ID |
-| sessionKey | String | 会话唯一标识(较小用户ID_较大用户ID) |
-| user1Id | Long | 用户1 ID（较小的用户ID） |
-| user2Id | Long | 用户2 ID（较大的用户ID） |
-| lastMessage | String | 最后一条消息内容 |
-| lastMsgTime | DateTime | 最后一条消息时间 |
-| unreadCount | Integer | 当前用户未读消息数 |
-| status | Integer | 会话状态: 0=正常, 1=已关闭 |
+| 字段        | 类型     | 说明                                 |
+| ----------- | -------- | ------------------------------------ |
+| sessionId   | Long     | 会话ID                               |
+| sessionKey  | String   | 会话唯一标识(较小用户ID\_较大用户ID) |
+| user1Id     | Long     | 用户1 ID（较小的用户ID）             |
+| user2Id     | Long     | 用户2 ID（较大的用户ID）             |
+| lastMessage | String   | 最后一条消息内容                     |
+| lastMsgTime | DateTime | 最后一条消息时间                     |
+| unreadCount | Integer  | 当前用户未读消息数                   |
+| status      | Integer  | 会话状态: 0=正常, 1=已关闭           |
 
 ### MessageVO 消息视图对象
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| messageId | Long | 消息ID |
-| sessionId | Long | 会话ID |
-| senderId | Long | 发送者ID |
-| receiverId | Long | 接收者ID |
-| content | String | 消息内容 |
-| contentType | Integer | 内容类型: 1=文本, 2=图片 |
-| isRead | Integer | 是否已读: 0=未读, 1=已读 |
-| msgTime | DateTime | 消息时间 |
+| 字段        | 类型     | 说明                     |
+| ----------- | -------- | ------------------------ |
+| messageId   | Long     | 消息ID                   |
+| sessionId   | Long     | 会话ID                   |
+| senderId    | Long     | 发送者ID                 |
+| receiverId  | Long     | 接收者ID                 |
+| content     | String   | 消息内容                 |
+| contentType | Integer  | 内容类型: 1=文本, 2=图片 |
+| isRead      | Integer  | 是否已读: 0=未读, 1=已读 |
+| msgTime     | DateTime | 消息时间                 |
 
 ### PollResultVO 轮询结果对象
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| messages | List\<MessageVO\> | 消息列表 |
-| hasMore | Boolean | 是否还有更多消息 |
-| lastMsgId | Long | 最后一条消息ID（用于下次轮询） |
+| 字段      | 类型              | 说明                           |
+| --------- | ----------------- | ------------------------------ |
+| messages  | List\<MessageVO\> | 消息列表                       |
+| hasMore   | Boolean           | 是否还有更多消息               |
+| lastMsgId | Long              | 最后一条消息ID（用于下次轮询） |
 
 ### MarkReadResultVO 标记已读结果对象
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
+| 字段        | 类型    | 说明               |
+| ----------- | ------- | ------------------ |
 | markedCount | Integer | 实际标记的消息数量 |
-| sessionId | Long | 会话ID |
+| sessionId   | Long    | 会话ID             |
 
 ---
 
 ## 错误码
 
-| code | 说明 |
-|------|------|
-| 200 | 成功 |
-| 400 | 请求参数错误 |
-| 403 | 无权限访问 |
-| 500 | 服务器内部错误 |
+| code | 说明           |
+| ---- | -------------- |
+| 200  | 成功           |
+| 400  | 请求参数错误   |
+| 403  | 无权限访问     |
+| 500  | 服务器内部错误 |
 
 ---
 
@@ -363,22 +380,22 @@ POST /market/chat/message/read
 ### 前端轮询示例
 
 ```javascript
-let lastMsgId = 0;
+let lastMsgId = 0
 
 async function pollMessages(sessionId) {
   const response = await fetch(
-    `/market/chat/message/poll?sessionId=${sessionId}&lastMsgId=${lastMsgId}`
-  );
-  const result = await response.json();
+    `/market/chat/message/poll?sessionId=${sessionId}&lastMsgId=${lastMsgId}`,
+  )
+  const result = await response.json()
 
   if (result.success && result.data.messages.length > 0) {
-    result.data.messages.forEach(msg => {
-      displayMessage(msg);
-    });
-    lastMsgId = result.data.lastMsgId;
+    result.data.messages.forEach((msg) => {
+      displayMessage(msg)
+    })
+    lastMsgId = result.data.lastMsgId
   }
 
-  setTimeout(() => pollMessages(sessionId), 3000);
+  setTimeout(() => pollMessages(sessionId), 3000)
 }
 ```
 
@@ -387,9 +404,9 @@ async function pollMessages(sessionId) {
 ```javascript
 // 1. 创建/获取会话
 const sessionRes = await fetch('/market/chat/session/create?targetId=2001', {
-  method: 'POST'
-});
-const session = await sessionRes.json();
+  method: 'POST',
+})
+const session = await sessionRes.json()
 
 // 2. 发送消息
 const msgRes = await fetch('/market/chat/message/send', {
@@ -397,13 +414,13 @@ const msgRes = await fetch('/market/chat/message/send', {
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
     sessionId: session.data.sessionId,
-    content: '您好，请问有货吗？'
-  })
-});
+    content: '您好，请问有货吗？',
+  }),
+})
 ```
 
 ### 获取会话列表示例
 
 ```javascript
-const sessions = await fetch('/market/chat/session/list');
+const sessions = await fetch('/market/chat/session/list')
 ```

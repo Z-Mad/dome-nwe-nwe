@@ -1,19 +1,19 @@
-import React from "react";
-import { Navigate, Route, Routes, useNavigate, useLocation } from "react-router-dom";
-import TabNav, { TabItem } from "../Shared/components/molecules/TabNav";
-import { BUYER_TABS, BuyerTab } from "./buyerTabs";
-import { Dashboard, Orders, Bills, Invoices, Resources, Analysis, Support } from "./tabs";
-import { BuyerModals } from "./BuyerModals";
+import React from 'react'
+import { Navigate, Route, Routes, useNavigate, useLocation } from 'react-router-dom'
+import TabNav, { type TabItem } from '../Shared/components/molecules/TabNav'
+import { BUYER_TABS, type BuyerTab } from './buyerTabs'
+import { Dashboard, Orders, Bills, Invoices, Resources, Analysis, Support } from './tabs'
+import { BuyerModals } from './BuyerModals'
 
 const BuyerConsole: React.FC = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const navigate = useNavigate()
+  const location = useLocation()
 
-  const currentTab = (location.pathname.split("/").pop() as BuyerTab) || "dashboard";
+  const currentTab = (location.pathname.split('/').pop() as BuyerTab) || 'dashboard'
 
   const handleBuyerTabChange = (tab: BuyerTab) => {
-    navigate(`/profile/buyer/${tab}`);
-  };
+    navigate(`/profile/buyer/${tab}`)
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -36,7 +36,7 @@ const BuyerConsole: React.FC = () => {
         <Route path="*" element={<Navigate to="dashboard" replace />} />
       </Routes>
     </div>
-  );
-};
+  )
+}
 
-export default React.memo(BuyerConsole);
+export default React.memo(BuyerConsole)

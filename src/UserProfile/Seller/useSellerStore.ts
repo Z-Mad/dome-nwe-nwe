@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { SELLER_MONITORING_MOCK, SELLER_REFUNDS_MOCK, RICH_ASSETS_MOCK } from "./constants";
-import { MonitoringData, SellerAsset, Refund } from '../types/index';
+import type { MonitoringData, SellerAsset, Refund } from '../types/index';
 
 interface SellerState {
   monitoringData: MonitoringData[];
@@ -18,4 +18,4 @@ export const useSellerStore = create<SellerState>((set) => ({
   setSellerAssets: (sellerAssets) => set({ sellerAssets }),
   sellerRefunds: SELLER_REFUNDS_MOCK,
   setSellerRefunds: (sellerRefunds) => set({ sellerRefunds }),
-}));
+}))

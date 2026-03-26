@@ -1,8 +1,8 @@
-const fs = require('fs');
-const content = fs.readFileSync('components/UserProfile.tsx', 'utf-8');
+const fs = require('fs')
+const content = fs.readFileSync('components/UserProfile.tsx', 'utf-8')
 
-const startRev = content.indexOf('const renderSellerRevenue = () => {');
-const endRev = content.indexOf('const renderSellerAnalysis = () => (');
+const startRev = content.indexOf('const renderSellerRevenue = () => {')
+const endRev = content.indexOf('const renderSellerAnalysis = () => (')
 
 if (startRev !== -1 && endRev !== -1) {
   const newFinance = `  const renderSellerFinance = () => {
@@ -358,10 +358,10 @@ if (startRev !== -1 && endRev !== -1) {
       </div>
     );
   };
-`;
-  const newContent = content.substring(0, startRev) + newFinance + '\n' + content.substring(endRev);
-  fs.writeFileSync('components/UserProfile.tsx', newContent);
-  console.log('Successfully replaced renderSellerRevenue with renderSellerFinance');
+`
+  const newContent = content.substring(0, startRev) + newFinance + '\n' + content.substring(endRev)
+  fs.writeFileSync('components/UserProfile.tsx', newContent)
+  console.log('Successfully replaced renderSellerRevenue with renderSellerFinance')
 } else {
-  console.log('Could not find start or end markers');
+  console.log('Could not find start or end markers')
 }

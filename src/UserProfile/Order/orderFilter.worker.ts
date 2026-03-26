@@ -1,15 +1,15 @@
-import { filterOrders, ProfileOrderItem } from "./orderUtils";
+import { filterOrders, type ProfileOrderItem } from './orderUtils'
 
 interface FilterPayload<T extends ProfileOrderItem> {
-  orders: T[];
-  statusFilter: string;
-  keyword: string;
+  orders: T[]
+  statusFilter: string
+  keyword: string
 }
 
 self.onmessage = (event: MessageEvent<FilterPayload<ProfileOrderItem>>) => {
-  const { orders, statusFilter, keyword } = event.data;
-  const filtered = filterOrders(orders, statusFilter, keyword);
-  self.postMessage(filtered);
-};
+  const { orders, statusFilter, keyword } = event.data
+  const filtered = filterOrders(orders, statusFilter, keyword)
+  self.postMessage(filtered)
+}
 
-export {};
+export {}

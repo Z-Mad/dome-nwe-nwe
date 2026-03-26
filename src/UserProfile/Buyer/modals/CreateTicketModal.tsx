@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import { LifeBuoy, X, Loader2, Upload, Send } from 'lucide-react';
+import { LifeBuoy, Loader2, X } from 'lucide-react'
+import { useState } from 'react'
 
 export const CreateTicketModal = ({ closeModal, showToast }: any) => {
-  const [ticketForm, setTicketForm] = useState({ type: "technical", desc: "" });
-  const [isLoading, setIsLoading] = useState(false);
+  const [ticketForm, setTicketForm] = useState({ type: 'technical', desc: '' })
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleCreateTicket = () => {
-    if (!ticketForm.desc) return;
-    setIsLoading(true);
+    if (!ticketForm.desc) return
+    setIsLoading(true)
     setTimeout(() => {
-      setIsLoading(false);
-      showToast("工单已提交，技术人员将尽快与您联系。");
-      closeModal();
-    }, 1000);
-  };
+      setIsLoading(false)
+      showToast('工单已提交，技术人员将尽快与您联系。')
+      closeModal()
+    }, 1000)
+  }
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4 animate-in fade-in">
@@ -29,15 +29,11 @@ export const CreateTicketModal = ({ closeModal, showToast }: any) => {
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">
-              问题类型
-            </label>
+            <label className="block text-sm font-bold text-gray-700 mb-2">问题类型</label>
             <select
               className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={ticketForm.type}
-              onChange={(e) =>
-                setTicketForm({ ...ticketForm, type: e.target.value })
-              }
+              onChange={(e) => setTicketForm({ ...ticketForm, type: e.target.value })}
             >
               <option value="technical">技术支持</option>
               <option value="billing">财务/账单</option>
@@ -46,16 +42,12 @@ export const CreateTicketModal = ({ closeModal, showToast }: any) => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">
-              问题描述
-            </label>
+            <label className="block text-sm font-bold text-gray-700 mb-2">问题描述</label>
             <textarea
               className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 h-32 resize-none"
               placeholder="请详细描述您遇到的问题..."
               value={ticketForm.desc}
-              onChange={(e) =>
-                setTicketForm({ ...ticketForm, desc: e.target.value })
-              }
+              onChange={(e) => setTicketForm({ ...ticketForm, desc: e.target.value })}
             ></textarea>
           </div>
         </div>
@@ -71,14 +63,10 @@ export const CreateTicketModal = ({ closeModal, showToast }: any) => {
             disabled={!ticketForm.desc || isLoading}
             className="px-5 py-2.5 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
-            {isLoading ? (
-              <Loader2 className="animate-spin" size={18} />
-            ) : (
-              "提交"
-            )}
+            {isLoading ? <Loader2 className="animate-spin" size={18} /> : '提交'}
           </button>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
