@@ -63,15 +63,6 @@ export default function UpgradeModal(props: any) {
     onUpgrade,
     previewImageUrl,
     setActiveModal,
-    invoiceStartDate,
-    invoiceEndDate,
-    dateError,
-    isQueryingUsage,
-    localOrders,
-    processSuccessfulPayment,
-    auditComment,
-    setAuditComment,
-    handleSellerRefundAudit,
   } = props
 
   return (

@@ -1,61 +1,52 @@
-import React, { useState, useEffect, useRef } from 'react'
+import ChatPanel from '@/components/ChatPanel'
+import LiveView from '@/components/LiveView'
+import RelatedPanel from '@/components/RelatedPanel'
+import ReportPanel from '@/components/ReportPanel'
+import Sidebar from '@/components/Sidebar'
+import VideoView from '@/components/VideoView'
+import { type DetailModule, MOCK_AGENTS } from '@/data'
 import {
-  Monitor,
-  PlayCircle,
-  Radio,
-  Star,
-  Share2,
-  Heart,
-  CheckCircle,
-  Download,
-  Globe,
-  Calendar,
-  Box,
-  Database,
-  Factory,
-  Layers,
-  ChevronRight,
-  Zap,
-  BarChart2,
-  TrendingUp,
-  AlertTriangle,
-  FileText,
-  User,
-  Users,
-  ShieldCheck,
-  Map,
   Activity,
-  X,
-  Check,
-  Phone,
-  Mail,
-  MessageSquare,
+  AlertTriangle,
   ArrowRight,
-  Cpu,
-  Server,
-  Lightbulb,
-  GitBranch,
-  Target,
-  Plus,
-  Layout,
+  BarChart2,
   BookOpen,
-  PieChart,
-  File,
+  Box,
   Building2,
-  Search,
-  CreditCard,
-  Loader2,
+  Calendar,
+  Check,
+  CheckCircle,
+  ChevronRight,
   Clock,
   Copy,
+  Cpu,
+  CreditCard,
+  Database,
+  Download,
+  Factory,
+  FileText,
+  GitBranch,
+  Globe,
+  Heart,
+  Loader2,
+  Map,
+  MessageSquare,
+  Monitor,
   MoreHorizontal,
+  PieChart,
+  PlayCircle,
+  Radio,
+  Search,
+  Share2,
+  ShieldCheck,
+  Star,
+  TrendingUp,
+  User,
+  Users,
+  X,
+  Zap,
 } from 'lucide-react'
-import Sidebar from '@/components/Sidebar'
-import ReportPanel from '@/components/ReportPanel'
-import ChatPanel from '@/components/ChatPanel'
-import RelatedPanel from '@/components/RelatedPanel'
-import VideoView from '@/components/VideoView'
-import LiveView from '@/components/LiveView'
-import { MOCK_AGENTS, AgentData, DetailModule, Deliverable, DataColumn, DataRow } from '@/data'
+import React, { useEffect, useRef, useState } from 'react'
 
 interface ProductDetailProps {
   onBack: () => void
@@ -967,10 +958,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
 
   if (!agent) return <div>Loading...</div>
 
-  const handleContactManager = () => {
-    onNavigate('messages', { conversationId: 'manager_james' })
-  }
-
   const handleCtaClick = (type: 'trial' | 'paid' | 'consultation' | 'upgrade') => {
     setPurchaseType(type)
     setShowPurchaseModal(true)
@@ -1101,13 +1088,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
       return (baseMonthly * 12 * discount).toLocaleString()
     }
     return '5,000' // Usage base installation fee
-  }
-
-  const getDisplayUnit = () => {
-    if (pricingMode === 'buyout') return agent.pricing.buyout.unit
-    if (saasPlanType === 'monthly') return '/ 月'
-    if (saasPlanType === 'yearly') return '/ 年'
-    return '/ 基础费'
   }
 
   return (

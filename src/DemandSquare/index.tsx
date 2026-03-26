@@ -1,5 +1,5 @@
+import { ArrowRight, Briefcase, Clock, DollarSign, MapPin, Plus, Search, Tag } from 'lucide-react'
 import React from 'react'
-import { Search, Clock, DollarSign, Briefcase, MapPin, Tag, ArrowRight, Plus } from 'lucide-react'
 
 const DemandSquare: React.FC = () => {
   const demands = [

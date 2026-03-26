@@ -1,15 +1,5 @@
-import { ReportItem, DocType, RelatedRecord, Message, Account } from './types'
-import {
-  FileBarChart,
-  Layers,
-  AlertTriangle,
-  Zap,
-  Database,
-  Activity,
-  ShieldCheck,
-  Factory,
-} from 'lucide-react'
 import React from 'react'
+import type { Account } from './types'
 
 // Helper to get a future date string
 export const getFutureDate = (days: number) => {

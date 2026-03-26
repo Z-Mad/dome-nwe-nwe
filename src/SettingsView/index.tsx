@@ -1,33 +1,26 @@
-import React, { useState } from 'react'
+import { type Account } from '@/types'
 import {
-  User,
-  Bell,
-  Lock,
-  Globe,
-  Moon,
-  Shield,
-  Key,
-  CheckCircle,
-  Trash2,
-  Plus,
-  Copy,
   AlertTriangle,
-  Mail,
-  RefreshCw,
-  Check,
-  FileText,
-  Upload,
-  Calendar,
-  Network,
-  Eye,
-  EyeOff,
-  X,
+  Bell,
   Building2,
-  Smartphone,
+  Calendar,
   Camera,
+  Check,
+  CheckCircle,
+  Copy,
+  Key,
+  Lock,
+  Network,
+  Plus,
+  Shield,
   ShieldCheck,
+  Smartphone,
+  Trash2,
+  Upload,
+  User,
+  X,
 } from 'lucide-react'
-import { Account } from '@/types'
+import React, { useState } from 'react'
 
 interface SettingsViewProps {
   currentAccount: Account

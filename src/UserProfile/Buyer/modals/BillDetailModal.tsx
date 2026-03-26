@@ -1,5 +1,5 @@
+import { X } from 'lucide-react'
 import React from 'react'
-import { FileText, X, CheckCircle, AlertCircle, Clock, Download } from 'lucide-react'
 
 export const BillDetailModal = ({ selectedItem, closeModal, openModal }: any) => {
   if (!selectedItem) return null

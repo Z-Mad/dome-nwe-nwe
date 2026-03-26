@@ -1,19 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react'
-import {
-  Search,
-  MoreVertical,
-  Phone,
-  Video,
-  Send,
-  Paperclip,
-  Smile,
-  Image as ImageIcon,
-  Bot,
-  User,
-} from 'lucide-react'
-import { chatService, SessionVO, MessageVO } from '@/services/chat'
+import { chatService, type MessageVO, type SessionVO } from '@/services/chat'
 import { uploadService } from '@/services/upload'
-import { useUserStore } from '@/utils/user'
+import {
+  Bot,
+  Image as ImageIcon,
+  MoreVertical,
+  Paperclip,
+  Phone,
+  Search,
+  Send,
+  Smile,
+  User,
+  Video,
+} from 'lucide-react'
+import React, { useEffect, useRef, useState } from 'react'
 
 interface Message {
   id: string
@@ -40,23 +39,20 @@ interface Contact {
 
 interface MessageCenterProps {
   initialParams?: { conversationId?: string }
-  systemNotifications?: Message[]
 }
 
 const CURRENT_USER_ID = localStorage.getItem('market_userId') // FIXME: 需要从全局状态/上下文中获取当前登录用户ID
 
-const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams, systemNotifications }) => {
+const MessageCenter: React.FC<MessageCenterProps> = ({ initialParams }) => {
   // --- State ---
   const [contacts, setContacts] = useState<Contact[]>([])
   const [activeChatId, setActiveChatId] = useState<string>(initialParams?.conversationId || '')
   const [chatHistory, setChatHistory] = useState<Record<string, Message[]>>({})
   const [inputText, setInputText] = useState('')
-  const [loading, setLoading] = useState(false)
   const [uploadingImage, setUploadingImage] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const imageInputRef = useRef<HTMLInputElement>(null)
   const pollingTimerRef = useRef<NodeJS.Timeout | null>(null)
-  const { userInfo } = useUserStore()
 
   // --- Helpers ---
   const formatTime = (timeStr: string | null) => {

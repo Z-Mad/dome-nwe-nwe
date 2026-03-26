@@ -1,76 +1,43 @@
-import React, { useState, useEffect, useMemo } from 'react'
 import {
-  X,
-  Layers,
+  Activity,
+  AlertCircle,
+  AlertTriangle,
+  BarChart2,
   Box,
-  LineChart,
-  FileText,
+  Check,
   CheckCircle,
   ChevronRight,
-  Upload,
-  Info,
-  DollarSign,
-  Wallet,
-  Save,
-  Monitor,
-  PlayCircle,
-  Radio,
-  Tag,
-  HelpCircle,
-  AlertCircle,
-  Video,
-  Image as ImageIcon,
-  Sparkles,
-  Cpu,
-  Trash2,
-  PlusCircle,
-  Lightbulb,
-  BarChart3,
-  BarChart2,
-  GripVertical,
-  GitCommit,
-  ShieldAlert,
-  Zap,
-  Bug,
-  Layout,
-  List,
-  Table,
-  Code,
-  Eye,
-  PenTool,
-  Target,
-  User,
-  Activity,
-  ShieldCheck,
-  FileImage,
-  Settings,
-  Type,
-  Key,
-  Database,
-  HardHat,
-  Check,
-  CreditCard,
-  Server,
-  Users,
-  Lock,
-  Calendar,
-  Building,
-  Building2,
-  Package,
   Clock,
-  Loader2,
-  GitBranch,
-  ChevronLeft,
+  Cpu,
+  CreditCard,
+  Database,
   Edit3,
-  Plus,
-  Minus,
-  Folder,
-  FileCode,
-  ArrowRight,
+  Eye,
+  FileText,
   Filter,
+  GitBranch,
+  Image as ImageIcon,
+  Layout,
+  LineChart,
+  Monitor,
   MoreVertical,
-  AlertTriangle,
+  Package,
+  PlayCircle,
+  Plus,
+  Radio,
+  Save,
+  Settings,
+  ShieldCheck,
+  Sparkles,
+  Target,
+  Type,
+  Upload,
+  Users,
+  Video,
+  X,
+  Zap,
 } from 'lucide-react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 interface PublishWizardProps {
   onClose: () => void
@@ -340,7 +307,6 @@ const PublishWizard: React.FC<PublishWizardProps> = ({
   const [step, setStep] = useState(1)
   const [showAgreementModal, setShowAgreementModal] = useState(false)
   const [isValidating, setIsValidating] = useState(false)
-  const [validationStep, setValidationStep] = useState(0)
   const [isStep1Validating, setIsStep1Validating] = useState(false)
   const [step1Error, setStep1Error] = useState<string | null>(null)
 
@@ -549,30 +515,6 @@ const PublishWizard: React.FC<PublishWizardProps> = ({
   const removeDataPreviewRow = (index: number) => {
     const newRows = formData.dataPreviewRows.filter((_, i) => i !== index)
     setFormData({ ...formData, dataPreviewRows: newRows })
-  }
-
-  const addResourcePack = () => {
-    const newId = `p${formData.resourcePacks.length + 1}`
-    setFormData((prev) => ({
-      ...prev,
-      resourcePacks: [
-        ...prev.resourcePacks,
-        { id: newId, name: '新资源包', price: 0, tokens: 0, storage: 0 },
-      ],
-    }))
-  }
-
-  const removeResourcePack = (index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      resourcePacks: prev.resourcePacks.filter((_, i) => i !== index),
-    }))
-  }
-
-  const handleResourcePackChange = (index: number, field: string, value: any) => {
-    const newPacks = [...formData.resourcePacks]
-    newPacks[index] = { ...newPacks[index], [field]: value }
-    setFormData((prev) => ({ ...prev, resourcePacks: newPacks }))
   }
 
   const handleMonthlyFeeChange = (val: number) => {

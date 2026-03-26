@@ -1,5 +1,5 @@
+import { Box, ChevronRight, Download, Filter, LineChart, Search, Star } from 'lucide-react'
 import React, { useState } from 'react'
-import { Search, Filter, Download, Star, Box, LineChart, ChevronRight } from 'lucide-react'
 
 interface AgentCategoryViewProps {
   category: 'method' | 'analysis' | 'service'

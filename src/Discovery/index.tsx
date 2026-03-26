@@ -1,6 +1,6 @@
+import { ArrowRight, Cpu, Download, Filter, Search, Star } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import { Search, Filter, Star, Download, Box, LineChart, Cpu, ArrowRight } from 'lucide-react'
-import { getAgentList, Agent } from '../../services/discover'
+import { type Agent, getAgentList } from '@/services/discover'
 
 interface DiscoveryProps {
   onNavigateToDetail: (id: string) => void
@@ -9,7 +9,7 @@ interface DiscoveryProps {
 
 const Discovery: React.FC<DiscoveryProps> = ({ onNavigateToDetail, extraAgents = [] }) => {
   const [agents, setAgents] = useState<Agent[]>([])
-  const [loading, setLoading] = useState(false)
+  const [_loading, setLoading] = useState(false)
 
   useEffect(() => {
     const fetchAgents = async () => {

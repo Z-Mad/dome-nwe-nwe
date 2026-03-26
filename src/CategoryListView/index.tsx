@@ -1,17 +1,15 @@
-import React from 'react'
 import {
-  Factory,
-  Droplet,
-  Zap,
-  Truck,
-  ShieldAlert,
-  Cpu,
-  Database,
   ChevronRight,
-  Layers,
+  Droplet,
+  Factory,
   Flame,
+  Layers,
+  ShieldAlert,
+  Truck,
   Wrench,
+  Zap,
 } from 'lucide-react'
+import React from 'react'
 
 const CategoryListView: React.FC = () => {
   const categories = [
