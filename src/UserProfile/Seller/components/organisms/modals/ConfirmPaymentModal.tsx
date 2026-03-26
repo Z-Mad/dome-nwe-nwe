@@ -1,6 +1,20 @@
 import { AlertCircle, CheckCircle, Upload, X } from 'lucide-react'
 import { useState } from 'react'
 
+interface Order {
+  id: string
+  [key: string]: any
+}
+
+interface ConfirmPaymentModalProps {
+  selectedItem: Order
+  showToast: (message: string) => void
+  setLocalOrders: (orders: Order[] | ((prev: Order[]) => Order[])) => void
+  setMonitoringData: (data: any[] | ((prev: any[]) => any[])) => void
+  processSuccessfulPayment: (orderId: string, data: any) => void
+  setActiveModal: (modal: string) => void
+}
+
 export const ConfirmPaymentModal = ({
   selectedItem,
   showToast,
@@ -8,7 +22,7 @@ export const ConfirmPaymentModal = ({
   setMonitoringData,
   processSuccessfulPayment,
   setActiveModal,
-}: any) => {
+}: ConfirmPaymentModalProps) => {
   const [receiptForm, setReceiptForm] = useState({
     companyName: '',
     phone: '',
@@ -178,9 +192,8 @@ export const ConfirmPaymentModal = ({
                     : item,
                 ),
               )
-              let updatedOrderToProcess = null
               setLocalOrders((prev) => {
-                const newOrders = prev.map((o) => {
+                const mappedOrders = prev.map((o) => {
                   if (o.id === (selectedItem.orderId || selectedItem.id)) {
                     // Use selectedItem.orderId or id since it maps to localOrders now
                     // Extend expire date by 30 days for mock
@@ -203,16 +216,18 @@ export const ConfirmPaymentModal = ({
                       payTime: new Date().toLocaleString(),
                       paymentMethod: 'CorporateRemittance',
                     }
-                    updatedOrderToProcess = updatedOrder
                     return updatedOrder
                   }
                   return o
                 })
-                return newOrders
+                const updatedOrder = mappedOrders.find(
+                  (o) => o.id === (selectedItem.orderId || selectedItem.id),
+                )
+                if (updatedOrder) {
+                  processSuccessfulPayment(updatedOrder.id, updatedOrder)
+                }
+                return mappedOrders
               })
-              if (updatedOrderToProcess) {
-                processSuccessfulPayment(updatedOrderToProcess)
-              }
               setActiveModal('none')
             }}
             className="px-5 py-2.5 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition-colors shadow-sm"

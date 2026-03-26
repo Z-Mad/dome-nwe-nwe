@@ -46,6 +46,35 @@ interface PublishWizardProps {
   mode?: 'create' | 'version' | 'edit'
 }
 
+interface SubItem {
+  name: string
+  type?: string
+  value?: string
+  target?: string
+  status?: string
+}
+
+interface ConfigItem {
+  name: string
+  subItems?: SubItem[]
+  hasDataToggle?: boolean
+}
+
+interface ConfigGroup {
+  category: string
+  items: ConfigItem[]
+}
+
+interface SourceAsset {
+  id: string
+  name: string
+  type: 'AI' | 'BI'
+  lastModified: string
+  owner: string
+  avatar: string
+  configOptions: ConfigGroup[]
+}
+
 // --- Mock Source Assets Data ---
 const MOCK_SUB_ITEMS = [
   { name: '昨天 计划达成率', type: 'combo', value: '94%', target: '目标≥98', status: 'red' },
@@ -53,7 +82,7 @@ const MOCK_SUB_ITEMS = [
   { name: '昨天 生产效率', type: 'combo', value: '92%', target: '目标≥90', status: 'green' },
 ]
 
-const BI_CONFIG_OPTIONS = [
+const BI_CONFIG_OPTIONS: ConfigGroup[] = [
   {
     category: '数据源表',
     items: [
@@ -73,7 +102,7 @@ const BI_CONFIG_OPTIONS = [
   },
 ]
 
-const MOCK_SOURCE_ASSETS = [
+const MOCK_SOURCE_ASSETS: SourceAsset[] = [
   {
     id: 'src_001',
     name: '维观AI专家',
@@ -94,11 +123,18 @@ const MOCK_SOURCE_ASSETS = [
           {
             name: '数据范围',
             hasDataToggle: true,
-            subItems: ['设备问题', '质量问题', '生产问题', '项目问题', '销售问题', '采购问题'],
+            subItems: [
+              { name: '设备问题' },
+              { name: '质量问题' },
+              { name: '生产问题' },
+              { name: '项目问题' },
+              { name: '销售问题' },
+              { name: '采购问题' },
+            ] as SubItem[],
           },
           {
             name: '推送时间',
-            subItems: ['日报', '周报', '月报'],
+            subItems: [{ name: '日报' }, { name: '周报' }, { name: '月报' }] as SubItem[],
           },
         ],
       },
@@ -106,7 +142,7 @@ const MOCK_SOURCE_ASSETS = [
         category: '专家问题·思考方式',
         items: [{ name: '专家问题列表' }],
       },
-    ],
+    ] as ConfigGroup[],
   },
   {
     id: 'src_002',
@@ -459,16 +495,7 @@ const PublishWizard: React.FC<PublishWizardProps> = ({
   useEffect(() => {
     if (step === 5) {
       setIsValidating(true)
-      setValidationStep(0)
-      const timers = [
-        setTimeout(() => setValidationStep(1), 500),
-        setTimeout(() => setValidationStep(2), 1500),
-        setTimeout(() => setValidationStep(3), 2500),
-        setTimeout(() => {
-          setValidationStep(4)
-          setIsValidating(false)
-        }, 3500),
-      ]
+      const timers = [setTimeout(() => setIsValidating(false), 3500)]
       return () => timers.forEach(clearTimeout)
     }
   }, [step])

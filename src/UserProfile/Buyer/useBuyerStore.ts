@@ -3,7 +3,7 @@ import { INITIAL_BILLS, INITIAL_INVOICE_HEADERS } from './constants'
 
 interface BuyerState {
   bills: any[]
-  setBills: (bills: any[]) => void
+  setBills: (bills: any[] | ((prev: any[]) => any[])) => void
   invoices: any[]
   setInvoices: (invoices: any[]) => void
   invoiceHeaders: any[]
@@ -12,7 +12,10 @@ interface BuyerState {
 
 export const useBuyerStore = create<BuyerState>((set) => ({
   bills: INITIAL_BILLS,
-  setBills: (bills) => set({ bills }),
+  setBills: (updater) =>
+    set((state) => ({
+      bills: typeof updater === 'function' ? updater(state.bills) : updater,
+    })),
   invoiceHeaders: INITIAL_INVOICE_HEADERS,
   setInvoiceHeaders: (updater) =>
     set((state) => ({

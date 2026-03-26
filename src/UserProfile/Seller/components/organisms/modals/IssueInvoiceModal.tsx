@@ -1,7 +1,19 @@
 import { FileText, Loader2, Upload, X } from 'lucide-react'
 import { useState } from 'react'
 
-export const IssueInvoiceModal = ({ selectedItem, closeModal, showToast, setLocalOrders }: any) => {
+interface Order {
+  id: string
+  [key: string]: any
+}
+
+interface IssueInvoiceModalProps {
+  selectedItem: Order
+  closeModal: () => void
+  showToast: (message: string) => void
+  setLocalOrders: (orders: Order[] | ((prev: Order[]) => Order[])) => void
+}
+
+export const IssueInvoiceModal = ({ selectedItem, closeModal, showToast, setLocalOrders }: IssueInvoiceModalProps) => {
   const [isLoading, setIsLoading] = useState(false)
 
   if (!selectedItem) return null

@@ -1,12 +1,34 @@
 import { Plus, Settings, X } from 'lucide-react'
 import { useState } from 'react'
 
+interface InvoiceHeader {
+  id: string
+  title: string
+  taxId: string
+  address?: string
+  phone?: string
+  bankName?: string
+  bankAccount?: string
+  bank?: string
+  type?: 'special' | 'normal'
+  isDefault?: boolean
+}
+
+interface InvoiceHeaderModalProps {
+  closeModal: () => void
+  showToast: (message: string) => void
+  invoiceHeaders: InvoiceHeader[]
+  setInvoiceHeaders: (
+    headers: InvoiceHeader[] | ((prev: InvoiceHeader[]) => InvoiceHeader[]),
+  ) => void
+}
+
 export const InvoiceHeaderModal = ({
   closeModal,
   showToast,
   invoiceHeaders,
   setInvoiceHeaders,
-}: any) => {
+}: InvoiceHeaderModalProps) => {
   const [editingInvoiceHeader, setEditingInvoiceHeader] = useState<any>(null)
   const [showInvoiceHeaderForm, setShowInvoiceHeaderForm] = useState(false)
 

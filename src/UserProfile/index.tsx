@@ -42,10 +42,10 @@ const UserProfileContent: React.FC<UserProfileProps> = ({ currentAccount, initia
   const displayAccount = useMemo(
     () => ({
       ...currentAccount,
-      displayName: userInfo.userName,
-      orgInfo: `${userInfo.tenantName} ID:${userInfo.tenantId}`,
+      displayName: userInfo?.userName || '',
+      orgInfo: userInfo ? `${userInfo.tenantName} ID:${userInfo.tenantId}` : '',
     }),
-    [currentAccount],
+    [currentAccount, userInfo],
   )
 
   const navigateBuyerTab = useCallback(

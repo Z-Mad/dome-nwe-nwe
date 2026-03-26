@@ -29,8 +29,17 @@ export const request = async <T>(url: string, options: RequestOptions = {}): Pro
   const { token, tenantId, authorization } = useAuthStore.getState()
   const isFormDataBody = customOptions.body instanceof FormData
 
-  const headers: HeadersInit = {
-    ...customOptions.headers,
+  const headers: Record<string, string> = {}
+  if (customOptions.headers) {
+    if (typeof customOptions.headers === 'object' && !Array.isArray(customOptions.headers)) {
+      if (customOptions.headers instanceof Headers) {
+        customOptions.headers.forEach((value, key) => {
+          headers[key] = value
+        })
+      } else {
+        Object.assign(headers, customOptions.headers)
+      }
+    }
   }
   if (!isFormDataBody && !headers['Content-Type']) {
     headers['Content-Type'] = 'application/json'
