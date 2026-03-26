@@ -9,7 +9,7 @@ export const formatTime = (timeStr: string | null) => {
   return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
-export const convertSessionToContact = (session: SessionVO): Contact => {
+export const convertSessionToContact = (session: SessionVO): IContact => {
   const targetId = session.user1Id === CURRENT_USER_ID ? session.user2Id : session.user1Id
   return {
     id: session.sessionId.toString(),
@@ -26,7 +26,7 @@ export const convertSessionToContact = (session: SessionVO): Contact => {
   }
 }
 
-export const convertMessageToLocal = (msg: MessageVO): Message => {
+export const convertMessageToLocal = (msg: MessageVO): IMessage => {
   return {
     id: msg.messageId.toString(),
     rawId: msg.messageId,
