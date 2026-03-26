@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { filterOrders, ProfileOrderItem } from './orderUtils'
+import { filterOrders, type ProfileOrderItem } from './orderUtils'
 import OrderFilterWorker from './orderFilter.worker.ts?worker'
 
 const createWorker = () => {
