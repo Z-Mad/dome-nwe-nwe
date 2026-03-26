@@ -1,14 +1,17 @@
 {
   "name": "application-market-react",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint src/UserProfile --ext .ts,.tsx && tsc --noEmit",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -27,14 +30,16 @@
     "@typescript-eslint/eslint-plugin": "^8.46.1",
     "@typescript-eslint/parser": "^8.46.1",
     "@vitejs/plugin-react": "^5.0.0",
+    "chrome-launcher": "^1.1.2",
     "eslint": "^9.38.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "lighthouse": "^12.6.0",
+    "oxfmt": "^0.42.0",
+    "oxlint": "^1.57.0",
     "tailwindcss": "^4.2.2",
     "typescript": "~5.8.2",
     "vite": "^6.2.0",
-    "vitest": "^3.2.4",
-    "chrome-launcher": "^1.1.2"
+    "vitest": "^3.2.4"
   },
   "engines": {
     "node": ">=20.0.0",
