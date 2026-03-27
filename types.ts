@@ -22,6 +22,13 @@ export interface ApiResponse<T> {
   msg: string
   code?: number
 }
+export declare interface IPageResult<T> {
+  total: number
+  size: number
+  current: number
+  records: T[]
+}
+
 export enum ReportType {
   DAILY = 'Daily',
   WEEKLY = 'Weekly',

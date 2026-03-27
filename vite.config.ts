@@ -46,6 +46,7 @@ export default defineConfig(({ mode }) => {
       __SCS_RESOURCE__: JSON.stringify('/scs-ops-resource'), // 文件上传
       __SCS_IM_CENTER__: JSON.stringify('/scs-im-center'), // 消息中心
       __SCS_AGENT__: JSON.stringify('/scs-service-agent'), // 智能体服务
+      __SCS_DESKTOP__: JSON.stringify('/scs-desktop-center'), // 智能体服务
       __SCS_MARKET_CENTER__: JSON.stringify('/scs-service-market-center'), // 智能体市场中心
     },
     resolve: {
