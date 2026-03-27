@@ -24,5 +24,5 @@ export interface ApiResponse<T> {
  * @param params 查询参数
  */
 export const getAgentList = (params?: Record<string, any>) => {
-  return get<ApiResponse<Agent[]>>(`${__SCS_SERVICE__}/agent/list`, params)
+  return get<ApiResponse<Agent[]>>('/agent/list', params)
 }
