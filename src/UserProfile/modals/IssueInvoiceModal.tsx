@@ -1,7 +1,7 @@
 // components/profile/modals/IssueInvoiceModal.tsx
 import React, { useState } from 'react';
 import { X, FileText, Upload, Loader2 } from 'lucide-react';
-import type { BuyerOrder } from '../../../types/profile';
+import type { BuyerOrder } from '../types/profile';
 
 interface IssueInvoiceModalProps {
   order: BuyerOrder;

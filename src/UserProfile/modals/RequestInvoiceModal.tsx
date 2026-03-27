@@ -1,7 +1,7 @@
 // components/profile/modals/RequestInvoiceModal.tsx
 import React, { useState } from 'react';
 import { X, FileText, Plus, Loader2 } from 'lucide-react';
-import type { InvoiceHeader } from '../../../types/profile';
+import type { InvoiceHeader } from '../types/profile';
 
 interface RequestInvoiceModalProps {
   item: any;

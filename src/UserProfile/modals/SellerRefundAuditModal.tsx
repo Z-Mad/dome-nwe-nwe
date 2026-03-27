@@ -1,7 +1,7 @@
 // components/profile/modals/SellerRefundAuditModal.tsx
 import React, { useState } from 'react';
 import { X, ShieldCheck, AlertCircle, Activity } from 'lucide-react';
-import type { SellerRefund } from '../../../types/profile';
+import type { SellerRefund } from '../types/profile';
 
 interface SellerRefundAuditModalProps {
   refund: SellerRefund;

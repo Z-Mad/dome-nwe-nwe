@@ -1,7 +1,7 @@
 // components/profile/modals/PreviewImageModal.tsx
 import React from 'react';
 import { X, Download, Receipt } from 'lucide-react';
-import type { BuyerOrder } from '../../../types/profile';
+import type { BuyerOrder } from '../types/profile';
 
 interface PreviewImageModalProps {
   imageUrl: string;

@@ -1,7 +1,7 @@
 // components/profile/modals/PayBillModal.tsx
 import React, { useState } from 'react';
 import { X, CreditCard, Wallet, Building, Loader2 } from 'lucide-react';
-import type { BuyerBill } from '../../../types/profile';
+import type { BuyerBill } from '../types/profile';
 
 interface PayBillModalProps {
   bill: BuyerBill;

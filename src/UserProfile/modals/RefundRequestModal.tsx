@@ -1,8 +1,8 @@
 // components/profile/modals/RefundRequestModal.tsx
 import React, { useState } from 'react';
 import { X, RefreshCcw, AlertTriangle, CheckCircle } from 'lucide-react';
-import type { BuyerOrder } from '../../../types/profile';
-import { REFUND_REASONS } from '../../../constants/profile';
+import type { BuyerOrder } from '../types/profile';
+import { REFUND_REASONS } from '../constants/profile';
 
 interface RefundRequestModalProps {
   order: BuyerOrder;
