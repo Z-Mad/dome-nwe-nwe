@@ -1,11 +1,6 @@
 import { postForm } from '../utils/request'
+import type { ApiResponse } from '@/types'
 
-interface UploadResponse<T> {
-  code: number
-  success: boolean
-  data: T
-  msg: string
-}
 
 type UploadData =
   | string
@@ -30,7 +25,7 @@ export const uploadService = {
     const formData = new FormData()
     formData.append('file', file)
 
-    const res = await postForm<UploadResponse<UploadData>>(
+    const res = await postForm<ApiResponse<UploadData>>(
       `${__SCS_RESOURCE__}/oss/endpoint/put-file`,
       formData,
     )

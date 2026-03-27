@@ -1,4 +1,5 @@
 import { get, post } from '../utils/request'
+import type { ApiResponse } from '@/types'
 
 export interface UserInfo {
   userId?: string
@@ -10,12 +11,6 @@ export interface TenantInfo {
   tenantId: string
   tenantName: string
   [key: string]: any
-}
-
-export interface ApiResponse<T> {
-  data: T
-  success: boolean
-  msg: string
 }
 
 /**

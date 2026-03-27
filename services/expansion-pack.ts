@@ -1,4 +1,5 @@
 import { get, post } from '../utils/request'
+import type { ApiResponse } from '@/types'
 
 export interface GoodType {
   	"deadline": number, //有效期 1-6个月 2-1年
@@ -14,11 +15,7 @@ export interface GoodType {
     "unit": number //资源单位 1-tokens 2-GB
   [key: string]: any
 }
-export interface ApiResponse<T> {
-  data: T
-  success: boolean
-  msg: string
-}
+
 /**
  * 通过商品类型查询资源扩展包商品列表
  * @param goodsType	商品类型 1-token包 2-数据存储包

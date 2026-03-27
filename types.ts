@@ -16,7 +16,12 @@ export interface Account {
     canViewAnalytics: boolean
   }
 }
-
+export interface ApiResponse<T> {
+  data: T
+  success: boolean
+  msg: string
+  code?: number
+}
 export enum ReportType {
   DAILY = 'Daily',
   WEEKLY = 'Weekly',

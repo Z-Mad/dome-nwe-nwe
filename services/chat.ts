@@ -1,4 +1,5 @@
 import { get, post } from '../utils/request'
+import type { ApiResponse } from '@/types'
 
 export interface SessionVO {
   sessionId: number
@@ -38,17 +39,12 @@ export interface PageResult<T> {
   total: number
 }
 
-export interface BaseResponse<T> {
-  code: number
-  success: boolean
-  data: T
-  msg: string
-}
+
 
 export const chatService = {
   // 获取会话列表
   getSessionList: async (current = 1, size = 20) => {
-    return get<BaseResponse<PageResult<SessionVO>>>(
+    return get<ApiResponse<PageResult<SessionVO>>>(
       `${__SCS_IM_CENTER__}/market/chat/session/list`,
       { current, size },
     )
@@ -56,14 +52,14 @@ export const chatService = {
 
   // 创建/获取会话
   createSession: async (targetId: number) => {
-    return post<BaseResponse<SessionVO>>(
+    return post<ApiResponse<SessionVO>>(
       `${__SCS_IM_CENTER__}/market/chat/session/create?targetId=${targetId}`,
     )
   },
 
   // 发送消息
   sendMessage: async (sessionId: number, content: string, contentType: number = 1) => {
-    return post<BaseResponse<MessageVO>>(`${__SCS_IM_CENTER__}/market/chat/message/send`, {
+    return post<ApiResponse<MessageVO>>(`${__SCS_IM_CENTER__}/market/chat/message/send`, {
       sessionId,
       content,
       contentType,
@@ -74,7 +70,7 @@ export const chatService = {
   getHistory: async (sessionId: number, limit = 20, lastId?: number) => {
     const params: Record<string, any> = { sessionId, limit }
     if (lastId) params.lastId = lastId
-    return get<BaseResponse<MessageVO[]>>(
+    return get<ApiResponse<MessageVO[]>>(
       `${__SCS_IM_CENTER__}/market/chat/message/history`,
       params,
     )
@@ -82,7 +78,7 @@ export const chatService = {
 
   // 轮询新消息
   pollMessages: async (sessionId: number, lastMsgId: number, limit = 50) => {
-    return get<BaseResponse<PollResultVO>>(`${__SCS_IM_CENTER__}/market/chat/message/poll`, {
+    return get<ApiResponse<PollResultVO>>(`${__SCS_IM_CENTER__}/market/chat/message/poll`, {
       sessionId,
       lastMsgId,
       limit,
@@ -91,7 +87,7 @@ export const chatService = {
 
   // 标记消息已读
   markRead: async (sessionId: number, upToMessageId: number) => {
-    return post<BaseResponse<{ markedCount: number; sessionId: number }>>(
+    return post<ApiResponse<{ markedCount: number; sessionId: number }>>(
       `${__SCS_IM_CENTER__}/market/chat/message/read`,
       { sessionId, upToMessageId },
     )

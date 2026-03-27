@@ -1,5 +1,5 @@
 import { post } from '../utils/request'
-
+import type { ApiResponse } from '@/types'
 export interface TokenRefreshParams {
   grant_type: string
   scope: string
@@ -15,17 +15,12 @@ export interface TokenResponseData {
   [key: string]: any
 }
 
-export interface AuthResponse {
-  data: TokenResponseData
-  success: boolean
-  msg: string
-}
 
 /**
  * 刷新 Token
  */
 export const refreshToken = (data: TokenRefreshParams, options?: any) => {
-  return post<AuthResponse>(`${__SCS_AUTH__}/oauth/token`, undefined, { ...options, params: data })
+  return post<ApiResponse<TokenResponseData>>(`${__SCS_AUTH__}/oauth/token`, undefined, { ...options, params: data })
 }
 
 /**

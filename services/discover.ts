@@ -1,4 +1,5 @@
 import { get } from '../utils/request'
+import type { ApiResponse } from '@/types'
 
 export interface Agent {
   id: string
@@ -11,12 +12,6 @@ export interface Agent {
   rating: number
   image: string
   isTarget?: boolean
-}
-
-export interface ApiResponse<T> {
-  data: T
-  success: boolean
-  msg: string
 }
 
 /**
