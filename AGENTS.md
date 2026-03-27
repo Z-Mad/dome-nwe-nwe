@@ -13,3 +13,11 @@
 - Zustand（状态管理）
 - Tailwind（样式系统）
 - Fetch API（网络请求）
+
+## 规范
+
+导入类型时，需要使用 `type` 关键字，例如：
+
+```typescript
+import { type PublishFormData } from '../types/publish-wizard'
+```
