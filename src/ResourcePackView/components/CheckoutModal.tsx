@@ -1,21 +1,17 @@
 // components/CheckoutModal.tsx
-import React from 'react'
-import {
-  X,
-  CreditCard,
-  CheckCircle,
-  ChevronDown,
-  Loader2,
-  Building2,
-} from 'lucide-react'
-import type { CartItem, Order } from '../types/resourcePack'
-
+import React, { useState, useEffect } from 'react'
+import { useConfirm } from '@/components/contexts/ConfirmContext' // 全局确认弹窗
+import { createResourcePackOrder, type CreateResourcePackOrderDTO, type ResourcePackGoodsItemDTO } from '@/services/order'
+import type { InstanceVO } from '@/services/instance'
+import type { CartItem } from '../types/resourcePack'
+import { CreditCard,X,CheckCircle,ChevronDown,Building2,Loader2 } from 'lucide-react'
 interface CheckoutModalProps {
   isOpen: boolean
   cartItems: CartItem[]
   cartTotal: number
-  targetOrderId: string
-  setTargetOrderId: (id: string) => void
+  instances: InstanceVO[]          // 实例列表（从接口获取）
+  instancesLoading: boolean        // 加载状态
+  InstanceId?: string
   selectedVersion: string
   setSelectedVersion: (version: string) => void
   paymentMethod: 'alipay' | 'wechat' | 'offline'
@@ -23,20 +19,20 @@ interface CheckoutModalProps {
   agreementChecked: boolean
   setAgreementChecked: (checked: boolean) => void
   isProcessing: boolean
-  activeOrders: Order[]
-  currentVersions: string[]
   onClose: () => void
-  onConfirm: () => void
+  onConfirm: (instanceId: string, version: string, method: string) => void  // 改为由父组件处理
   onShowAgreement: () => void
   onShowPaymentApplication: () => void
+  showToast?: (msg: string, type?: 'success' | 'error' | 'warning') => void
 }
 
 export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   isOpen,
   cartItems,
   cartTotal,
-  targetOrderId,
-  setTargetOrderId,
+  instances,
+  instancesLoading,
+  InstanceId,
   selectedVersion,
   setSelectedVersion,
   paymentMethod,
@@ -44,16 +40,102 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   agreementChecked,
   setAgreementChecked,
   isProcessing,
-  activeOrders,
-  currentVersions,
   onClose,
   onConfirm,
   onShowAgreement,
   onShowPaymentApplication,
+  showToast,
 }) => {
+  const { confirm } = useConfirm()
+  const [creatingOrder, setCreatingOrder] = useState(false)
+const [selectedInstanceId, setSelectedInstanceId] = useState(InstanceId || '')
+  // 当实例列表变化时，自动选中第一个
+  useEffect(() => {
+    if (instances.length > 0 && !selectedInstanceId) {
+      setSelectedInstanceId(String(instances[0].id))
+      setSelectedVersion(instances[0].version || 'v1.0.0')
+    }
+  }, [instances, selectedInstanceId, setSelectedInstanceId, setSelectedVersion])
+
+  // 根据选中的实例获取可用的版本列表（这里简单使用实例自带版本，实际可能需要额外接口）
+  const getVersionsForInstance = (instanceId: string) => {
+    const instance = instances.find(i => String(i.id) === instanceId)
+    return instance ? [instance.version || 'v1.0.0'] : []
+  }
+
+  const currentVersions = selectedInstanceId ? getVersionsForInstance(selectedInstanceId) : []
+
+  // 支付处理
+  const handlePay = async () => {
+    if (!selectedInstanceId) {
+      showToast?.('请选择挂载实例', 'warning')
+      return
+    }
+    if (!selectedVersion) {
+      showToast?.('请选择适配版本', 'warning')
+      return
+    }
+    if (!agreementChecked) {
+      showToast?.('请阅读并同意服务协议', 'warning')
+      return
+    }
+
+    // 二次确认
+    const ok = await confirm({
+      title: '确认支付',
+      message: `确认支付 ¥${cartTotal.toLocaleString()} 元？`,
+      confirmText: '确认支付',
+      cancelText: '取消',
+      type: 'info',
+    })
+
+    if (!ok) return
+
+    // 构建订单 DTO
+    const goodsList: ResourcePackGoodsItemDTO[] = cartItems.map(item => ({
+      buyQuantity: item.quantity,
+      deadline: item.validity === '1年' ? 12 : 6, // 根据有效期映射：1年->12，6个月->6
+      goodsCode: item.id, // 实际应使用商品编码，这里暂时用id
+      goodsDesc: item.name,
+      goodsId: Number(item.id),
+      goodsName: item.name,
+      goodsType: item.type === 'token' ? 1 : 2,
+      price: item.price,
+      quantity: item.amount,
+      totalAmount: item.subtotal,
+      unit: item.type === 'token' ? 1 : 2,
+    }))
+
+    const orderDto: CreateResourcePackOrderDTO = {
+      amount: cartTotal,
+      buyType: 1, // 新购订单
+      exampleId: Number(selectedInstanceId),
+      goodsList,
+      payAmount: cartTotal,
+      tenantName: '', // 从用户信息获取
+      remark: `资源包购买 - 支付方式: ${paymentMethod}`,
+    }
+
+    setCreatingOrder(true)
+    try {
+      const res = await createResourcePackOrder(orderDto)
+      if (res.success) {
+        showToast?.('订单创建成功，请完成支付', 'success')
+        // 调用父组件的确认回调
+        onConfirm(selectedInstanceId, selectedVersion, paymentMethod)
+      } else {
+        showToast?.(res.msg || '订单创建失败', 'error')
+      }
+    } catch (err: any) {
+      showToast?.(err.message || '订单创建失败', 'error')
+    } finally {
+      setCreatingOrder(false)
+    }
+  }
+
   if (!isOpen) return null
 
-  const isConfirmDisabled = !targetOrderId || !selectedVersion || !agreementChecked || isProcessing
+  const isConfirmDisabled = !selectedInstanceId || !selectedVersion || !agreementChecked || isProcessing || creatingOrder
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in">
@@ -94,39 +176,46 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
               1. 挂载实例 (TARGET INSTANCE) <span className="text-red-500">*</span>
             </label>
-            <div className="space-y-2 max-h-32 overflow-y-auto custom-scrollbar border border-gray-100 rounded-xl p-1">
-              {activeOrders.length > 0 ? (
-                activeOrders.map(order => (
-                  <div
-                    key={order.id}
-                    onClick={() => setTargetOrderId(order.id)}
-                    className={`p-3 rounded-lg border cursor-pointer transition-all flex items-center justify-between ${
-                      targetOrderId === order.id
-                        ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500'
-                        : 'border-gray-200 hover:bg-gray-50'
-                    }`}
-                  >
-                    <div>
-                      <div className="font-bold text-sm text-gray-800">{order.productName}</div>
-                      <div className="text-xs text-gray-500 font-mono">
-                        {order.id} · {order.provider}
+            {instancesLoading ? (
+              <div className="text-center py-4 text-gray-500">加载实例列表中...</div>
+            ) : (
+              <div className="space-y-2 max-h-32 overflow-y-auto custom-scrollbar border border-gray-100 rounded-xl p-1">
+                {instances.length > 0 ? (
+                  instances.map((instance) => (
+                    <div
+                      key={instance.id}
+                      onClick={() => {
+                        setSelectedInstanceId?.(String(instance.id))
+                        setSelectedVersion(instance.version || 'v1.0.0')
+                      }}
+                      className={`p-3 rounded-lg border cursor-pointer transition-all flex items-center justify-between ${
+                        selectedInstanceId === String(instance.id)
+                          ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500'
+                          : 'border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      <div>
+                        <div className="font-bold text-sm text-gray-800">{instance.name}</div>
+                        <div className="text-xs text-gray-500 font-mono">
+                          {instance.productName} · {instance.status}
+                        </div>
                       </div>
+                      {selectedInstanceId === String(instance.id) && (
+                        <CheckCircle size={18} className="text-blue-600" />
+                      )}
                     </div>
-                    {targetOrderId === order.id && (
-                      <CheckCircle size={18} className="text-blue-600" />
-                    )}
+                  ))
+                ) : (
+                  <div className="p-4 text-center text-sm text-gray-500 bg-gray-50 rounded-lg">
+                    暂无可用实例，请先购买或激活实例
                   </div>
-                ))
-              ) : (
-                <div className="p-4 text-center text-sm text-gray-500 bg-gray-50 rounded-lg">
-                  暂无有效订阅实例
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* 2. Version Selection */}
-          {targetOrderId && (
+          {selectedInstanceId && (
             <div className="animate-in fade-in slide-in-from-top-2">
               <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
                 2. 适配版本 (TARGET VERSION) <span className="text-red-500">*</span>
@@ -134,16 +223,19 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <div className="relative">
                 <select
                   value={selectedVersion}
-                  onChange={e => setSelectedVersion(e.target.value)}
+                  onChange={(e) => setSelectedVersion(e.target.value)}
                   className="w-full p-3 rounded-xl border border-blue-500 bg-blue-50 text-blue-700 font-bold outline-none appearance-none cursor-pointer hover:bg-blue-100 transition-colors"
                 >
-                  {currentVersions.map(ver => (
+                  {currentVersions.map((ver) => (
                     <option key={ver} value={ver}>
                       {ver}
                     </option>
                   ))}
                 </select>
-                <ChevronDown size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-blue-600 pointer-events-none" />
+                <ChevronDown
+                  size={16}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-blue-600 pointer-events-none"
+                />
               </div>
             </div>
           )}
@@ -218,13 +310,16 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               id="modal-agreement"
               className="mt-1 w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
               checked={agreementChecked}
-              onChange={e => setAgreementChecked(e.target.checked)}
+              onChange={(e) => setAgreementChecked(e.target.checked)}
             />
-            <label htmlFor="modal-agreement" className="text-xs text-gray-500 cursor-pointer select-none">
+            <label
+              htmlFor="modal-agreement"
+              className="text-xs text-gray-500 cursor-pointer select-none"
+            >
               点击去结算即代表同意
               <span
                 className="text-blue-600 hover:underline mx-1 font-medium"
-                onClick={e => {
+                onClick={(e) => {
                   e.preventDefault()
                   onShowAgreement()
                 }}
@@ -243,7 +338,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               取消
             </button>
             <button
-              onClick={onConfirm}
+              onClick={handlePay}
               disabled={isConfirmDisabled}
               className={`flex-1 py-2.5 rounded-xl text-white font-bold transition-all shadow-lg flex items-center justify-center gap-2 ${
                 isConfirmDisabled
@@ -251,9 +346,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   : 'bg-gray-900 hover:bg-black shadow-gray-300'
               }`}
             >
-              {isProcessing ? (
+              {isProcessing || creatingOrder ? (
                 <>
-                  <Loader2 size={18} className="animate-spin" /> 支付处理中...
+                  <Loader2 size={18} className="animate-spin" /> 处理中...
                 </>
               ) : paymentMethod === 'offline' ? (
                 '提交订单并下载《支付申请单》'

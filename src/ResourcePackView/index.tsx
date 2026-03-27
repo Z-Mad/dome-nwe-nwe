@@ -15,12 +15,17 @@ import { AgreementModal } from './components/AgreementModal'
 import { PaymentApplicationModal } from './components/PaymentApplicationModal'
 import {  DURATIONS, RULES_CONTENT } from './constants/resourcePack.tsx'
 import { safeMultiply } from '@/utils/index.ts'
+import { getInstanceList, type InstanceVO } from '@/services/instance'
+import { useToast } from '@/components/contexts/ToastContext' // 全局提示
+
+
 interface ResourcePackViewProps {
   orders: any[]
   onPurchase: (items: any[], targetOrderId: string, version: string, paymentMethod: string) => void
 }
 
 const ResourcePackView: React.FC<ResourcePackViewProps> = ({ orders, onPurchase }) => {
+  const { showToast } = useToast();
    const { getConfigForType, fetchGoods, loading: goodsLoading, error: goodsError } = useResourcePackData()
    // 将 selectedType 映射为商品类型 ID
    const [selectedType, setSelectedType] = useState<'token' | 'storage'>('token')
@@ -48,6 +53,8 @@ const ResourcePackView: React.FC<ResourcePackViewProps> = ({ orders, onPurchase 
     currentVersions,
     getVersionsForOrder,
   } = useCheckoutModal(orders)
+  const [instances, setInstances] = useState<InstanceVO[]>([])
+const [instancesLoading, setInstancesLoading] = useState(false)
 
   const { showPaymentApplicationModal, setShowPaymentApplicationModal } = usePaymentApplication()
   const [showAgreementDetail, setShowAgreementDetail] = React.useState(false)
@@ -60,7 +67,42 @@ const ResourcePackView: React.FC<ResourcePackViewProps> = ({ orders, onPurchase 
   const currentDuration = DURATIONS[selectedDurationIdx]
   const currentSelectionPrice = safeMultiply(Number(currentQuota.price), currentDuration.multiplier)
   const currentSelectionSubtotal = safeMultiply(currentSelectionPrice, purchaseQuantity)
+  // 打开弹窗前获取实例列表
+  const handleCheckoutClick = async () => {
+    if (cartItems.length === 0) return
 
+    // 获取实例列表
+    setInstancesLoading(true)
+    try {
+      const res = await getInstanceList()
+      if (res.success) {
+        setInstances(res.data || [])
+      } else {
+        showToast(res.msg || '获取实例列表失败','error')
+        return
+      }
+    } catch (err) {
+      showToast('获取实例列表失败','error')
+      return
+    } finally {
+      setInstancesLoading(false)
+    } 
+    // 重置弹窗状态
+    setTargetOrderId('')
+    setSelectedVersion('')
+    setPaymentMethod('alipay')
+    setAgreementChecked(true)
+
+    // 自动选择第一个实例（如果有）
+    if (instances.length > 0) {
+      setTargetOrderId(String(instances[0].id))
+      // 版本列表需要根据实例的产品ID获取，这里假设实例自带版本，或需要另一个接口
+      setSelectedVersion(instances[0].version || 'v1.0.0')
+    }
+
+    // setIsPurchaseModalOpen(true)
+    openModal()
+  }
   const handleAddToCart = () => {
     addToCart({
       id: `item_${Date.now()}`,
@@ -190,18 +232,18 @@ const ResourcePackView: React.FC<ResourcePackViewProps> = ({ orders, onPurchase 
               }}
               onAddToCart={handleAddToCart}
               onRemoveFromCart={removeFromCart}
-              onCheckout={openModal}
+              onCheckout={handleCheckoutClick}
             />
           </div>
         </div>
       </div>
 
       <CheckoutModal
+        instances={instances}
+        instancesLoading={instancesLoading}
         isOpen={isPurchaseModalOpen}
         cartItems={cartItems}
         cartTotal={cartTotal}
-        targetOrderId={targetOrderId}
-        setTargetOrderId={setTargetOrderId}
         selectedVersion={selectedVersion}
         setSelectedVersion={setSelectedVersion}
         paymentMethod={paymentMethod}
@@ -209,8 +251,6 @@ const ResourcePackView: React.FC<ResourcePackViewProps> = ({ orders, onPurchase 
         agreementChecked={agreementChecked}
         setAgreementChecked={setAgreementChecked}
         isProcessing={isProcessing}
-        activeOrders={activeOrders}
-        currentVersions={currentVersions}
         onClose={closeModal}
         onConfirm={handleConfirmPurchase}
         onShowAgreement={() => setShowAgreementDetail(true)}
