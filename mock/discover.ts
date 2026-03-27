@@ -1,5 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import type { Agent } from '../services/discover'
+import { MOCK_AGENTS } from '../data'
 
 const mockAgents: Agent[] = [
   {
@@ -12,7 +13,7 @@ const mockAgents: Agent[] = [
     downloads: 128,
     rating: 4.9,
     image: 'https://picsum.photos/seed/agent_avatar_new/100/100',
-    isTarget: true
+    isTarget: true,
   },
   {
     id: '2',
@@ -23,7 +24,7 @@ const mockAgents: Agent[] = [
     price: '获取',
     downloads: 89,
     rating: 4.5,
-    image: 'https://picsum.photos/seed/blast_furnace/100/100'
+    image: 'https://picsum.photos/seed/blast_furnace/100/100',
   },
   {
     id: 'crane',
@@ -34,7 +35,7 @@ const mockAgents: Agent[] = [
     price: '获取',
     downloads: 64,
     rating: 4.7,
-    image: 'https://picsum.photos/seed/crane/100/100'
+    image: 'https://picsum.photos/seed/crane/100/100',
   },
   {
     id: 'chatter',
@@ -45,7 +46,7 @@ const mockAgents: Agent[] = [
     price: '¥299/月',
     downloads: 45,
     rating: 4.8,
-    image: 'https://picsum.photos/seed/vibration/100/100'
+    image: 'https://picsum.photos/seed/vibration/100/100',
   },
   {
     id: 'acid',
@@ -56,7 +57,7 @@ const mockAgents: Agent[] = [
     price: '获取',
     downloads: 32,
     rating: 4.6,
-    image: 'https://picsum.photos/seed/acid/100/100'
+    image: 'https://picsum.photos/seed/acid/100/100',
   },
   {
     id: 'edge_drop',
@@ -67,7 +68,7 @@ const mockAgents: Agent[] = [
     price: '获取',
     downloads: 78,
     rating: 4.9,
-    image: 'https://picsum.photos/seed/silicon_steel/100/100'
+    image: 'https://picsum.photos/seed/silicon_steel/100/100',
   },
   {
     id: 'price_index',
@@ -78,7 +79,7 @@ const mockAgents: Agent[] = [
     price: '获取',
     downloads: 210,
     rating: 4.5,
-    image: 'https://picsum.photos/seed/steel_price/100/100'
+    image: 'https://picsum.photos/seed/steel_price/100/100',
   },
   {
     id: 'zinc',
@@ -89,8 +90,8 @@ const mockAgents: Agent[] = [
     price: '获取',
     downloads: 56,
     rating: 4.4,
-    image: 'https://picsum.photos/seed/zinc/100/100'
-  }
+    image: 'https://picsum.photos/seed/zinc/100/100',
+  },
 ]
 
 /**
@@ -101,7 +102,25 @@ export const discoverHandlers = [
     return HttpResponse.json({
       success: true,
       data: mockAgents,
-      msg: '获取成功'
+      msg: '获取成功',
     })
-  })
+  }),
+  http.get('/api/agent/detail/:id', ({ params }) => {
+    const agentDetail = MOCK_AGENTS[params.id as string]
+    if (agentDetail) {
+      return HttpResponse.json({
+        success: true,
+        data: agentDetail,
+        msg: '获取成功',
+      })
+    }
+    return HttpResponse.json(
+      {
+        success: false,
+        data: null,
+        msg: '智能体不存在',
+      },
+      { status: 404 },
+    )
+  }),
 ]

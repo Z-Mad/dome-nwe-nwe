@@ -5,7 +5,7 @@ import type { ResourceTypeConfig, DurationOption, RuleTab } from '../types/resou
 
 export const CONFIG_OPTIONS: Record<'token' | 'storage', ResourceTypeConfig> = {
   token: {
-    label: '算力/Tok en包',
+    label: '算力/Token包',
     unit: 'k Tokens',
     icon: React.createElement(Cpu, { size: 18 }),
     desc: '适用于所有大语言模型类智能体，抵扣对话、推理产生的 Token 消耗。',
@@ -41,76 +41,107 @@ export const RULES_CONTENT: RuleTab[] = [
     id: 'instructions',
     label: '购买说明',
     icon: React.createElement(FileText, { size: 16 }),
-    content: (
-      <ul className="list-disc pl-5 space-y-2 text-xs text-gray-600 leading-relaxed">
-        <li>资源包购买后立即生效，有效期自购买之日起计算。</li>
-        <li>
-          <strong>叠加规则：</strong>
-          支持购买多个同类型或不同类型的资源包，额度将累加，有效期以各资源包独立时间为准。
-        </li>
-        <li>
-          <strong>适用范围：</strong>
-          Token包通用于所有接入标准API的智能体；存储包仅限私有化部署或需独立数据库的实例。
-        </li>
-        <li>企业认证用户购买大额资源包（单笔满 ¥10,000）可申请增值税专用发票。</li>
-      </ul>
+    content: React.createElement(
+      'ul',
+      { className: 'list-disc pl-5 space-y-2 text-xs text-gray-600 leading-relaxed' },
+      React.createElement('li', null, '资源包购买后立即生效，有效期自购买之日起计算。'),
+      React.createElement(
+        'li',
+        null,
+        React.createElement('strong', null, '叠加规则：'),
+        ' 支持购买多个同类型或不同类型的资源包，额度将累加，有效期以各资源包独立时间为准。',
+      ),
+      React.createElement(
+        'li',
+        null,
+        React.createElement('strong', null, '适用范围：'),
+        ' Token包通用于所有接入标准API的智能体；存储包仅限私有化部署或需独立数据库的实例。',
+      ),
+      React.createElement(
+        'li',
+        null,
+        '企业认证用户购买大额资源包（单笔满 ¥10,000）可申请增值税专用发票。',
+      ),
     ),
   },
   {
     id: 'deduction',
     label: '抵扣规则',
     icon: React.createElement(RefreshCcw, { size: 16 }),
-    content: (
-      <ul className="list-disc pl-5 space-y-2 text-xs text-gray-600 leading-relaxed">
-        <li>
-          <strong>抵扣顺序：</strong>系统优先抵扣即将过期的资源包额度（先到期先扣）。
-        </li>
-        <li>
-          <strong>混合支付：</strong>
-          当资源包额度不足时，超出部分将自动按照“按量付费”标准从账户余额中扣除。
-        </li>
-        <li>
-          <strong>余额逻辑：</strong>
-          平台没有充值功能，自动从已关联的企业对公账户或个人签约账户扣除。
-        </li>
-        <li className="text-red-500">若从关联账户扣除失败，则该订单自动失效。</li>
-      </ul>
+    content: React.createElement(
+      'ul',
+      { className: 'list-disc pl-5 space-y-2 text-xs text-gray-600 leading-relaxed' },
+      React.createElement(
+        'li',
+        null,
+        React.createElement('strong', null, '抵扣顺序：'),
+        ' 系统优先抵扣即将过期的资源包额度（先到期先扣）。',
+      ),
+      React.createElement(
+        'li',
+        null,
+        React.createElement('strong', null, '混合支付：'),
+        ' 当资源包额度不足时，超出部分将自动按照"按量付费"标准从账户余额中扣除。',
+      ),
+      React.createElement(
+        'li',
+        null,
+        React.createElement('strong', null, '余额逻辑：'),
+        ' 平台没有充值功能，自动从已关联的企业对公账户或个人签约账户扣除。',
+      ),
+      React.createElement(
+        'li',
+        { className: 'text-red-500' },
+        '若从关联账户扣除失败，则该订单自动失效。',
+      ),
     ),
   },
   {
     id: 'refund',
     label: '退订规则',
     icon: React.createElement(ShieldAlert, { size: 16 }),
-    content: (
-      <ul className="list-disc pl-5 space-y-2 text-xs text-gray-600 leading-relaxed">
-        <li>
-          <strong>五天无理由：</strong>购买后5天内且未使用任何额度，支持全额退款。
-        </li>
-        <li>
-          <strong>非全额退款：</strong>
-          已使用部分额度或超过5天，不支持退款。特殊情况请提交工单申请，将收取15%手续费。
-        </li>
-        <li>活动赠送的资源包不支持退现或转让。</li>
-      </ul>
+    content: React.createElement(
+      'ul',
+      { className: 'list-disc pl-5 space-y-2 text-xs text-gray-600 leading-relaxed' },
+      React.createElement(
+        'li',
+        null,
+        React.createElement('strong', null, '五天无理由：'),
+        ' 购买后5天内且未使用任何额度，支持全额退款。',
+      ),
+      React.createElement(
+        'li',
+        null,
+        React.createElement('strong', null, '非全额退款：'),
+        ' 已使用部分额度或超过5天，不支持退款。特殊情况请提交工单申请，将收取15%手续费。',
+      ),
+      React.createElement('li', null, '活动赠送的资源包不支持退现或转让。'),
     ),
   },
   {
     id: 'tips',
     label: '温馨提示',
     icon: React.createElement(HelpCircle, { size: 16 }),
-    content: (
-      <div className="space-y-2 text-xs text-gray-600 leading-relaxed">
-        <p>
-          1. 请在购买前确认您的实例运行状态正常，挂载至“已过期”或“已冻结”实例可能导致服务无法立刻恢复。
-        </p>
-        <p>
-          2. 系统已自动开启<strong>“余额预警”</strong>
-          功能。当资源包剩余额度低于20%时，系统将发送短信提醒，您可以在个人中心的订单管理中查看预警详情。
-        </p>
-        <p className="text-orange-600 font-bold">
-          3. 严禁利用平台资源进行挖矿或其他违规计算行为，一经发现将封禁账号。
-        </p>
-      </div>
+    content: React.createElement(
+      'div',
+      { className: 'space-y-2 text-xs text-gray-600 leading-relaxed' },
+      React.createElement(
+        'p',
+        null,
+        '1. 请在购买前确认您的实例运行状态正常，挂载至"已过期"或"已冻结"实例可能导致服务无法立刻恢复。',
+      ),
+      React.createElement(
+        'p',
+        null,
+        '2. 系统已自动开启',
+        React.createElement('strong', null, '"余额预警"'),
+        ' 功能。当资源包剩余额度低于20%时，系统将发送短信提醒，您可以在个人中心的订单管理中查看预警详情。',
+      ),
+      React.createElement(
+        'p',
+        { className: 'text-orange-600 font-bold' },
+        '3. 严禁利用平台资源进行挖矿或其他违规计算行为，一经发现将封禁账号。',
+      ),
     ),
   },
 ]
