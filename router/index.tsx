@@ -13,6 +13,7 @@ const SettingsView = lazy(() => import('@/src/SettingsView/index'))
 const MessageCenter = lazy(() => import('@/src/MessageCenter/index'))
 const ResourcePackView = lazy(() => import('@/src/ResourcePackView/index'))
 
+import { ProfileRoutes } from '@/src/UserProfile/pages/index';
 interface AppRouterProps {
   extraAgents: any
   myOrders: any
@@ -76,7 +77,7 @@ const AppRouter: React.FC<AppRouterProps> = ({
           }
         />
         <Route path="/detail" element={<Navigate to="/discovery" replace />} />
-        <Route
+        {/* <Route
           path="/profile/*"
           element={
             <UserProfileWrapper
@@ -90,7 +91,18 @@ const AppRouter: React.FC<AppRouterProps> = ({
               setMyResources={setMyResources}
             />
           }
-        />
+        /> */}
+        {ProfileRoutes({
+          currentAccount,
+          onNavigate: handleNavigate,
+          extraAssets: extraAgents,
+          globalOrders: myOrders,
+          globalResources: myResources,
+          onUpgrade: handleUpgrade,
+          onUpdateOrder: (orderId, updates) => setMyOrders((prev) => prev.map(o => o.id === orderId ? { ...o, ...updates } : o)),
+          onUpdateResource: (resourceId, updates) => setMyResources((prev) => prev.map(r => r.id === resourceId ? { ...r, ...updates } : r)),
+          onAddResource: (resource) => setMyResources((prev) => [resource, ...prev]),
+        })}
         <Route
           path="/messages"
           element={<MessageCenterWrapper systemNotifications={systemNotifications} />}

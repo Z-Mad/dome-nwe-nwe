@@ -1,19 +1,19 @@
 // pages/profile/index.tsx
 import { Routes, Route } from 'react-router-dom';
-import ProfileLayout from './pages/ProfileLayout';
-import BuyerDashboard from './pages/buyer/Dashboard';
-import BuyerOrders from './pages/buyer/Orders';
-import BuyerBills from './pages/buyer/Bills';
-import BuyerInvoices from './pages/buyer/Invoices';
-import BuyerResources from './pages/buyer/Resources';
-import BuyerAnalysis from './pages/buyer/Analysis';
-import BuyerSupport from './pages/buyer/Support';
-import SellerDashboard from './pages/seller/Dashboard';
-import SellerAssets from './pages/seller/Assets';
-import SellerFinance from './pages/seller/Finance';
-import SellerSupport from './pages/seller/Support';
-import SellerAnalysis from './pages/seller/Analysis';
-import SellerHealth from './pages/seller/Health';
+import ProfileLayout from './ProfileLayout';
+import BuyerDashboard from './buyer/Dashboard';
+import BuyerOrders from './buyer/Orders';
+import BuyerBills from './buyer/Bills';
+import BuyerInvoices from './buyer/Invoices';
+import BuyerResources from './buyer/Resources';
+import BuyerAnalysis from './buyer/Analysis';
+import BuyerSupport from './buyer/Support';
+import SellerDashboard from './seller/Dashboard';
+import SellerAssets from './seller/Assets';
+import SellerFinance from './seller/Finance';
+import SellerSupport from './seller/Support';
+import SellerAnalysis from './seller/Analysis';
+import SellerHealth from './seller/Health';
 
 export const ProfileRoutes = (props: any) => {
   return (

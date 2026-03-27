@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import MarketplaceSidebar from './components/MarketplaceSidebar'
-
+import { ToastProvider } from '@/components/contexts/ToastContext';
+import { ConfirmProvider } from '@/components/contexts/ConfirmContext';
 import { useAuthStore } from './store/authStore'
 import { useMarketStore } from './store/marketStore'
 import AppRouter from './router'
@@ -157,6 +158,8 @@ const App: React.FC = () => {
   })()
 
   return (
+     <ToastProvider>
+      <ConfirmProvider>
     <div className="flex h-screen bg-gray-50 overflow-hidden font-sans text-gray-900">
       <MarketplaceSidebar
         currentView={currentView}
@@ -183,6 +186,8 @@ const App: React.FC = () => {
         />
       </div>
     </div>
+     </ConfirmProvider>
+    </ToastProvider>
   )
 }
 

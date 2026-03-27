@@ -3,9 +3,7 @@ import { defineConfig, loadEnv } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
-
-// import reactInspector from './plugins/vite-plugin-react-inspector/src/index.ts'
-
+import devInspector from 'vite-plugin-dev-inspector'
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '')
   return {
@@ -26,6 +24,10 @@ export default defineConfig(({ mode }) => {
       react(),
       babel({ presets: [reactCompilerPreset()] }),
       tailwindcss(),
+      devInspector({
+        toggleButtonVisibility: 'always',
+        launchEditor: 'trae',
+      }),
     ],
     preview: {
       host: true,
