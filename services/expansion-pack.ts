@@ -21,5 +21,5 @@ export interface GoodType {
  * @param goodsType	商品类型 1-token包 2-数据存储包
  */
 export const getByGoodType = (goodsType: number) => {
-  return post<ApiResponse<GoodType>>(`${__SCS_MARKET_CENTER__}/xpansion-pack/getByGoodType`, { goodsType })
+  return post<ApiResponse<GoodType>>(`${__SCS_MARKET_CENTER__}/expansion-pack/getByGoodType`, { goodsType })
 }

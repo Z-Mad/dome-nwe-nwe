@@ -21,6 +21,16 @@ export interface CheckConfigurationNewVO {
   modelReason: string // 整个模块都未检验的原因
 }
 
+export interface AnalysisConfigurationDTO {
+  id: string // 应用ID
+  tenantId: string // 租户ID
+  userId: string // 用户ID
+}
+export interface UninstallApplicationDTO {
+  type: string // 应用ID
+  tenantId: string // 租户ID
+  uninstallAppId: string // 用户ID
+}
 
 
 /**
@@ -32,5 +42,26 @@ export const checkExtractConfig = (appId: number, type: string) => {
   return get<ApiResponse<CheckConfigurationNewVO[]>>(
     `${__SCS_MARKET_CENTER__}/develop/config/checkExtractConfig`,
     { appId, type }
+  )
+}
+/**
+ * 检查应用配置完整性
+ * @param data 配置检查参数
+ */
+export const analysisConfiguration = (data:AnalysisConfigurationDTO) => {
+  return get<ApiResponse<any>>(
+    `${__SCS_MARKET_CENTER__}/develop/config/analysisConfiguration`,
+    data
+  )
+}
+
+/**
+ * 检查应用配置完整性
+ * @param data 配置检查参数
+ */
+export const uninstallApplication = (data:UninstallApplicationDTO) => {
+  return get<ApiResponse<any>>(
+    `${__SCS_MARKET_CENTER__}/develop/config/uninstallApplication`,
+    data
   )
 }
