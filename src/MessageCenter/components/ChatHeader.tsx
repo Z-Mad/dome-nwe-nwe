@@ -31,14 +31,14 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ activeContact }) => {
           <div className="text-xs text-gray-500">{activeContact.role}</div>
         </div>
       </div>
-      <div className="flex gap-4 text-gray-400">
+      {/* <div className="flex gap-4 text-gray-400">
         <Phone size={20} className="hover:text-blue-600 cursor-pointer transition-colors" />
         <Video size={20} className="hover:text-blue-600 cursor-pointer transition-colors" />
         <MoreVertical
           size={20}
           className="hover:text-gray-600 cursor-pointer transition-colors"
         />
-      </div>
+      </div> */}
     </div>
   )
 }

@@ -42,7 +42,7 @@ export const ConfirmPaymentModal: React.FC<ConfirmPaymentModalProps> = ({ item, 
         </div>
         <div className="p-6 space-y-4">
           <p className="text-gray-600 text-sm leading-relaxed">
-            请确认您已通过线下对公账户收到来自 <span className="font-bold text-gray-900">{item.buyer}</span> 的款项 <span className="font-bold text-indigo-600 font-mono">¥ {item.estimatedCost.toFixed(2)}</span>。
+            请确认您已通过线下对公账户收到来自 <span className="font-bold text-gray-900">{item.buyer}</span> 的款项 <span className="font-bold text-indigo-600 font-mono">¥ {item?.estimatedCost?.toFixed?.(2) ?? '0.00'}</span>。
           </p>
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-700 flex items-start gap-2">
             <AlertCircle size={16} className="mt-0.5 shrink-0" />

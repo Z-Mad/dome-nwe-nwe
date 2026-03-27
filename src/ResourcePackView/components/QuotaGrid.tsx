@@ -1,7 +1,7 @@
 // components/QuotaGrid.tsx
 import React from 'react'
 import { CheckCircle } from 'lucide-react'
-import { QuotaOption } from '../types/resourcePack'
+import type { QuotaOption } from '../types/resourcePack'
 
 interface QuotaGridProps {
   quotas: QuotaOption[]

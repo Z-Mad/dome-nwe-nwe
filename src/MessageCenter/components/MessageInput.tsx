@@ -29,8 +29,8 @@ const MessageInput: React.FC<MessageInputProps> = ({
         >
           <ImageIcon size={20} />
         </button>
-        <Paperclip size={20} className="hover:text-blue-600 cursor-pointer transition-colors" />
-        <Smile size={20} className="hover:text-blue-600 cursor-pointer transition-colors" />
+        {/* <Paperclip size={20} className="hover:text-blue-600 cursor-pointer transition-colors" />
+        <Smile size={20} className="hover:text-blue-600 cursor-pointer transition-colors" /> */}
         {uploadingImage && <span className="text-xs text-blue-600">图片上传中...</span>}
         <input
           ref={imageInputRef}
@@ -52,7 +52,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
         <button
           onClick={handleSend}
           disabled={!inputText.trim() || uploadingImage}
-          className={`p-3 rounded-xl transition-all shadow-md flex items-center justify-center ${
+          className={`w-[46px] h-[46px] rounded-xl transition-all shadow-md flex items-center justify-center ${
             inputText.trim() && !uploadingImage
               ? 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer'
               : 'bg-gray-200 text-gray-400 cursor-not-allowed'

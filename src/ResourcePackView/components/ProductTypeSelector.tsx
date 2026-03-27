@@ -1,7 +1,7 @@
 // components/ProductTypeSelector.tsx
 import React from 'react'
 import { CheckCircle, Info } from 'lucide-react'
-import { CONFIG_OPTIONS } from '../constants/resourcePack'
+import { CONFIG_OPTIONS } from '../constants/resourcePack.tsx'
 
 interface ProductTypeSelectorProps {
   selectedType: 'token' | 'storage'

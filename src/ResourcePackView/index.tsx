@@ -13,7 +13,7 @@ import { CartSidebar } from './components/CartSidebar'
 import { CheckoutModal } from './components/CheckoutModal'
 import { AgreementModal } from './components/AgreementModal'
 import { PaymentApplicationModal } from './components/PaymentApplicationModal'
-import { CONFIG_OPTIONS, DURATIONS, RULES_CONTENT } from './constants/resourcePack'
+import { CONFIG_OPTIONS, DURATIONS, RULES_CONTENT } from './constants/resourcePack.tsx'
 
 interface ResourcePackViewProps {
   orders: any[]

@@ -1,7 +1,7 @@
 // components/DurationQuantitySelector.tsx
 import React from 'react'
 import { Minus, Plus } from 'lucide-react'
-import { DurationOption } from '../types/resourcePack'
+import type { DurationOption } from '../types/resourcePack'
 
 interface DurationQuantitySelectorProps {
   durations: DurationOption[]

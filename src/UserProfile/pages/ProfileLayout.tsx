@@ -116,7 +116,7 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({
   const handleNavigate = (path: string) => {
     navigate(path);
   };
-
+  console.log(activeModal)
   // 渲染弹窗（与之前相同，略去重复代码，实际需保留所有弹窗渲染逻辑）
   const renderModal = () => {
     switch (activeModal) {
