@@ -2,7 +2,7 @@
 import React from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, FileText, Receipt, Box, PieChart, Headphones, Wallet, LifeBuoy, BarChart2, Activity } from 'lucide-react';
-import { ProfileHeader } from '../components/profile/ProfileHeader';
+import { ProfileHeader } from '../components/ProfileHeader';
 import  { useToast } from '../hooks/useToast';
 import  { useModal } from '../hooks/useModal';
 import  { useInvoiceHeaders } from '../hooks/useInvoiceHeaders';
@@ -12,27 +12,27 @@ import { useUserStore } from '@/utils/user'
 
 
 // 引入所有弹窗组件
-import { OrderDetailModal } from '../components/profile/modals/OrderDetailModal';
-import { MonitoringDetailModal } from '../components/profile/modals/MonitoringDetailModal';
-import { BillDetailModal } from '../components/profile/modals/BillDetailModal';
-import { RefundRequestModal } from '../components/profile/modals/RefundRequestModal';
-import { SellerRefundAuditModal } from '../components/profile/modals/SellerRefundAuditModal';
-import { CreateTicketModal } from '../components/profile/modals/CreateTicketModal';
-import { InvoiceHeaderModal } from '../components/profile/modals/InvoiceHeaderModal';
-import { RequestInvoiceModal } from '../components/profile/modals/RequestInvoiceModal';
-import { PayBillModal } from '../components/profile/modals/PayBillModal';
-import { EditAssetModal } from '../components/profile/modals/EditAssetModal';
-import { ManageVersionModal } from '../components/profile/modals/ManageVersionModal';
-import { ConfirmTakedownModal } from '../components/profile/modals/ConfirmTakedownModal';
-import { UnderDevelopmentModal } from '../components/profile/modals/UnderDevelopmentModal';
-import { PaymentApplicationModal } from '../components/profile/modals/PaymentApplicationModal';
-import { PaymentModal } from '../components/profile/modals/PaymentModal';
-import { GenerateInvoiceModal } from '../components/profile/modals/GenerateInvoiceModal';
-import { ConfirmPaymentModal } from '../components/profile/modals/ConfirmPaymentModal';
-import { UploadReceiptModal } from '../components/profile/modals/UploadReceiptModal';
-import { IssueInvoiceModal } from '../components/profile/modals/IssueInvoiceModal';
-import { ExportStatementModal } from '../components/profile/modals/ExportStatementModal';
-import { PreviewImageModal } from '../components/profile/modals/PreviewImageModal';
+import { OrderDetailModal } from '../modals/OrderDetailModal';
+import { MonitoringDetailModal } from '../modals/MonitoringDetailModal';
+import { BillDetailModal } from '../modals/BillDetailModal';
+import { RefundRequestModal } from '../modals/RefundRequestModal';
+import { SellerRefundAuditModal } from '../modals/SellerRefundAuditModal';
+import { CreateTicketModal } from '../modals/CreateTicketModal';
+import { InvoiceHeaderModal } from '../modals/InvoiceHeaderModal';
+import { RequestInvoiceModal } from '../modals/RequestInvoiceModal';
+import { PayBillModal } from '../modals/PayBillModal';
+import { EditAssetModal } from '../modals/EditAssetModal';
+import { ManageVersionModal } from '../modals/ManageVersionModal';
+import { ConfirmTakedownModal } from '../modals/ConfirmTakedownModal';
+import { UnderDevelopmentModal } from '../modals/UnderDevelopmentModal';
+import { PaymentApplicationModal } from '../modals/PaymentApplicationModal';
+import { PaymentModal } from '../modals/PaymentModal';
+import { GenerateInvoiceModal } from '../modals/GenerateInvoiceModal';
+import { ConfirmPaymentModal } from '../modals/ConfirmPaymentModal';
+import { UploadReceiptModal } from '../modals/UploadReceiptModal';
+import { IssueInvoiceModal } from '../modals/IssueInvoiceModal';
+import { ExportStatementModal } from '../modals/ExportStatementModal';
+import { PreviewImageModal } from '../modals/PreviewImageModal';
 
 interface ProfileLayoutProps {
   currentAccount: any;

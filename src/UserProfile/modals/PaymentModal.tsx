@@ -1,7 +1,7 @@
 // components/profile/modals/PaymentModal.tsx
 import React from 'react';
 import { X, Wallet, Scan, Building } from 'lucide-react';
-import type { BuyerOrder } from '../../../types/profile';
+import type { BuyerOrder } from '../types/profile';
 
 interface PaymentModalProps {
   order: BuyerOrder;

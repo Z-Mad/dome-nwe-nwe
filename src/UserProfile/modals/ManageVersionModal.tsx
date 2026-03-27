@@ -1,7 +1,7 @@
 // components/profile/modals/ManageVersionModal.tsx
 import React from 'react';
 import { X, Settings, Activity, Terminal, Loader2 } from 'lucide-react';
-import type { SellerAsset } from '../../../types/profile';
+import type { SellerAsset } from '../types/profile';
 
 interface ManageVersionModalProps {
   asset: SellerAsset;

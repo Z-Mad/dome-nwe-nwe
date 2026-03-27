@@ -1,7 +1,7 @@
 // components/profile/modals/ExportStatementModal.tsx
 import React, { useState } from 'react';
 import { X, Download, Loader2 } from 'lucide-react';
-import type { BuyerBill } from '../../../types/profile';
+import type { BuyerBill } from '../types/profile';
 
 interface ExportStatementModalProps {
   bills: BuyerBill[];

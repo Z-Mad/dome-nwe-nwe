@@ -1,7 +1,7 @@
 // components/profile/modals/GenerateInvoiceModal.tsx
 import React, { useState, useEffect } from 'react';
 import { X, FileText, Loader2, AlertCircle, Download } from 'lucide-react';
-import type { SellerMonitoringItem } from '../../../types/profile';
+import type { SellerMonitoringItem } from '../types/profile';
 
 interface GenerateInvoiceModalProps {
   item: SellerMonitoringItem;

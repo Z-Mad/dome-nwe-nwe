@@ -1,7 +1,7 @@
 // components/profile/modals/UploadReceiptModal.tsx
 import React, { useState } from 'react';
 import { X, Upload, Building, Loader2 } from 'lucide-react';
-import type { BuyerOrder } from '../../../types/profile';
+import type { BuyerOrder } from '../types/profile';
 
 interface UploadReceiptModalProps {
   order: BuyerOrder;

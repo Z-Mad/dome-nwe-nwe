@@ -1,7 +1,7 @@
 // components/profile/modals/EditAssetModal.tsx
 import React, { useState } from 'react';
 import { X, Edit3, Loader2 } from 'lucide-react';
-import type { SellerAsset } from '../../../types/profile';
+import type { SellerAsset } from '../types/profile';
 
 interface EditAssetModalProps {
   asset: SellerAsset;

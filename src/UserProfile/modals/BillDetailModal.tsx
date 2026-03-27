@@ -1,7 +1,7 @@
 // components/profile/modals/BillDetailModal.tsx
 import React from 'react';
 import { X, FileText } from 'lucide-react';
-import type { BuyerBill } from '../../../types/profile';
+import type { BuyerBill } from '../types/profile';
 
 interface BillDetailModalProps {
   bill: BuyerBill;

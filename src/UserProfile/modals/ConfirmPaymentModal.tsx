@@ -1,7 +1,7 @@
 // components/profile/modals/ConfirmPaymentModal.tsx
 import React, { useState } from 'react';
 import { X, CheckCircle, AlertCircle, Upload } from 'lucide-react';
-import type { SellerMonitoringItem } from '../../../types/profile';
+import type { SellerMonitoringItem } from '../types/profile';
 
 interface ConfirmPaymentModalProps {
   item: SellerMonitoringItem;

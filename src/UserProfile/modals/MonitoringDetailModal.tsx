@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, FileText, Box, Scale } from 'lucide-react';
-import type { SellerMonitoringItem } from '../../../types/profile';
+import type { SellerMonitoringItem } from '../types/profile';
 
 interface MonitoringDetailModalProps {
   item: SellerMonitoringItem;

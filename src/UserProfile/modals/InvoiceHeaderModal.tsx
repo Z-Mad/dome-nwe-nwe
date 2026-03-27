@@ -1,7 +1,7 @@
 // components/profile/modals/InvoiceHeaderModal.tsx
 import React, { useState } from 'react';
 import { X, Settings, Plus, CheckCircle } from 'lucide-react';
-import type { InvoiceHeader } from '../../../types/profile';
+import type { InvoiceHeader } from '../types/profile';
 
 interface InvoiceHeaderModalProps {
   headers: InvoiceHeader[];

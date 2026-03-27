@@ -1,7 +1,7 @@
 import React from 'react';
 import { X, FileText, Box, Scale, Receipt, History, ArrowUpRight, PlusCircle, RefreshCcw, Repeat } from 'lucide-react';
 import { StatusBadge, PaymentStatusBadge } from '@/components/Badges';
-import type { BuyerOrder } from '../../../types/profile';
+import type { BuyerOrder } from '../types/profile';
 
 interface OrderDetailModalProps {
   order: BuyerOrder;
