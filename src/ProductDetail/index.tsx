@@ -4,7 +4,8 @@ import RelatedPanel from '@/components/RelatedPanel'
 import ReportPanel from '@/components/ReportPanel'
 import Sidebar from '@/components/Sidebar'
 import VideoView from '@/components/VideoView'
-import { type DetailModule, MOCK_AGENTS } from '@/data'
+import { type DetailModule } from '@/data'
+import { type AgentDetail, getAgentDetail } from '@/services/discover'
 import {
   Activity,
   AlertTriangle,
@@ -857,6 +858,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   productOrders = [],
 }) => {
   const [activeAgentId, setActiveAgentId] = useState('1')
+  const [agent, setAgent] = useState<AgentDetail | null>(null)
+  const [relatedAgents, setRelatedAgents] = useState<Record<string, AgentDetail>>({})
+  const [loading, setLoading] = useState(true)
   const [demoTab, setDemoTab] = useState<'preview' | 'video' | 'live'>('preview')
   const [pricingMode, setPricingMode] = useState<'saas' | 'buyout'>('saas')
   const [saasPlanType, setSaasPlanType] = useState<'monthly' | 'yearly' | 'usage'>('monthly')
@@ -901,7 +905,42 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
 
   const reviewsRef = useRef<HTMLDivElement>(null)
 
-  const agent = MOCK_AGENTS[activeAgentId]
+  /**
+   * 获取智能体详情数据
+   */
+  useEffect(() => {
+    const fetchAgentDetail = async () => {
+      setLoading(true)
+      try {
+        const response = await getAgentDetail(activeAgentId)
+        if (response.success && response.data) {
+          setAgent(response.data)
+          // 获取相关的智能体数据
+          if (response.data.related && response.data.related.length > 0) {
+            const relatedData: Record<string, AgentDetail> = {}
+            for (const relId of response.data.related) {
+              try {
+                const relResponse = await getAgentDetail(relId)
+                if (relResponse.success && relResponse.data) {
+                  relatedData[relId] = relResponse.data
+                }
+              } catch (error) {
+                console.error(`获取相关智能体 ${relId} 详情失败:`, error)
+              }
+            }
+            setRelatedAgents(relatedData)
+          }
+        }
+      } catch (error) {
+        console.error('获取智能体详情失败:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchAgentDetail()
+  }, [activeAgentId])
+
   const trialCount = productOrders?.filter((o) => o.orderType === 'Trial').length || 0
 
   // Determine User Status based on productOrders
@@ -958,7 +997,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     }
   }, [initialParams, pricingMode])
 
-  if (!agent) return <div>Loading...</div>
+  if (loading || !agent)
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Loader2 className="animate-spin" />
+      </div>
+    )
 
   const handleCtaClick = (type: 'trial' | 'paid' | 'consultation' | 'upgrade') => {
     setPurchaseType(type)
@@ -1362,14 +1406,18 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     <tbody className="divide-y divide-gray-100">
                       {agent.dataPreview.rows.map((row, idx) => (
                         <tr key={idx} className="hover:bg-gray-50">
-                          {agent.dataPreview.columns.map((col) => (
-                            <td
-                              key={col.key}
-                              className="px-6 py-4 whitespace-nowrap text-gray-700 font-mono"
-                            >
-                              {row[col.key]}
-                            </td>
-                          ))}
+                          {agent.dataPreview.columns.map((col) => {
+                            const cellValue = row[col.key]
+                            const isReactElement = React.isValidElement(cellValue)
+                            return (
+                              <td
+                                key={col.key}
+                                className="px-6 py-4 whitespace-nowrap text-gray-700 font-mono"
+                              >
+                                {isReactElement ? cellValue : String(cellValue)}
+                              </td>
+                            )
+                          })}
                         </tr>
                       ))}
                     </tbody>
@@ -1738,7 +1786,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               </h3>
               <div className="space-y-4">
                 {agent.related.map((relId) => {
-                  const relAgent = MOCK_AGENTS[relId]
+                  const relAgent = relatedAgents[relId]
                   if (!relAgent) return null
                   return (
                     <div
