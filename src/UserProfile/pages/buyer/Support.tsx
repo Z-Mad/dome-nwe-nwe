@@ -3,9 +3,11 @@ import { useOutletContext } from 'react-router-dom';
 import { Headphones, MessageSquare, HelpCircle, ChevronRight, Loader2 } from 'lucide-react';
 import { SUPPORT_TICKETS, FAQ_ITEMS } from '../../constants/profile';
 import { chatService } from '@/services/chat'
+import { useToast } from '@/components/contexts/ToastContext';
 const BuyerSupport: React.FC = () => {
   const { onNavigate, openModal } = useOutletContext<any>();
   const [isCreatingSession, setIsCreatingSession] = useState(false)
+  const { showToast } = useToast();
   const contactConsultant = async () => {
     try {
       setIsCreatingSession(true)
@@ -13,11 +15,10 @@ const BuyerSupport: React.FC = () => {
       if (res.success && res.data) {
         onNavigate('messages', { conversationId: String(res.data.sessionId) })
       } else {
-        // showToast(res.msg || '发起会话失败')
+        showToast(res.msg || '发起会话失败')
       }
     } catch (error) {
-      console.error('Failed to create session:', error)
-      // showToast('发起会话异常，请稍后重试')
+      showToast('发起会话异常，请稍后重试')
     } finally {
       setIsCreatingSession(false)
     }
