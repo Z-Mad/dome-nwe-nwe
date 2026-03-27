@@ -1,0 +1,195 @@
+// components/profile/modals/InvoiceHeaderModal.tsx
+import React, { useState } from 'react';
+import { X, Settings, Plus, CheckCircle } from 'lucide-react';
+import type { InvoiceHeader } from '../../../types/profile';
+
+interface InvoiceHeaderModalProps {
+  headers: InvoiceHeader[];
+  editingHeader: InvoiceHeader | null;
+  showForm: boolean;
+  onClose: () => void;
+  onSave: (header: InvoiceHeader) => void;
+  onAdd: () => void;
+}
+
+export const InvoiceHeaderModal: React.FC<InvoiceHeaderModalProps> = ({
+  headers,
+  editingHeader,
+  showForm,
+  onClose,
+  onSave,
+  onAdd,
+}) => {
+  const [localEditing, setLocalEditing] = useState<InvoiceHeader | null>(editingHeader);
+  const [localShowForm, setLocalShowForm] = useState(showForm);
+
+  const handleSave = () => {
+    if (!localEditing?.title || !localEditing?.taxId) {
+      alert('请填写必填项');
+      return;
+    }
+    onSave(localEditing);
+    setLocalShowForm(false);
+  };
+
+  if (localShowForm && localEditing) {
+    return (
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4 animate-in fade-in">
+        <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+            <h3 className="font-bold text-gray-900 flex items-center gap-2">
+              <Settings size={18} className="text-blue-600" /> {localEditing.id ? '编辑发票抬头' : '新增发票抬头'}
+            </h3>
+            <button onClick={() => setLocalShowForm(false)} className="text-gray-400 hover:text-gray-600">
+              <X size={20} />
+            </button>
+          </div>
+          <div className="p-6 overflow-y-auto flex-1 space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">发票类型</label>
+              <div className="flex gap-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    checked={localEditing.type === 'enterprise'}
+                    onChange={() => setLocalEditing({ ...localEditing, type: 'enterprise' })}
+                    className="text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-gray-700">增值税普通发票</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    checked={localEditing.type === 'special'}
+                    onChange={() => setLocalEditing({ ...localEditing, type: 'special' })}
+                    className="text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-gray-700">增值税专用发票</span>
+                </label>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">发票抬头 <span className="text-red-500">*</span></label>
+              <input
+                type="text"
+                value={localEditing.title}
+                onChange={(e) => setLocalEditing({ ...localEditing, title: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                placeholder="请输入企业全称"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">纳税人识别号 <span className="text-red-500">*</span></label>
+              <input
+                type="text"
+                value={localEditing.taxId}
+                onChange={(e) => setLocalEditing({ ...localEditing, taxId: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                placeholder="请输入18位统一社会信用代码"
+              />
+            </div>
+            {localEditing.type === 'special' && (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">注册地址及电话 <span className="text-red-500">*</span></label>
+                  <input
+                    type="text"
+                    value={localEditing.address || ''}
+                    onChange={(e) => setLocalEditing({ ...localEditing, address: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                    placeholder="请输入注册地址及电话"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">开户行及账号 <span className="text-red-500">*</span></label>
+                  <input
+                    type="text"
+                    value={localEditing.bank || ''}
+                    onChange={(e) => setLocalEditing({ ...localEditing, bank: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                    placeholder="请输入开户行及账号"
+                  />
+                </div>
+              </>
+            )}
+            <div className="pt-2">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={localEditing.isDefault}
+                  onChange={(e) => setLocalEditing({ ...localEditing, isDefault: e.target.checked })}
+                  className="text-blue-600 focus:ring-blue-500 rounded"
+                />
+                <span className="text-sm font-medium text-gray-700">设为默认发票抬头</span>
+              </label>
+            </div>
+          </div>
+          <div className="p-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
+            <button onClick={() => setLocalShowForm(false)} className="px-4 py-2 text-gray-600 font-medium hover:bg-gray-200 rounded-lg transition-colors">
+              取消
+            </button>
+            <button onClick={handleSave} className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+              保存
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4 animate-in fade-in">
+      <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+          <h3 className="font-bold text-gray-900 flex items-center gap-2">
+            <Settings size={18} className="text-blue-600" /> 发票抬头管理
+          </h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <X size={20} />
+          </button>
+        </div>
+        <div className="p-6 overflow-y-auto flex-1 space-y-4">
+          {headers.map((header) => (
+            <div key={header.id} className="border border-gray-200 rounded-xl p-4 relative hover:border-blue-300 transition-colors">
+              {header.isDefault && <span className="absolute top-4 right-4 bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded font-bold">默认</span>}
+              <div className="font-bold text-gray-900 mb-2 pr-12">{header.title}</div>
+              <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
+                <div><span className="text-gray-400">税号：</span>{header.taxId}</div>
+                <div><span className="text-gray-400">类型：</span>{header.type === 'special' ? '增值税专用发票' : '增值税普通发票'}</div>
+                <div className="col-span-2"><span className="text-gray-400">开户行及账号：</span>{header.bank || '-'}</div>
+              </div>
+              <div className="mt-4 flex gap-3">
+                <button
+                  onClick={() => {
+                    setLocalEditing(header);
+                    setLocalShowForm(true);
+                  }}
+                  className="text-blue-600 text-sm font-medium hover:text-blue-800"
+                >
+                  编辑
+                </button>
+                <button
+                  onClick={() => {
+                    // 删除逻辑由父组件处理
+                  }}
+                  className="text-red-600 text-sm font-medium hover:text-red-800"
+                >
+                  删除
+                </button>
+              </div>
+            </div>
+          ))}
+          <button
+            onClick={() => {
+                    setLocalEditing({});
+                    setLocalShowForm(true);
+                  }}
+            className="w-full py-4 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 font-medium hover:border-blue-500 hover:text-blue-600 transition-colors flex items-center justify-center gap-2"
+          >
+            <Plus size={18} /> 新增发票抬头
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};

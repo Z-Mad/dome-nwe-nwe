@@ -1,6 +1,6 @@
 // hooks/useDemands.ts
 import { useState, useMemo } from 'react'
-import { Demand } from '../types/demand'
+import type { Demand } from '../types/demand'
 
 // 静态数据，实际可从 API 获取
 const initialDemands: Demand[] = [
